@@ -222,7 +222,7 @@ export default function TeamClient() {
   const roles = [...new Set(members.map((m) => m.role))];
 
   return (
-    <div className="px-10 py-10 flex-grow">
+    <div className="px-5 py-6 md:px-10 md:py-10 flex-grow">
       {/* Header */}
       <div className="mb-10 flex items-end justify-between">
         <div>

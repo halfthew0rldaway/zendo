@@ -126,7 +126,7 @@ export default function ScheduleClient() {
   };
 
   return (
-    <div className="px-10 py-10 flex-grow overflow-y-auto">
+    <div className="px-5 py-6 md:px-10 md:py-10 flex-grow overflow-y-auto">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>

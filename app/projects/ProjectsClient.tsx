@@ -199,7 +199,7 @@ export default function ProjectsPage() {
   }, [projects, filter, sort, unlockedProjectIds]);
 
   return (
-    <div className="px-10 py-10 flex-grow">
+    <div className="px-5 py-6 md:px-10 md:py-10 flex-grow">
       {/* Header */}
       <div className="mb-10 flex justify-between items-end flex-wrap gap-4">
         <div>
@@ -298,7 +298,7 @@ export default function ProjectsPage() {
       {/* FAB */}
       <Link
         href="/projects/new"
-        className="fixed bottom-10 right-10 w-16 h-16 rounded-full primary-gradient text-white flex items-center justify-center active:scale-90 transition-transform group z-50"
+        className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 rounded-full primary-gradient text-white flex items-center justify-center active:scale-90 transition-transform group z-50"
         style={{ boxShadow: "0 16px 40px rgba(12,86,208,0.4)" }}
       >
         <span className="material-symbols-outlined text-[32px]">add</span>

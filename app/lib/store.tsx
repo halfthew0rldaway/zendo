@@ -41,7 +41,7 @@ interface ProjectStore {
 
 const ProjectContext = createContext<ProjectStore | null>(null);
 
-function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = []): Project {
+function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = [], members: import("../types").ProjectMember[] = []): Project {
   return {
     id: row.id as string,
     name: row.name as string,
@@ -52,8 +52,9 @@ function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = []): Proje
     dueDate: (row.due_date as string) ?? null,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
-    memberCount: (row.member_count as number) ?? 1,
+    memberCount: (row.member_count as number) ?? members.length || 1,
     tasks,
+    members,
   };
 }
 
@@ -142,7 +143,37 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         tasksByProject[pid].push(dbRowToTask(r));
       }
 
-      setProjects(projectRows.map((r) => dbRowToProject(r as Record<string, unknown>, tasksByProject[r.id] ?? [])));
+      // Fetch all members for these projects
+      const { data: allMembersRow } = await supabase
+        .from("project_members")
+        .select(`
+          project_id,
+          role,
+          profiles (
+            id,
+            username,
+            avatar_url
+          )
+        `)
+        .in("project_id", projectIds);
+      
+      const membersByProject: Record<string, import("../types").ProjectMember[]> = {};
+      for (const row of allMembersRow ?? []) {
+        const pid = row.project_id as string;
+        if (!membersByProject[pid]) membersByProject[pid] = [];
+        const profile = row.profiles as any;
+        if (profile) {
+          membersByProject[pid].push({
+            id: profile.id,
+            projectId: pid,
+            username: profile.username,
+            role: row.role as string,
+            avatarUrl: profile.avatar_url,
+          });
+        }
+      }
+
+      setProjects(projectRows.map((r) => dbRowToProject(r as Record<string, unknown>, tasksByProject[r.id] ?? [], membersByProject[r.id] ?? [])));
       setLoading(false);
     };
     load();
@@ -224,7 +255,16 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       console.error("Add member error:", memberError.message);
     }
 
-    const project = dbRowToProject(row as Record<string, unknown>);
+    // Create owner member entity locally
+    const ownerMember = {
+      id: currentUserId,
+      projectId: row.id,
+      username: currentProfile?.username ?? "You",
+      role: "owner",
+      avatarUrl: currentProfile?.avatarUrl ?? null
+    };
+
+    const project = dbRowToProject(row as Record<string, unknown>, [], [ownerMember]);
     setProjects((prev) => [project, ...prev]);
     return project;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -341,7 +381,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     // Lookup user by username
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("id")
+      .select("id, username, avatar_url")
       .ilike("username", username)
       .single();
 
@@ -370,8 +410,23 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       return { success: false, error: insertError.message };
     }
 
-    // Increment member count in local state just so UI reflects immediately if we care, or trigger an update
-    setProjects((prev) => prev.map((p) => p.id === projectId ? { ...p, memberCount: p.memberCount + 1 } : p));
+    // Increment member count and add member object in local state 
+    setProjects((prev) => prev.map((p) => {
+      if (p.id === projectId) {
+        return {
+          ...p,
+          memberCount: p.memberCount + 1,
+          members: [...p.members, {
+            id: profile.id,
+            projectId: projectId,
+            username: profile.username,
+            role: dbRole,
+            avatarUrl: profile.avatar_url
+          }]
+        };
+      }
+      return p;
+    }));
     
     return { success: true };
   }, []);

@@ -45,6 +45,14 @@ export interface Column {
   order: number;
 }
 
+export interface ProjectMember {
+  id: string;
+  projectId: string;
+  username: string;
+  role: string;
+  avatarUrl: string | null;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -57,6 +65,7 @@ export interface Project {
   updatedAt: string;
   tasks: Task[];
   memberCount: number;
+  members: ProjectMember[];
 }
 
 export interface TeamMember {
