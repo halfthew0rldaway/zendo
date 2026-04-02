@@ -76,20 +76,20 @@ export default function PinAccessClient({ projectId }: PinAccessClientProps) {
             className="font-black text-4xl tracking-tighter text-[#0c56d0] mb-2"
             style={{ fontFamily: "Outfit, sans-serif" }}
           >
-            Architect
+            ZENDO
           </h1>
           <p className="text-[#586064] font-medium tracking-tight">
-            Enterprise Project Access
+            Secure Project Access
           </p>
         </div>
 
         {/* Card */}
         <section
-          className="bg-white rounded-xl p-8 md:p-10 ghost-border"
+          className="bg-white rounded-2xl p-8 md:p-10 ghost-border"
           style={{ boxShadow: "0 32px 64px -12px rgba(43,52,55,0.06)" }}
         >
           <header className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#f1f4f6] rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#f1f4f6] rounded-2xl mb-4">
               <span className="material-symbols-outlined text-[#0c56d0] text-3xl">
                 lock
               </span>
@@ -123,7 +123,7 @@ export default function PinAccessClient({ projectId }: PinAccessClientProps) {
                 <input
                   key={i}
                   ref={(el) => { inputRefs.current[i] = el; }}
-                  className={`w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold rounded-lg transition-all outline-none ${
+                  className={`w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold rounded-xl transition-all outline-none ${
                     error
                       ? "bg-[#ff00001a] border-2 border-[#9f403d]/20 text-[#9f403d] ring-2 ring-[#9f403d]/20"
                       : "bg-[#f1f4f6] border-none focus:ring-2 focus:ring-[#0c56d0]/40 focus:bg-white"
@@ -152,9 +152,9 @@ export default function PinAccessClient({ projectId }: PinAccessClientProps) {
 
             {/* Submit */}
             <button
-              className="w-full primary-gradient text-white font-bold py-4 rounded-full active:scale-95 transition-transform"
+              className="w-full primary-gradient text-white font-bold py-4 rounded-xl text-sm active:scale-95 transition-all"
               style={{
-                boxShadow: "0 8px 20px -4px rgba(12,86,208,0.3)",
+                boxShadow: "0 8px 24px rgba(12,86,208,0.25)",
               }}
               type="submit"
             >
