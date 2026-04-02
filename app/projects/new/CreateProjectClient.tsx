@@ -41,6 +41,7 @@ export default function CreateProjectClient() {
   const [pin, setPin] = useState("");
   const [icon, setIcon] = useState("apartment");
   const [iconBg, setIconBg] = useState<IconBg>("primary");
+  const [dueDate, setDueDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPinText, setShowPinText] = useState(false);
 
@@ -67,6 +68,7 @@ export default function CreateProjectClient() {
       pin: pin.trim() || null,
       icon,
       iconBg,
+      dueDate: dueDate ? new Date(dueDate).toISOString() : null,
     });
 
     if (project) {
@@ -171,6 +173,19 @@ export default function CreateProjectClient() {
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              {/* Due Date */}
+              <div className="flex flex-col gap-2 group md:col-span-2">
+                <label className="text-sm font-semibold tracking-wide text-[#586064] ml-1">
+                  Project Deadline (Optional)
+                </label>
+                <input
+                  type="date"
+                  className="w-full px-4 py-3.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg focus:bg-white focus:border-[#0c56d0]/40 transition-all outline-none"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
                 />
               </div>
 
