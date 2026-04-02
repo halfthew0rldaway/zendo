@@ -27,8 +27,8 @@ function toIsoDay(iso: string) {
 }
 
 const STATUS_DOT: Record<TaskStatus, string> = {
-  todo: "bg-[#64748b]",
-  in_progress: "bg-[#6366f1]",
+  todo: "bg-[#abb3b7]",
+  in_progress: "bg-[#0c56d0]",
   review: "bg-[#0ea5e9]",
   testing: "bg-[#a855f7]",
   done: "bg-[#22c55e]",
@@ -131,32 +131,32 @@ export default function CalendarClient() {
   ).length;
 
   return (
-    <div className="flex-grow flex flex-col h-full bg-[#0f1117] text-white">
+    <div className="flex-grow flex flex-col h-full bg-[#f8f9fa] text-[#2b3437]">
       {/* Top bar */}
-      <div className="px-10 pt-10 pb-6 border-b border-white/5">
+      <div className="px-10 pt-10 pb-6 border-b border-[#e3e9ec] bg-white">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <span className="material-symbols-outlined text-[#6366f1]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              <span className="material-symbols-outlined text-[#0c56d0]" style={{ fontVariationSettings: "'FILL' 1" }}>
                 calendar_month
               </span>
               <h1 className="text-3xl font-extrabold tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-                Calendar
+                Calendar Overview
               </h1>
             </div>
-            <p className="text-white/40 text-sm">Deadlines and task due dates across all your projects.</p>
+            <p className="text-[#586064] text-sm">Deadlines and task due dates across all your projects.</p>
           </div>
 
           {/* Stats */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6 bg-[#f1f4f6] px-6 py-3 rounded-xl border border-[#e3e9ec]">
             {[
-              { label: "Events", value: totalEvents, color: "text-[#6366f1]" },
-              { label: "Overdue", value: overdueEvents, color: "text-[#f87171]" },
-              { label: "This week", value: upcomingEvents, color: "text-[#34d399]" },
+              { label: "Events", value: totalEvents, color: "text-[#0c56d0]" },
+              { label: "Overdue", value: overdueEvents, color: "text-[#9f403d]" },
+              { label: "This week", value: upcomingEvents, color: "text-[#004ab9]" },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <p className={`text-xl font-extrabold ${s.color}`}>{s.value}</p>
-                <p className="text-[10px] text-white/30 uppercase tracking-wider">{s.label}</p>
+                <p className="text-[10px] text-[#737c7f] font-bold uppercase tracking-wider">{s.label}</p>
               </div>
             ))}
           </div>
@@ -170,35 +170,35 @@ export default function CalendarClient() {
           <div className="flex items-center justify-between mb-8">
             <button
               onClick={prevMonth}
-              className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full bg-white border border-[#e3e9ec] hover:bg-[#f1f4f6] flex items-center justify-center transition-colors shadow-sm"
             >
-              <span className="material-symbols-outlined text-lg">chevron_left</span>
+              <span className="material-symbols-outlined text-lg text-[#586064]">chevron_left</span>
             </button>
-            <h2 className="text-xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>
+            <h2 className="text-2xl font-bold text-[#2b3437]" style={{ fontFamily: "Outfit, sans-serif" }}>
               {formatMonth(year, month)}
             </h2>
             <button
               onClick={nextMonth}
-              className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full bg-white border border-[#e3e9ec] hover:bg-[#f1f4f6] flex items-center justify-center transition-colors shadow-sm"
             >
-              <span className="material-symbols-outlined text-lg">chevron_right</span>
+              <span className="material-symbols-outlined text-lg text-[#586064]">chevron_right</span>
             </button>
           </div>
 
           {/* Day-of-week headers */}
           <div className="grid grid-cols-7 mb-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <div key={d} className="text-center text-[11px] font-bold text-white/20 uppercase tracking-widest py-1">
+              <div key={d} className="text-center text-[11px] font-bold text-[#586064] uppercase tracking-widest py-1">
                 {d}
               </div>
             ))}
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-3">
             {/* Leading blanks */}
             {Array.from({ length: startDay }).map((_, i) => (
-              <div key={`blank-${i}`} className="aspect-square rounded-xl" />
+              <div key={`blank-${i}`} className="aspect-square rounded-xl bg-transparent" />
             ))}
 
             {/* Days */}
@@ -214,32 +214,32 @@ export default function CalendarClient() {
                 <button
                   key={day}
                   onClick={() => setSelectedDay(isSelected ? null : dateStr)}
-                  className={`aspect-square rounded-xl p-1.5 flex flex-col items-start transition-all relative group text-left ${
+                  className={`aspect-square rounded-xl p-2 flex flex-col items-start transition-all relative group text-left border ${
                     isSelected
-                      ? "bg-[#6366f1]/20 ring-2 ring-[#6366f1]"
+                      ? "bg-[#0c56d0]/5 border-[#0c56d0] ring-2 ring-[#0c56d0]/20 shadow-sm"
                       : isToday
-                      ? "bg-[#6366f1]/10 ring-1 ring-[#6366f1]/40"
-                      : "hover:bg-white/5"
-                  } ${isPast && !isToday ? "opacity-50" : ""}`}
+                      ? "bg-white border-[#0c56d0]/40 shadow-sm"
+                      : "bg-white border-[#e3e9ec] hover:bg-[#f8f9fa] hover:border-[#abb3b7]/40 hover:shadow-sm"
+                  } ${isPast && !isToday ? "opacity-60 bg-[#f8f9fa]" : ""}`}
                 >
-                  <span className={`text-[13px] font-bold mb-1 ${
-                    isToday ? "text-[#6366f1]" : "text-white/70 group-hover:text-white/90"
+                  <span className={`text-sm font-bold mb-2 ${
+                    isToday ? "text-[#0c56d0]" : "text-[#4d626c] group-hover:text-[#2b3437]"
                   }`}>
                     {day}
                   </span>
 
                   {/* Event dots */}
-                  <div className="flex flex-wrap gap-0.5">
+                  <div className="flex flex-wrap gap-1 mt-auto">
                     {events.slice(0, 4).map((ev, ei) => (
                       <span
                         key={ei}
-                        className={`w-1.5 h-1.5 rounded-full ${
+                        className={`w-2 h-2 rounded-full shadow-sm ${
                           ev.type === "project" ? "bg-[#f59e0b]" : STATUS_DOT[ev.status ?? "todo"]
                         }`}
                       />
                     ))}
                     {events.length > 4 && (
-                      <span className="text-[8px] text-white/30 font-bold leading-none self-end">
+                      <span className="text-[9px] text-[#737c7f] font-bold leading-none self-end ml-0.5">
                         +{events.length - 4}
                       </span>
                     )}
@@ -250,25 +250,25 @@ export default function CalendarClient() {
           </div>
 
           {/* Legend */}
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <span className="text-[11px] text-white/20 uppercase tracking-widest font-bold">Legend:</span>
+          <div className="mt-8 flex flex-wrap items-center gap-5 bg-white p-4 rounded-xl border border-[#e3e9ec]">
+            <span className="text-[11px] text-[#737c7f] uppercase tracking-widest font-bold">Legend:</span>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]" />
-              <span className="text-[11px] text-white/40">Project deadline</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] shadow-sm" />
+              <span className="text-[11px] font-semibold text-[#586064]">Project deadline</span>
             </div>
             {(Object.entries(STATUS_DOT) as [TaskStatus, string][]).map(([status, cls]) => (
               <div key={status} className="flex items-center gap-1.5">
-                <span className={`w-2.5 h-2.5 rounded-full ${cls}`} />
-                <span className="text-[11px] text-white/40">{STATUS_LABEL[status]}</span>
+                <span className={`w-2.5 h-2.5 rounded-full shadow-sm ${cls}`} />
+                <span className="text-[11px] font-semibold text-[#586064]">{STATUS_LABEL[status]}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Side panel */}
-        <div className="w-80 shrink-0 border-l border-white/5 flex flex-col overflow-hidden">
-          <div className="p-6 border-b border-white/5">
-            <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">
+        <div className="w-80 shrink-0 border-l border-[#e3e9ec] bg-white flex flex-col overflow-hidden shadow-[-4px_0_16px_rgba(43,52,55,0.02)] z-10">
+          <div className="p-6 border-b border-[#e3e9ec] bg-[#f8f9fa]">
+            <h3 className="text-sm font-extrabold text-[#2b3437] uppercase tracking-widest">
               {selectedDay
                 ? new Date(selectedDay + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
                 : "Select a day"}
@@ -277,16 +277,16 @@ export default function CalendarClient() {
 
           <div className="flex-1 overflow-y-auto p-6 space-y-3">
             {!selectedDay && (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-white/20">
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-[#abb3b7]">
                 <span className="material-symbols-outlined text-5xl">touch_app</span>
-                <p className="text-sm text-center">Click a date on the calendar to see events for that day.</p>
+                <p className="text-sm text-center font-medium">Click a date on the calendar to see events for that day.</p>
               </div>
             )}
 
             {selectedDay && selectedEvents.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-white/20">
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-[#abb3b7]">
                 <span className="material-symbols-outlined text-4xl">event_available</span>
-                <p className="text-sm text-center">No events on this day.</p>
+                <p className="text-sm text-center font-medium">No events on this day.</p>
               </div>
             )}
 
@@ -294,39 +294,41 @@ export default function CalendarClient() {
               <Link
                 key={i}
                 href={`/projects/${ev.projectId}/board`}
-                className={`block p-4 rounded-xl border transition-all group hover:scale-[1.01] ${
+                className={`block p-4 rounded-xl border transition-all group hover:scale-[1.01] shadow-sm hover:shadow-md ${
                   ev.type === "project"
-                    ? "bg-[#f59e0b]/10 border-[#f59e0b]/20 hover:bg-[#f59e0b]/15"
-                    : "bg-white/5 border-white/5 hover:bg-white/10"
+                    ? "bg-[#fffbeb] border-[#fde68a] hover:bg-[#fef3c7]"
+                    : "bg-white border-[#e3e9ec] hover:border-[#0c56d0]/20"
                 }`}
               >
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1.5">
                   {ev.type === "project" ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-[#f59e0b] shrink-0" />
-                      <span className="text-[10px] font-bold text-[#f59e0b] uppercase tracking-widest">Project Deadline</span>
+                      <span className="text-[10px] font-bold text-[#b45309] uppercase tracking-widest">Project Deadline</span>
                     </>
                   ) : (
                     <>
                       <span className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[ev.status ?? "todo"]}`} />
-                      <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
+                      <span className="text-[10px] font-bold text-[#586064] uppercase tracking-widest">
                         {STATUS_LABEL[ev.status ?? "todo"]}
                       </span>
                     </>
                   )}
                 </div>
-                <p className={`text-sm font-semibold truncate ${ev.type === "project" ? "text-[#f59e0b]" : "text-white/90"}`}>
+                <p className={`text-sm font-bold truncate ${ev.type === "project" ? "text-[#92400e]" : "text-[#2b3437]"}`}>
                   {ev.title}
                 </p>
-                <p className="text-[11px] text-white/30 mt-0.5 truncate">{ev.projectName}</p>
+                <p className={`text-[11px] truncate mt-0.5 ${ev.type === "project" ? "text-[#b45309]/80" : "text-[#586064]"}`}>
+                  {ev.projectName}
+                </p>
               </Link>
             ))}
           </div>
 
           {/* Upcoming events section */}
-          <div className="border-t border-white/5 p-6">
-            <h4 className="text-[11px] font-bold text-white/30 uppercase tracking-widest mb-4">Coming up</h4>
-            <div className="space-y-2">
+          <div className="border-t border-[#e3e9ec] bg-[#f8f9fa] p-6">
+            <h4 className="text-[11px] font-bold text-[#737c7f] uppercase tracking-widest mb-4">Coming up</h4>
+            <div className="space-y-3">
               {(() => {
                 const upcoming: Array<{ dateStr: string; ev: CalendarEvent }> = [];
                 for (let d = 0; d <= 14; d++) {
@@ -336,14 +338,14 @@ export default function CalendarClient() {
                   (eventMap[ds] ?? []).forEach(ev => upcoming.push({ dateStr: ds, ev }));
                 }
                 if (upcoming.length === 0) return (
-                  <p className="text-xs text-white/20">Nothing in the next 2 weeks.</p>
+                  <p className="text-xs text-[#abb3b7] font-medium">Nothing in the next 2 weeks.</p>
                 );
                 return upcoming.slice(0, 5).map(({ dateStr, ev }, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ev.type === "project" ? "bg-[#f59e0b]" : STATUS_DOT[ev.status ?? "todo"]}`} />
+                  <div key={i} className="flex items-center gap-3 bg-white p-2.5 rounded-lg border border-[#e3e9ec]">
+                    <span className={`w-2 h-2 rounded-full shrink-0 shadow-sm ${ev.type === "project" ? "bg-[#f59e0b]" : STATUS_DOT[ev.status ?? "todo"]}`} />
                     <div className="min-w-0">
-                      <p className="text-xs text-white/70 font-medium truncate">{ev.title}</p>
-                      <p className="text-[10px] text-white/25">
+                      <p className="text-[11px] text-[#2b3437] font-bold truncate">{ev.title}</p>
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-[#737c7f] mt-0.5">
                         {new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </p>
                     </div>

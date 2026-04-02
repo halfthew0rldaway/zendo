@@ -1,7 +1,7 @@
 import TeamClient from "./TeamClient";
 
 export const metadata = {
-  title: "Team | Architect",
+  title: "Team | Zendo",
   description: "Manage your team members and roles.",
 };
 

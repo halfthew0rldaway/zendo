@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PinAccessClient from "./PinAccessClient";
 
 export const metadata: Metadata = {
-  title: "Unlock Project | Architect",
+  title: "Unlock Project | Zendo",
   description: "Enter your secure access PIN to proceed.",
 };
 

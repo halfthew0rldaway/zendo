@@ -19,7 +19,7 @@ export default function HelpClient() {
           Help & FAQ
         </h1>
         <p className="text-[#4d626c] text-base">
-          Answers to common questions about Architect Zendo.
+          Answers to common questions about Zendo Zendo.
         </p>
       </div>
 

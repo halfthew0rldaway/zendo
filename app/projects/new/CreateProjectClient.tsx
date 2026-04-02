@@ -11,7 +11,7 @@ const ICON_OPTIONS = [
   { value: "apartment", label: "Apartment" },
   { value: "eco", label: "Eco" },
   { value: "museum", label: "Museum" },
-  { value: "architecture", label: "Architecture" },
+  { value: "architecture", label: "Zendoure" },
   { value: "domain", label: "Domain" },
   { value: "corporate_fare", label: "Corporate" },
   { value: "foundation", label: "Foundation" },

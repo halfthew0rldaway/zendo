@@ -8,15 +8,15 @@ export default function CalendarPage() {
   const [tab, setTab] = useState<"calendar" | "schedule">("calendar");
 
   return (
-    <div className="flex-grow flex flex-col h-full overflow-hidden">
+    <div className="flex-grow flex flex-col h-full overflow-hidden bg-[#f8f9fa]">
       {/* Tab switcher */}
-      <div className={`flex items-center gap-1 px-10 pt-6 pb-0 ${tab === "calendar" ? "bg-[#0f1117]" : "bg-[#f8f9fa]"} transition-colors duration-300`}>
+      <div className="flex items-center gap-1 px-10 pt-6 pb-0 bg-white border-b border-[#e3e9ec]">
         <button
           onClick={() => setTab("calendar")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-t-xl text-sm font-bold transition-all duration-200 ${
+          className={`flex items-center gap-2 px-5 py-3 border-b-2 text-sm font-bold transition-all duration-200 ${
             tab === "calendar"
-              ? "bg-[#1a1d27] text-white"
-              : "text-[#586064] hover:text-[#2b3437] bg-transparent"
+              ? "border-[#0c56d0] text-[#0c56d0]"
+              : "border-transparent text-[#586064] hover:text-[#2b3437] hover:bg-[#f1f4f6] rounded-t-xl"
           }`}
         >
           <span className="material-symbols-outlined text-[18px]" style={tab === "calendar" ? { fontVariationSettings: "'FILL' 1" } : undefined}>
@@ -26,10 +26,10 @@ export default function CalendarPage() {
         </button>
         <button
           onClick={() => setTab("schedule")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-t-xl text-sm font-bold transition-all duration-200 ${
+          className={`flex items-center gap-2 px-5 py-3 border-b-2 text-sm font-bold transition-all duration-200 ${
             tab === "schedule"
-              ? "bg-[#f8f9fa] text-[#2b3437]"
-              : "text-white/40 hover:text-white/80 bg-transparent"
+              ? "border-[#0c56d0] text-[#0c56d0]"
+              : "border-transparent text-[#586064] hover:text-[#2b3437] hover:bg-[#f1f4f6] rounded-t-xl"
           }`}
         >
           <span className="material-symbols-outlined text-[18px]" style={tab === "schedule" ? { fontVariationSettings: "'FILL' 1" } : undefined}>

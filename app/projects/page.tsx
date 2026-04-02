@@ -1,7 +1,7 @@
 import ProjectsClient from "./ProjectsClient";
 
 export const metadata = {
-  title: "Architect | Projects",
+  title: "Zendo | Projects",
   description: "Manage your architectural blueprints and development pipelines.",
 };
 
