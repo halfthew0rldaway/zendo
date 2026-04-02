@@ -226,7 +226,7 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
 export default function TopBar({ showSearch = true, searchPlaceholder = "Search projects..." }: { showSearch?: boolean; searchPlaceholder?: string }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { signOut, currentUserId } = useProjects();
+  const { signOut, currentUserId, currentProfile } = useProjects();
   const [notifOpen, setNotifOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -246,8 +246,13 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
     router.push("/login");
   };
 
-  // Derive initials from userId as fallback
-  const initials = currentUserId ? currentUserId.slice(0, 2).toUpperCase() : "?";
+  // Derive initials from profile fallback to userId
+  const nameToUse = currentProfile?.fullName || currentProfile?.username || currentUserId?.slice(0, 8);
+  const initials = currentProfile?.fullName 
+    ? currentProfile.fullName.slice(0, 2).toUpperCase()
+    : currentProfile?.username 
+      ? currentProfile.username.slice(0, 2).toUpperCase()
+      : currentUserId ? currentUserId.slice(0, 2).toUpperCase() : "?";
 
   return (
     <header className="bg-[#f8f9fa] flex justify-between items-center w-full px-10 py-4 sticky top-0 z-40 border-b border-slate-100">
@@ -315,7 +320,7 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
               <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-[#abb3b7]/20 overflow-hidden z-50 min-w-[160px]">
                 <div className="px-4 py-3 border-b border-[#f1f4f6]">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#737c7f]">Signed in</p>
-                  <p className="text-xs text-[#2b3437] font-medium truncate">{currentUserId?.slice(0, 8)}...</p>
+                  <p className="text-xs text-[#2b3437] font-medium truncate">{nameToUse}</p>
                 </div>
                 <button
                   className="w-full flex items-center gap-2 px-4 py-3 text-sm text-[#9f403d] hover:bg-[#fe8983]/10 transition-colors font-semibold"

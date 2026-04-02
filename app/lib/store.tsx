@@ -10,11 +10,18 @@ import React, {
 import { createClient } from "../../utils/supabase/client";
 import { Project, Task, TaskStatus, TeamMember } from "../types";
 
+export interface UserProfile {
+  username: string;
+  fullName: string | null;
+  avatarUrl: string | null;
+}
+
 interface ProjectStore {
   projects: Project[];
   members: TeamMember[];
   unlockedProjectIds: Set<string>;
   currentUserId: string | null;
+  currentProfile: UserProfile | null;
   loading: boolean;
   addProject: (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount">) => Promise<Project | null>;
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
@@ -70,6 +77,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [unlockedProjectIds, setUnlockedProjectIds] = useState<Set<string>>(new Set());
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   const supabase = createClient();
@@ -81,6 +89,21 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setLoading(false); return; }
       setCurrentUserId(user.id);
+
+      // Fetch user profile
+      const { data: profileRow } = await supabase
+        .from("profiles")
+        .select("username, full_name, avatar_url")
+        .eq("id", user.id)
+        .single();
+        
+      if (profileRow) {
+        setCurrentProfile({
+          username: profileRow.username,
+          fullName: profileRow.full_name,
+          avatarUrl: profileRow.avatar_url,
+        });
+      }
 
       // Fetch projects the user is a member of
       const { data: memberRows } = await supabase
@@ -319,7 +342,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ProjectContext.Provider value={{
-      projects, members, unlockedProjectIds, currentUserId, loading,
+      projects, members, unlockedProjectIds, currentUserId, currentProfile, loading,
       addProject, updateProject, deleteProject, unlockProject,
       addTask, updateTask, deleteTask, moveTask,
       addMember, removeMember, updateMember, resetData, signOut,
