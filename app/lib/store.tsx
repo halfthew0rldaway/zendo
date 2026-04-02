@@ -22,7 +22,7 @@ interface ProjectStore {
   currentUserId: string | null;
   currentProfile: UserProfile | null;
   loading: boolean;
-  addProject: (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount">) => Promise<Project | null>;
+  addProject: (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount" | "members">) => Promise<Project | null>;
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   unlockProject: (id: string) => void;
@@ -212,7 +212,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const addProject = useCallback(async (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount">) => {
+  const addProject = useCallback(async (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount" | "members">) => {
     if (!currentUserId) {
       console.error("Cannot create project: No current user ID");
       return null;
