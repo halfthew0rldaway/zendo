@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Architect | Kanban Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#eaeff1",
+              "error-dim": "#4e0309",
+              "on-error": "#fff7f6",
+              "secondary": "#4d626c",
+              "on-secondary-fixed": "#2d424c",
+              "surface-tint": "#0c56d0",
+              "on-tertiary-fixed": "#3f3a54",
+              "tertiary-fixed": "#e3dbfd",
+              "secondary-dim": "#415660",
+              "on-surface": "#2b3437",
+              "background": "#f8f9fa",
+              "on-primary-fixed-variant": "#0253cd",
+              "secondary-fixed-dim": "#c1d8e4",
+              "on-error-container": "#752121",
+              "error-container": "#fe8983",
+              "surface-bright": "#f8f9fa",
+              "primary-fixed-dim": "#c6d3ff",
+              "on-secondary": "#f2faff",
+              "on-secondary-container": "#40555f",
+              "surface-container-high": "#e3e9ec",
+              "outline-variant": "#abb3b7",
+              "secondary-fixed": "#cfe6f2",
+              "surface-container-highest": "#dbe4e7",
+              "primary-fixed": "#dae2ff",
+              "inverse-on-surface": "#9b9d9e",
+              "surface": "#f8f9fa",
+              "surface-variant": "#dbe4e7",
+              "surface-dim": "#d1dce0",
+              "tertiary": "#615b77",
+              "tertiary-fixed-dim": "#d5cdee",
+              "on-tertiary": "#fcf7ff",
+              "on-primary-fixed": "#003993",
+              "on-primary": "#f8f7ff",
+              "inverse-surface": "#0c0f10",
+              "primary": "#0c56d0",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed-variant": "#495f69",
+              "primary-dim": "#004aba",
+              "inverse-primary": "#5c8bff",
+              "tertiary-container": "#e3dbfd",
+              "on-tertiary-container": "#524c68",
+              "on-background": "#2b3437",
+              "tertiary-dim": "#554f6b",
+              "error": "#9f403d",
+              "primary-container": "#dae2ff",
+              "secondary-container": "#cfe6f2",
+              "outline": "#737c7f",
+              "on-tertiary-fixed-variant": "#5c5672",
+              "on-surface-variant": "#586064",
+              "surface-container-low": "#f1f4f6",
+              "on-primary-container": "#004ab9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-panel {
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="h-screen sticky left-0 w-64 bg-slate-50 dark:bg-slate-900 flex flex-col h-full gap-8 p-6 hidden md:flex">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+</div>
+<div>
+<h2 class="font-manrope font-bold text-lg text-slate-900 dark:text-slate-50">Project Studio</h2>
+<p class="text-xs text-on-surface-variant">Enterprise Plan</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="home_app_logo">home_app_logo</span>
+<span class="font-inter text-sm font-medium">Home</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-inter text-sm font-medium">Projects</span>
+</a>
+<a class="text-[#0c56d0] dark:text-blue-400 font-bold flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="view_kanban">view_kanban</span>
+<span class="font-inter text-sm font-medium">Board</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-inter text-sm font-medium">Schedule</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-inter text-sm font-medium">Team</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1">
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-inter text-sm font-medium">Help</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 py-2 px-4 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+<span class="font-inter text-sm font-medium">Archived</span>
+</a>
+<button class="mt-4 bg-gradient-to-br from-primary to-primary-dim text-white py-3 px-4 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+                    Create New
+                </button>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-1 flex flex-col min-w-0 bg-background overflow-hidden relative">
+<!-- TopAppBar -->
+<header class="bg-[#f8f9fa] dark:bg-slate-950 flex justify-between items-center w-full px-10 py-4 max-w-full docked full-width top-0 z-40">
+<div class="flex items-center gap-6">
+<h1 class="text-2xl font-manrope font-black tracking-tighter text-[#0c56d0] dark:text-blue-500">Architect</h1>
+<div class="hidden lg:flex items-center gap-8">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#0c56d0] dark:hover:text-blue-300 transition-all duration-300" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#0c56d0] dark:hover:text-blue-300 transition-all duration-300" href="#">Projects</a>
+<a class="text-[#0c56d0] dark:text-blue-400 font-bold border-b-2 border-[#0c56d0] pb-1" href="#">Kanban</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" placeholder="Search tasks..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-surface-container-high ml-2" data-alt="professional portrait of a creative director in a minimalist studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQkW_T0CZMLF8M0byI7o_oJ4KrtfCT69Rl8LKWjCT1jhQGy4zfDuKHBc_Pg5FB9Ul--AF5FpE_b_yFStSbt0y5kDDax28WRpiZPtJhjkbkaRzTPdHSHfB0k39cqqoDnoXEW0cA-rR7nXFrzixzdERHDPGfeJr0sL2oR8Y5KW545P1_WavD7Ojh-m9O62qmD7nYGvAzYQJcahcwlAIvsNQFlHB1y7Ke21MSTIrOuJchuQP9zc8fgnIbtrZCKXF5Imzuq6AAyVozPi76"/>
+</div>
+</header>
+<!-- Kanban Header Section -->
+<div class="px-10 py-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="px-2 py-0.5 bg-primary-container text-on-primary-container text-[10px] font-bold tracking-widest uppercase rounded">PROJ-442</span>
+<h2 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface">Cloud Architect SaaS</h2>
+</div>
+<p class="text-on-surface-variant max-w-2xl leading-relaxed">Infrastructure modernization and UI redesign for the next-generation cloud deployment platform. Sprint 14 is focused on performance optimization.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-background" data-alt="avatar of a team member with short dark hair and a friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCttTfGy88L4K5bnI0JdkZJRBGvIwZDDYmsu-j034Xs2YC87k0DryEjFPP-or1Vm9DD4JxkwqYMx46WsDComNP-NnZf-LEOb_EOMD4CRrWTcMIPHWjjONfOQ_yk7N5lOamjUP4hVSGiy3PBapx70jNysVxgzItUMfweQs0w0SudsHeb2MLFM-OmhNdBkuSXlC2aAIZRltTHwhiw9sAIHSWSrZcU_-SL58WbY_gCA7mYAqhRcRZ5sZgjuNfeY8ckvYRPnVzpELu-uzSl"/>
+<img class="w-10 h-10 rounded-full border-2 border-background" data-alt="avatar of a team member with long blonde hair in a professional setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCezwnLpJGDVR4nfQwL9gKm3c7pFFjWxzqOO8n3N_gQ1uYsRBulsO3TKRoi8wVcinwhkkel9p4_MB4IKdm0JHF0GPXsNDqesRRJzhbQDJFEkSOr5DZ4KKGNDn4HT5Xw_c78JJ5zjgmfI2uWE3WkT8j8n3s0vd-7vDWB1vyIfljG9eyB-Z98MzL659EahZcRqdeFdfH7q-icYCChhSgWuxFYKZ1QsOgl3iwG8cJE1AlpYDQT2S-ED5suwQ5rPhHgesJ68v5BpcaaSQMb"/>
+<img class="w-10 h-10 rounded-full border-2 border-background" data-alt="avatar of a team member wearing glasses and a focused expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQvEjoDLZy3VEAypAFIYgdcrNNTjz_P-K3xpQ2hSRdbQlE1bSSexAs42TKP58PNI_EL3baZO95V1idqgL4DYGdHZ6Cud9tWI8DXEelGPK7TZUYyLk9vAJ202INttaEmvZTAxwA1DPAkiddPLIzReRXsmsBro6wivyX7E3KAmxnBtRAuFdPj58yripEFb_Gfd6MRYGus5_HydOfTzf8Q_TE6l1SNXKXmCAe0KDm6Zs6FItsiUSCcvZwmymHt-VC2_U1KJSpqlDGSQ_A"/>
+<div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-high flex items-center justify-center text-xs font-bold text-on-secondary-container">+4</div>
+</div>
+<button class="flex items-center gap-2 bg-surface-container-high hover:bg-surface-container-highest px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="share">share</span>
+                            Invite (PIN: 8842)
+                        </button>
+</div>
+</div>
+</div>
+<!-- Scrollable Kanban Area -->
+<div class="flex-1 overflow-x-auto px-10 pb-8 flex gap-6 items-start hide-scrollbar">
+<!-- Column: To Do -->
+<div class="flex-shrink-0 w-80 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-manrope font-bold text-sm tracking-wide text-on-surface uppercase">To Do</h3>
+<span class="w-5 h-5 bg-surface-container-high rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
+</div>
+<button class="p-1 hover:bg-surface-container-low rounded"><span class="material-symbols-outlined text-lg" data-icon="add">add</span></button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Task Card -->
+<div class="group bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-on-surface/5 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded">frontend</span>
+<span class="material-symbols-outlined text-on-surface-variant text-base opacity-0 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h4 class="font-manrope font-bold text-on-surface mb-2">Implement Auth Flow</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-4">Connect Firebase authentication with the main login screen and handle session persistence.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-error text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="priority_high">priority_high</span>
+                                    Urgent
+                                </div>
+<div class="flex items-center -space-x-2">
+<img class="w-6 h-6 rounded-full ring-1 ring-background" data-alt="small circular avatar of team member 5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC127iIBv5JP93TqUMZUlnGdtFL9j7bxJi-XhdACMKNKwwgRuRI2lfMi0yRMbyNCj_v7a8JpA_F3wIPLCOCMxU6OptzNO-XLDzyzm8AuOPEK0UdZTiJJT2bHPQ05V7qp7vEIIupCeaFtielSIcUhquD8jU0S0QsZxDbbI9KeZ1MJyIVw9omcxF1kzlq9jRkBjFwwid8GxyTvW__62YCGPF0Ih7vuLeJsHOODDRabToqkUdUpPu2nTeQnE2086BWqsBSOs4TpUEs0v4T"/>
+</div>
+</div>
+</div>
+<!-- Task Card -->
+<div class="group bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-on-surface/5 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold rounded">design</span>
+<span class="material-symbols-outlined text-on-surface-variant text-base opacity-0 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h4 class="font-manrope font-bold text-on-surface mb-2">Typography Audit</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-4">Review all components for font weight consistency across the design system.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-secondary text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="low_priority">low_priority</span>
+                                    Low
+                                </div>
+<img class="w-6 h-6 rounded-full ring-1 ring-background" data-alt="small circular avatar of team member 6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeSXe8UAkq-rzdUw7Km5vd4Q6OX08Hdet86f4RqJnTKuXGOYr-wsftDvoGepZMn-pDRKsCy0K0D0PHFe-ipeUtbMK8fJ2SV8HJo6H9WAnfnJHWOEk4LiK9aqlzSYMOIur8pUgG3284uRccOEYDvYD5lVMMHfGnsW9OZYM7P1ElAk_AZbHrAanxRw-9ZJMg7VFpAANVZe-LR50yH620dioeQNf6CW8Pis_R5hT00RbqY8f0b8OHYs_pY8ch5WJy71RWcA5SM2VSGNg9"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: In Progress -->
+<div class="flex-shrink-0 w-80 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-manrope font-bold text-sm tracking-wide text-on-surface uppercase">In Progress</h3>
+<span class="w-5 h-5 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
+</div>
+<button class="p-1 hover:bg-surface-container-low rounded"><span class="material-symbols-outlined text-lg" data-icon="add">add</span></button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-on-surface/5 transition-all border-l-4 border-primary cursor-pointer ring-2 ring-primary/5">
+<div class="flex justify-between items-start mb-3">
+<div class="flex gap-1">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded">backend</span>
+<span class="px-2 py-0.5 bg-error-container/20 text-error-container text-[10px] font-bold rounded">urgent</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-base opacity-0 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h4 class="font-manrope font-bold text-on-surface mb-2">API Gateway Migration</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-4">Transfer all legacy endpoints to the new AWS API Gateway infrastructure.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-[10px] text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="checklist">checklist</span>
+                                        4/12
+                                    </div>
+<div class="flex items-center gap-1 text-[10px] text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="attach_file">attach_file</span>
+                                        2
+                                    </div>
+</div>
+<img class="w-6 h-6 rounded-full ring-1 ring-background" data-alt="small circular avatar of team member 12" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXLJdxnsI5d5-oyEBHu8GG6ls09EU2J9Ql0LHQnGQH50H52PrPmH42yZZjljYIVlgCWCWty0vbunH1bBdCc6kEuY3nu_QtOcAu-FQGkpsFTVIdfAUfzPmnqoEWl8-JWnJ6bqcpEWR-goOjqhZC144nO4PbFQeXBchvVE-lRx9DN1G5ToFZkI9EGFP6RcDvxf-pEYi06ok0VhNYywBjvqtl5Hhi-7OSlueMRHCqsLgrtDk4nGqR-OUPCeHI25aBMSu8rg6rC-K9lxpH"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Review -->
+<div class="flex-shrink-0 w-80 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-manrope font-bold text-sm tracking-wide text-on-surface uppercase">Review</h3>
+<span class="w-5 h-5 bg-surface-container-high rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
+</div>
+<button class="p-1 hover:bg-surface-container-low rounded"><span class="material-symbols-outlined text-lg" data-icon="add">add</span></button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-on-surface/5 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-surface-container-high text-on-surface-variant text-[10px] font-bold rounded">QA</span>
+<span class="material-symbols-outlined text-on-surface-variant text-base opacity-0 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h4 class="font-manrope font-bold text-on-surface mb-2">Code Refactor: Sidebar</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-4">Removing unnecessary div nesting and optimizing Tailwind class strings.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+                                    Medium
+                                </div>
+<img class="w-6 h-6 rounded-full ring-1 ring-background" data-alt="small circular avatar of team member 15" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp5I_m4ODZEu1wT6E1qdk2o3nBxygha3F4I9X6eUcVjvL_k_oiYocOb91eGWwpo4cWqYoeCkrDx_acTKfkovDnPfGQh5EuT9svN1RyuzQ-uN3m-mkPzpghelxZlKlUQwC1evdjwf2j60Y4uRaVZun08E5qTiyGfOmMnG9U1Y0YlP9YTTNjlM9_c9nir7V6Kt8HLJ-bGvQh6tzThK3Akrl4ucymGZnpPrCMZb7_dPpeFQSbqVX-VfL-xKF4EIrmIpI2X6P4J_uHJsFt"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Testing -->
+<div class="flex-shrink-0 w-80 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-manrope font-bold text-sm tracking-wide text-on-surface uppercase">Testing</h3>
+<span class="w-5 h-5 bg-surface-container-high rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
+</div>
+<button class="p-1 hover:bg-surface-container-low rounded"><span class="material-symbols-outlined text-lg" data-icon="add">add</span></button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-on-surface/5 transition-all cursor-pointer border-l-4 border-error/50">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-error-container/20 text-error-container text-[10px] font-bold rounded">Bug</span>
+<span class="material-symbols-outlined text-on-surface-variant text-base opacity-0 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h4 class="font-manrope font-bold text-on-surface mb-2">Safari Border Rendering</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-4">The 'No-Line' rule isn't being respected in Safari mobile browsers.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-error text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="bug_report">bug_report</span>
+                                    Failed
+                                </div>
+<img class="w-6 h-6 rounded-full ring-1 ring-background" data-alt="small circular avatar of team member 22" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHriX9zx7RiFIsLzst_Mp325Jj6QqSUEq0Au-e0GkOPftLkE1oIMDH8Efcxy-gDGPsbdt67Nm7u6cGMntXnLulah3MoFz7Y0OaKNifWVjRsi7TnND4P1EdPfzTtGKZawvKRjou5gHM1seGp0ZjXJekfD275P_BDfzktoGhwlMBw7Tns6Pf02NJraQ12BCCiV26G95kIR9TI-AoPDR8m9l7eKpdtdCQHC3UosbhWHryTIGhyaNFP8r1k-raNesumMEZ_L3Sh8g1enqI"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Done -->
+<div class="flex-shrink-0 w-80 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-manrope font-bold text-sm tracking-wide text-on-surface uppercase text-secondary">Done</h3>
+<span class="w-5 h-5 bg-secondary-fixed text-on-secondary-fixed rounded-full flex items-center justify-center text-[10px] font-bold">12</span>
+</div>
+</div>
+<div class="flex flex-col gap-4 opacity-70">
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded">docs</span>
+</div>
+<h4 class="font-manrope font-bold text-on-surface mb-2 line-through">Architecture Map V1</h4>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-secondary text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                                    Completed
+                                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Task Details Modal Overlay (Absolute) -->
+<div class="absolute inset-0 bg-inverse-surface/10 backdrop-blur-sm z-50 flex justify-end">
+<div class="w-full max-w-2xl bg-surface h-full shadow-2xl flex flex-col animate-slide-in-right">
+<div class="flex items-center justify-between p-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="view_kanban">view_kanban</span>
+<span class="text-xs font-bold text-on-surface-variant tracking-wider uppercase">In Progress / PROJ-102</span>
+</div>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto px-8 pb-12 hide-scrollbar">
+<h2 class="text-3xl font-headline font-extrabold text-on-surface mb-6">API Gateway Migration</h2>
+<div class="grid grid-cols-3 gap-8 mb-10">
+<div>
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-2">Assignee</label>
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="avatar of the assigned team member for this task" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuqW-qm7ymPQzQVLgBaKQCkpHNNsbqhVwkfcriLvpGfZplp4o4503Au0Tq-fdHVPSwmD28HafLcnpxdBMpe9_qw9Dg-7Nx3qaBzWfQp5Jx2lF1e5scEgGDkoICicjQa8DqZZ9TttyQBRmoesQPryZdmEyeXNQPPNGHAqH2wdbW7zhxiLJWrNMsS7O4Ft59TQ2jLJFlR-WSVYGF5TR0GW8LJSRYqllZ0kiyblRwV2pzGsBWgfohUShUFbYVTNnk4QEo_gzGLbwwzpQm"/>
+<span class="text-sm font-medium">Alex Rivera</span>
+</div>
+</div>
+<div>
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-2">Priority</label>
+<div class="flex items-center gap-2 text-error text-sm font-bold">
+<span class="material-symbols-outlined text-base" data-icon="priority_high">priority_high</span>
+                                    Urgent
+                                </div>
+</div>
+<div>
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-2">Testing State</label>
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full text-xs font-bold">
+<span class="w-2 h-2 bg-outline rounded-full"></span>
+                                    Not Tested
+                                </div>
+</div>
+</div>
+<div class="mb-10">
+<h3 class="text-sm font-bold text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="subject">subject</span>
+                                Description
+                            </h3>
+<div class="bg-surface-container-low p-6 rounded-xl text-sm leading-relaxed text-on-surface-variant">
+                                Transfer all legacy endpoints from the internal Express monolith to the new cloud-native AWS API Gateway infrastructure. This includes setting up Lambda authorizers and mapping VPC links for internal services.
+                            </div>
+</div>
+<div class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="checklist">checklist</span>
+                                    Checklist
+                                </h3>
+<span class="text-[10px] font-bold text-primary">33% Complete</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-4 group">
+<div class="w-5 h-5 border-2 border-primary rounded flex items-center justify-center bg-primary text-white">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<span class="text-sm text-on-surface-variant line-through">Define CloudFormation template</span>
+</div>
+<div class="flex items-center gap-4 group">
+<div class="w-5 h-5 border-2 border-outline rounded flex items-center justify-center group-hover:border-primary transition-colors"></div>
+<span class="text-sm text-on-surface">Configure VPC Link for Auth Service</span>
+</div>
+<div class="flex items-center gap-4 group">
+<div class="w-5 h-5 border-2 border-outline rounded flex items-center justify-center group-hover:border-primary transition-colors"></div>
+<span class="text-sm text-on-surface">Test Lambda Authorizer latency</span>
+</div>
+</div>
+</div>
+<div class="mb-10">
+<h3 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="attachment">attachment</span>
+                                Attachments
+                            </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<a class="flex items-center gap-3 p-3 border border-outline-variant/30 rounded-lg hover:bg-surface-container-low transition-colors" href="#">
+<div class="w-8 h-8 bg-surface-container-high rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-base" data-icon="code">code</span>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-bold truncate">GitHub Repository</p>
+<p class="text-[10px] text-on-surface-variant truncate">infra-main/gateway-configs</p>
+</div>
+</a>
+<a class="flex items-center gap-3 p-3 border border-outline-variant/30 rounded-lg hover:bg-surface-container-low transition-colors" href="#">
+<div class="w-8 h-8 bg-surface-container-high rounded flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-base" data-icon="merge">merge</span>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-bold truncate">Pull Request #412</p>
+<p class="text-[10px] text-on-surface-variant truncate">PR for migration draft</p>
+</div>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span>
+                                Testing Notes
+                            </h3>
+<textarea class="w-full bg-surface-container-low border-none rounded-xl text-sm p-4 focus:ring-2 focus:ring-primary/20 h-32" placeholder="Add details about test results or edge cases..."></textarea>
+<div class="flex gap-2 mt-3">
+<button class="px-4 py-2 bg-surface-container-high rounded-full text-xs font-bold hover:bg-surface-container-highest transition-colors">Save Draft</button>
+<button class="px-4 py-2 bg-primary text-white rounded-full text-xs font-bold active:scale-95 transition-all">Mark as Passed</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Side: Activity Panel -->
+<aside class="hidden xl:flex w-80 bg-slate-50 dark:bg-slate-900 flex-col gap-6 p-8 overflow-y-auto">
+<h3 class="font-manrope font-bold text-sm tracking-widest text-on-surface-variant uppercase">Recent Activity</h3>
+<div class="flex flex-col gap-8">
+<!-- Activity Item -->
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-8 h-8 rounded-full" data-alt="activity participant avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6lF-PjwKP0QtrqHF8aYXi1odTmdxHF5lX-L02RmXCHUiW7jxe-lLh71He3Ua8p-IhFpvjAoc6P_SR4a-RA-SAQoJ8sweV0RxVppFb-V6lXpCLHi7PJXAedMg39fh6fARiW0PA1K7ACdIX3R4WEKAXDJAg2p8BlWXR1DMMospKUOw09bcVOOqd3QYnSmVZFW6LJn_vhJ-A3F26kcLEetSQ18qHAWo-a9oXDv_JNCskC1I1MEH08C4FhrXd0ozH7bQsoQlXyabcL-zX"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-secondary-fixed text-on-secondary-fixed rounded-full flex items-center justify-center border-2 border-slate-50">
+<span class="material-symbols-outlined text-[10px]" data-icon="check" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div>
+<p class="text-sm text-on-surface leading-snug">
+<span class="font-bold">Jordan S.</span> moved <span class="font-medium text-primary">Architecture Map V1</span> to <span class="font-bold text-secondary">Done</span>
+</p>
+<span class="text-[10px] text-on-surface-variant font-medium mt-1 block">2 minutes ago</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-8 h-8 rounded-full" data-alt="activity participant avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfz0WaHKtD56Hy2oDt3uVkxORG5bodGFIFQBSzVSBD7TC5yVwu74WngWFE8bWR1-2lvLFhnk2yzY-UqbTPIjf4ZsxUrHS1MAziJ74IyNyKKXEnT572YF8RYNd6O14tBAcWTiX9sk1eR505MxjEZmsUm6Gq9BlK-ZGT0VptfMgTyfUB3_g5Rp542xcbUl-JzXfSXIXj5FwLRpSiO0TfmIjzL_M6aL-VDllebaeWyr4pmrGSJFQltY1lmoU5Dh7oJXV3fJmQb4hYTWeu"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-error-container text-on-error-container rounded-full flex items-center justify-center border-2 border-slate-50">
+<span class="material-symbols-outlined text-[10px]" data-icon="close" style="font-variation-settings: 'FILL' 1;">close</span>
+</div>
+</div>
+<div>
+<p class="text-sm text-on-surface leading-snug">
+<span class="font-bold">Casey L.</span> marked <span class="font-medium text-primary">Safari Border Rendering</span> as <span class="font-bold text-error">Failed</span>
+</p>
+<span class="text-[10px] text-on-surface-variant font-medium mt-1 block">45 minutes ago</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-8 h-8 rounded-full" data-alt="activity participant avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8ffXWz92yNPJOGSUdncjyL8Ev_UO8q1leKCBvPu1rTC-bQD60K_-L8JIr8OyWoTnj4eQIBY9EfR7CcqYAvGzG84dp8Cr-xqLkqwo2gWoZhraFrAjIzFOc9BpAjnnPdqaBhOBbkxBF1Tnw7RLwoWY5pVEYusY7jt5mUD_hYknbDdmjyTwxyCTGEAYpz4hQRxBZx93tNcRcR3btuUiYE91LT4Bc73nDblv-Chai6ybYtfRfZb9Y-ReYxBtDtZVvzvP_LSr54AK5plgj"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center border-2 border-slate-50">
+<span class="material-symbols-outlined text-[10px]" data-icon="edit" style="font-variation-settings: 'FILL' 1;">edit</span>
+</div>
+</div>
+<div>
+<p class="text-sm text-on-surface leading-snug">
+<span class="font-bold">Alex Rivera</span> added 3 items to the checklist of <span class="font-medium text-primary">API Gateway Migration</span>
+</p>
+<span class="text-[10px] text-on-surface-variant font-medium mt-1 block">2 hours ago</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-8 h-8 rounded-full" data-alt="activity participant avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCloVAcugMTuiB4_p9AVlzHyW65vwAu1HNwTX_di1O4oOKYv5yerwXAzRguXuB42YMLhpbZ7PPQyUWV-hIzauYmeqf9rrbwmP-M7wIUSrJCE6Y25N1ZbxCjTduML5pMsfaCKX6E-4o7acaP7RiTC2wRMQjfakI7TdC45UosidycRIWd-2RveVjuEOjbsAmzpmRQqoGXdEfGI7uSE1VsNpl3Wpnq02EMprH0-rysALOKjS8qzxeB60Z0vsxnJgPwZrVdeuFJjTeYW2I"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center border-2 border-slate-50">
+<span class="material-symbols-outlined text-[10px]" data-icon="attachment" style="font-variation-settings: 'FILL' 1;">attachment</span>
+</div>
+</div>
+<div>
+<p class="text-sm text-on-surface leading-snug">
+<span class="font-bold">Morgan W.</span> attached <span class="font-medium text-primary">typography_audit_v2.pdf</span>
+</p>
+<span class="text-[10px] text-on-surface-variant font-medium mt-1 block">5 hours ago</span>
+</div>
+</div>
+</div>
+<div class="mt-auto bg-surface-container-low p-4 rounded-xl">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Sprint Goal</p>
+<p class="text-xs text-on-surface italic">"Complete all API migrations and finalize the UI system documentation by EOD Friday."</p>
+</div>
+</aside>
+</div>
+</body></html>

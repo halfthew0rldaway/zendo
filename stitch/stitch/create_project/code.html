@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Project | Architect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#eaeff1",
+            "error-dim": "#4e0309",
+            "on-error": "#fff7f6",
+            "secondary": "#4d626c",
+            "on-secondary-fixed": "#2d424c",
+            "surface-tint": "#0c56d0",
+            "on-tertiary-fixed": "#3f3a54",
+            "tertiary-fixed": "#e3dbfd",
+            "secondary-dim": "#415660",
+            "on-surface": "#2b3437",
+            "background": "#f8f9fa",
+            "on-primary-fixed-variant": "#0253cd",
+            "secondary-fixed-dim": "#c1d8e4",
+            "on-error-container": "#752121",
+            "error-container": "#fe8983",
+            "surface-bright": "#f8f9fa",
+            "primary-fixed-dim": "#c6d3ff",
+            "on-secondary": "#f2faff",
+            "on-secondary-container": "#40555f",
+            "surface-container-high": "#e3e9ec",
+            "outline-variant": "#abb3b7",
+            "secondary-fixed": "#cfe6f2",
+            "surface-container-highest": "#dbe4e7",
+            "primary-fixed": "#dae2ff",
+            "inverse-on-surface": "#9b9d9e",
+            "surface": "#f8f9fa",
+            "surface-variant": "#dbe4e7",
+            "surface-dim": "#d1dce0",
+            "tertiary": "#615b77",
+            "tertiary-fixed-dim": "#d5cdee",
+            "on-tertiary": "#fcf7ff",
+            "on-primary-fixed": "#003993",
+            "on-primary": "#f8f7ff",
+            "inverse-surface": "#0c0f10",
+            "primary": "#0c56d0",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#495f69",
+            "primary-dim": "#004aba",
+            "inverse-primary": "#5c8bff",
+            "tertiary-container": "#e3dbfd",
+            "on-tertiary-container": "#524c68",
+            "on-background": "#2b3437",
+            "tertiary-dim": "#554f6b",
+            "error": "#9f403d",
+            "primary-container": "#dae2ff",
+            "secondary-container": "#cfe6f2",
+            "outline": "#737c7f",
+            "on-tertiary-fixed-variant": "#5c5672",
+            "on-surface-variant": "#586064",
+            "surface-container-low": "#f1f4f6",
+            "on-primary-container": "#004ab9"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-effect {
+      background: rgba(248, 249, 250, 0.8);
+      backdrop-filter: blur(20px);
+    }
+    .primary-gradient {
+      background: linear-gradient(135deg, #0c56d0 0%, #004aba 100%);
+    }
+    .ghost-border-focus:focus-within {
+      box-shadow: 0 0 0 2px rgba(12, 86, 208, 0.15);
+      border-color: rgba(12, 86, 208, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar: Reused as navigation shell but simplified for focused task -->
+<header class="bg-[#f8f9fa] dark:bg-slate-950 flex justify-between items-center w-full px-10 py-4 max-w-full docked full-width top-0 z-40">
+<div class="flex items-center gap-8">
+<div class="text-2xl font-manrope font-black tracking-tighter text-[#0c56d0] dark:text-blue-500">Architect</div>
+<nav class="hidden md:flex gap-6">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#0c56d0] dark:hover:text-blue-300 transition-all duration-300" href="#">Dashboard</a>
+<a class="text-[#0c56d0] dark:text-blue-400 font-bold border-b-2 border-[#0c56d0] pb-1 hover:text-[#0c56d0] dark:hover:text-blue-300 transition-all duration-300" href="#">Projects</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#0c56d0] dark:hover:text-blue-300 transition-all duration-300" href="#">Kanban</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="User Avatar" data-alt="professional headshot of a smiling creative director in a minimalist studio setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGzhniUiexki2YOD71BE_nVSHYxQP1N5t__4iWMLQOFaDXHkLo92VA_JKVlapFYy1t2NLj_JugZY06RzvUmnD2LbFLF9UVgobCmLwxeIU6ACTcY6PfZ0pNZ-VCOX9cpM-OENbr0pD1Z87fwBA8cEaSLc9WpNxmDIoePq3PS_hHwfoJwrbXA8tpW2MaS4pYgQCyF57-UHyDtondrRlPBvzGpouCj8BiSG2LYhomE6An0KwmjUVWfGRzS_JMxQEG17bJGO63bOo8SExQ"/>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+<!-- Abstract Background Elements for "Architectural Canvas" feel -->
+<div class="absolute top-20 -left-20 w-96 h-96 bg-primary-container/20 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-20 -right-20 w-96 h-96 bg-tertiary-container/20 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- Create Project Modal/Card -->
+<div class="w-full max-w-2xl z-10">
+<div class="bg-surface-container-lowest rounded-xl p-8 md:p-12 shadow-[0_12px_32px_rgba(43,52,55,0.06)] relative border border-outline-variant/10">
+<div class="mb-10 text-center sm:text-left">
+<h1 class="font-headline font-extrabold text-4xl tracking-tight text-on-surface mb-3">Initialize Project</h1>
+<p class="text-on-surface-variant font-body text-lg leading-relaxed">Establish the structural foundation for your new workspace.</p>
+</div>
+<form class="space-y-8">
+<!-- Two Column Grid for Main Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="flex flex-col gap-2 group">
+<label class="font-label text-sm font-semibold tracking-wide text-on-surface-variant ml-1" for="project-name">Project Name</label>
+<div class="relative">
+<input class="w-full px-4 py-3.5 bg-surface-container-low border-transparent rounded-lg font-body focus:bg-surface-container-lowest focus:ring-0 focus:border-primary/40 transition-all outline-none ghost-border-focus border-2" id="project-name" placeholder="E.g. Zenith Skyscraper" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 group">
+<label class="font-label text-sm font-semibold tracking-wide text-on-surface-variant ml-1" for="owner">Owner Name</label>
+<div class="relative">
+<input class="w-full px-4 py-3.5 bg-surface-container-low border-transparent rounded-lg font-body focus:bg-surface-container-lowest focus:ring-0 focus:border-primary/40 transition-all outline-none ghost-border-focus border-2" id="owner" placeholder="Full name or ID" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 group md:col-span-2">
+<label class="font-label text-sm font-semibold tracking-wide text-on-surface-variant ml-1" for="email">Owner Email</label>
+<div class="relative">
+<input class="w-full px-4 py-3.5 bg-surface-container-low border-transparent rounded-lg font-body focus:bg-surface-container-lowest focus:ring-0 focus:border-primary/40 transition-all outline-none ghost-border-focus border-2" id="email" placeholder="contact@studio.com" type="email"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 group md:col-span-2">
+<label class="font-label text-sm font-semibold tracking-wide text-on-surface-variant ml-1" for="description">Description</label>
+<textarea class="w-full px-4 py-3.5 bg-surface-container-low border-transparent rounded-lg font-body focus:bg-surface-container-lowest focus:ring-0 focus:border-primary/40 transition-all outline-none ghost-border-focus border-2 resize-none" id="description" placeholder="Briefly outline the project scope and primary objectives..." rows="3"></textarea>
+</div>
+<div class="flex flex-col gap-2 group max-w-xs">
+<label class="font-label text-sm font-semibold tracking-wide text-on-surface-variant ml-1" for="pin">Security PIN (Optional)</label>
+<div class="relative flex items-center">
+<input class="w-full px-4 py-3.5 bg-surface-container-low border-transparent rounded-lg font-body focus:bg-surface-container-lowest focus:ring-0 focus:border-primary/40 transition-all outline-none ghost-border-focus border-2 tracking-[0.5em]" id="pin" maxlength="6" placeholder="4-6 digits" type="password"/>
+<span class="absolute right-4 material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<p class="text-xs text-outline mt-1 ml-1">Used for high-priority authorization tasks.</p>
+</div>
+</div>
+<div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+<button class="text-primary font-bold px-6 py-3 hover:bg-surface-tint/5 rounded-full transition-all active:scale-95" type="button">
+              Cancel
+            </button>
+<button class="primary-gradient text-on-primary font-bold px-10 py-4 rounded-full shadow-lg shadow-primary/20 active:scale-95 transition-all text-lg flex items-center gap-3" type="submit">
+<span>Create Project</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Footer Info -->
+<div class="mt-8 flex items-center justify-center gap-6 text-on-surface-variant/60 font-label text-xs uppercase tracking-[0.2em]">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined !text-sm" data-icon="verified_user">verified_user</span> Secure Cloud Storage</span>
+<span class="w-1 h-1 bg-outline-variant/40 rounded-full"></span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined !text-sm" data-icon="sync">sync</span> Real-time Sync</span>
+</div>
+</div>
+</main>
+<!-- Mobile Navigation Bar (Suppressed on Web via Layout Rule) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest flex justify-around items-center py-3 z-50">
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="home_app_logo">home_app_logo</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#0c56d0]" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="text-[10px] font-bold">Projects</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="view_kanban">view_kanban</span>
+<span class="text-[10px] font-medium">Board</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="text-[10px] font-medium">Schedule</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-[10px] font-medium">Team</span>
+</a>
+</nav>
+</body></html>

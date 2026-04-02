@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Architect | Unlock Project</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#eaeff1",
+            "error-dim": "#4e0309",
+            "on-error": "#fff7f6",
+            "secondary": "#4d626c",
+            "on-secondary-fixed": "#2d424c",
+            "surface-tint": "#0c56d0",
+            "on-tertiary-fixed": "#3f3a54",
+            "tertiary-fixed": "#e3dbfd",
+            "secondary-dim": "#415660",
+            "on-surface": "#2b3437",
+            "background": "#f8f9fa",
+            "on-primary-fixed-variant": "#0253cd",
+            "secondary-fixed-dim": "#c1d8e4",
+            "on-error-container": "#752121",
+            "error-container": "#fe8983",
+            "surface-bright": "#f8f9fa",
+            "primary-fixed-dim": "#c6d3ff",
+            "on-secondary": "#f2faff",
+            "on-secondary-container": "#40555f",
+            "surface-container-high": "#e3e9ec",
+            "outline-variant": "#abb3b7",
+            "secondary-fixed": "#cfe6f2",
+            "surface-container-highest": "#dbe4e7",
+            "primary-fixed": "#dae2ff",
+            "inverse-on-surface": "#9b9d9e",
+            "surface": "#f8f9fa",
+            "surface-variant": "#dbe4e7",
+            "surface-dim": "#d1dce0",
+            "tertiary": "#615b77",
+            "tertiary-fixed-dim": "#d5cdee",
+            "on-tertiary": "#fcf7ff",
+            "on-primary-fixed": "#003993",
+            "on-primary": "#f8f7ff",
+            "inverse-surface": "#0c0f10",
+            "primary": "#0c56d0",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#495f69",
+            "primary-dim": "#004aba",
+            "inverse-primary": "#5c8bff",
+            "tertiary-container": "#e3dbfd",
+            "on-tertiary-container": "#524c68",
+            "on-background": "#2b3437",
+            "tertiary-dim": "#554f6b",
+            "error": "#9f403d",
+            "primary-container": "#dae2ff",
+            "secondary-container": "#cfe6f2",
+            "outline": "#737c7f",
+            "on-tertiary-fixed-variant": "#5c5672",
+            "on-surface-variant": "#586064",
+            "surface-container-low": "#f1f4f6",
+            "on-primary-container": "#004ab9"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .glass-effect {
+      background: rgba(248, 249, 250, 0.8);
+      backdrop-filter: blur(20px);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .primary-gradient {
+      background: linear-gradient(135deg, #0c56d0 0%, #004aba 100%);
+    }
+    .ghost-border {
+      border: 1px solid rgba(115, 124, 127, 0.15);
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="bg-background font-body text-on-surface min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<!-- Background Canvas Decoration -->
+<div class="absolute inset-0 z-0 pointer-events-none opacity-40">
+<div class="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-primary-container rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-[30vw] h-[30vw] bg-secondary-container rounded-full blur-[100px]"></div>
+</div>
+<!-- Main Content Area -->
+<main class="relative z-10 w-full max-w-md">
+<!-- Header Branding (Editorial Authority) -->
+<div class="text-center mb-10">
+<h1 class="font-headline font-black text-4xl tracking-tighter text-primary mb-2">Architect</h1>
+<p class="text-on-surface-variant font-medium tracking-tight">Enterprise Project Access</p>
+</div>
+<!-- PIN Access Modal Shell (Surface-Container-Lowest for "Lifting" effect) -->
+<section class="bg-surface-container-lowest rounded-xl p-8 md:p-10 shadow-[0_32px_64px_-12px_rgba(43,52,55,0.06)] ghost-border">
+<!-- Modal Header -->
+<header class="text-center mb-8">
+<div class="inline-flex items-center justify-center w-14 h-14 bg-surface-container-low rounded-full mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">lock</span>
+</div>
+<h2 class="font-headline font-bold text-2xl text-on-surface tracking-tight">Unlock Project</h2>
+<p class="text-on-surface-variant text-sm mt-2 font-medium">Enter your secure access PIN to proceed</p>
+</header>
+<!-- Access Form -->
+<form class="space-y-8">
+<div aria-label="PIN Input" class="flex justify-between gap-2 sm:gap-3" role="group">
+<!-- PIN Digits -->
+<input class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" maxlength="1" type="password" value="4"/>
+<input class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" maxlength="1" type="password" value="8"/>
+<input class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" maxlength="1" type="password" value="2"/>
+<!-- Subtle Error State Example -->
+<input class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold bg-on-error/50 border-2 border-error/20 rounded-lg focus:ring-2 focus:ring-error/40 transition-all text-error" maxlength="1" placeholder="•" type="password"/>
+<input class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" maxlength="1" placeholder="•" type="password"/>
+<input class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" maxlength="1" placeholder="•" type="password"/>
+</div>
+<!-- Feedback Messages -->
+<div class="flex items-start gap-2 text-error px-1">
+<span class="material-symbols-outlined text-[18px]">error</span>
+<p class="text-xs font-semibold leading-tight">Incorrect digit. Please verify and try again.</p>
+</div>
+<!-- Action Button (Primary Jewel Effect) -->
+<button class="w-full primary-gradient text-on-primary font-bold py-4 rounded-full shadow-[0_8px_20px_-4px_rgba(12,86,208,0.3)] active:scale-95 transition-transform" type="submit">
+          Unlock Project
+        </button>
+</form>
+<!-- Footer Help (Asymmetric Layout) -->
+<footer class="mt-8 pt-8 flex items-center justify-between border-t border-surface-container">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-widest text-outline font-bold">Lost Access?</span>
+<button class="text-primary font-bold text-xs hover:underline decoration-2 underline-offset-4">Ask project owner</button>
+</div>
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">fingerprint</span>
+</button>
+</div>
+</footer>
+</section>
+<!-- Contextual Details -->
+<div class="mt-12 grid grid-cols-2 gap-6 opacity-60">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="close-up of architectural blueprints and a modern office model on a minimalist wooden desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtXaKiIhXgZq3DqzWdYoz51pqVzDhN9IRL17cb1QMS7rrP8d4LmQwqq9bUekYzLrzGD0kmzAYjNYYqjdZyOsAjRH03MiKxYybQHUT0hPkTmmaM1-ljmYGxfDCnIfu91C7NnjoOVb26dwjrB12fln-3mIX12i2cyvoiKh8_QRrhhaeWX0vdavjEhjHVm0lxYZ-aoY69jG-qfNMOgchAibD0NqEeppgBX5DE3CYQCo7iwNaNt7guN51tCtQ7mxwMzomSl3t_hmvwjE2O"/>
+</div>
+<div>
+<p class="text-[10px] font-bold text-outline uppercase tracking-wider">Target Project</p>
+<p class="text-xs font-semibold text-on-surface">Skyline Tower Phase II</p>
+</div>
+</div>
+<div class="flex items-center gap-3 justify-end">
+<div class="text-right">
+<p class="text-[10px] font-bold text-outline uppercase tracking-wider">Encrypted By</p>
+<p class="text-xs font-semibold text-on-surface">AES-256 Vault</p>
+</div>
+<span class="material-symbols-outlined text-outline">verified_user</span>
+</div>
+</div>
+</main>
+<!-- Side-Drawer Mockup for UX Context (Visual Only) -->
+<div class="fixed top-0 right-0 h-full w-24 bg-surface-container-low/30 border-l border-outline-variant/10 hidden md:flex flex-col items-center py-10 gap-8">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">person</span>
+</div>
+<div class="flex flex-col gap-6 items-center">
+<span class="material-symbols-outlined text-outline">dashboard</span>
+<span class="material-symbols-outlined text-outline">folder</span>
+<span class="material-symbols-outlined text-primary" data-weight="fill">lock</span>
+<span class="material-symbols-outlined text-outline">notifications</span>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Architect | Project Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#eaeff1",
+                        "error-dim": "#4e0309",
+                        "on-error": "#fff7f6",
+                        "secondary": "#4d626c",
+                        "on-secondary-fixed": "#2d424c",
+                        "surface-tint": "#0c56d0",
+                        "on-tertiary-fixed": "#3f3a54",
+                        "tertiary-fixed": "#e3dbfd",
+                        "secondary-dim": "#415660",
+                        "on-surface": "#2b3437",
+                        "background": "#f8f9fa",
+                        "on-primary-fixed-variant": "#0253cd",
+                        "secondary-fixed-dim": "#c1d8e4",
+                        "on-error-container": "#752121",
+                        "error-container": "#fe8983",
+                        "surface-bright": "#f8f9fa",
+                        "primary-fixed-dim": "#c6d3ff",
+                        "on-secondary": "#f2faff",
+                        "on-secondary-container": "#40555f",
+                        "surface-container-high": "#e3e9ec",
+                        "outline-variant": "#abb3b7",
+                        "secondary-fixed": "#cfe6f2",
+                        "surface-container-highest": "#dbe4e7",
+                        "primary-fixed": "#dae2ff",
+                        "inverse-on-surface": "#9b9d9e",
+                        "surface": "#f8f9fa",
+                        "surface-variant": "#dbe4e7",
+                        "surface-dim": "#d1dce0",
+                        "tertiary": "#615b77",
+                        "tertiary-fixed-dim": "#d5cdee",
+                        "on-tertiary": "#fcf7ff",
+                        "on-primary-fixed": "#003993",
+                        "on-primary": "#f8f7ff",
+                        "inverse-surface": "#0c0f10",
+                        "primary": "#0c56d0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#495f69",
+                        "primary-dim": "#004aba",
+                        "inverse-primary": "#5c8bff",
+                        "tertiary-container": "#e3dbfd",
+                        "on-tertiary-container": "#524c68",
+                        "on-background": "#2b3437",
+                        "tertiary-dim": "#554f6b",
+                        "error": "#9f403d",
+                        "primary-container": "#dae2ff",
+                        "secondary-container": "#cfe6f2",
+                        "outline": "#737c7f",
+                        "on-tertiary-fixed-variant": "#5c5672",
+                        "on-surface-variant": "#586064",
+                        "surface-container-low": "#f1f4f6",
+                        "on-primary-container": "#004ab9"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #0c56d0 0%, #004aba 100%);
+        }
+        .ghost-border {
+            border: 1px solid rgba(115, 124, 127, 0.15);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen text-on-surface">
+<!-- SideNavBar -->
+<aside class="h-screen sticky left-0 w-64 bg-slate-50 dark:bg-slate-900 flex flex-col gap-8 p-6 z-50">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-lg primary-gradient flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<div>
+<div class="font-manrope font-bold text-lg text-slate-900 dark:text-slate-50">Project Studio</div>
+<div class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise Plan</div>
+</div>
+</div>
+<button class="primary-gradient text-on-primary py-3 px-4 rounded-xl font-body font-semibold text-sm flex items-center justify-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add</span>
+            Create New
+        </button>
+<nav class="flex flex-col gap-1 flex-grow">
+<a class="text-slate-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-3 py-2.5 px-4 font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="home_app_logo">home_app_logo</span>
+                Home
+            </a>
+<a class="text-[#0c56d0] font-bold flex items-center gap-3 py-2.5 px-4 bg-white shadow-sm rounded-lg font-inter text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+                Projects
+            </a>
+<a class="text-slate-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-3 py-2.5 px-4 font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="view_kanban">view_kanban</span>
+                Board
+            </a>
+<a class="text-slate-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-3 py-2.5 px-4 font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                Schedule
+            </a>
+<a class="text-slate-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-3 py-2.5 px-4 font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                Team
+            </a>
+</nav>
+<div class="pt-6 mt-auto border-t border-slate-200/50 flex flex-col gap-1">
+<a class="text-slate-500 hover:bg-white transition-colors flex items-center gap-3 py-2 px-4 text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help
+            </a>
+<a class="text-slate-500 hover:bg-white transition-colors flex items-center gap-3 py-2 px-4 text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+                Archived
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-[#f8f9fa] flex justify-between items-center w-full px-10 py-4 max-w-full docked full-width top-0 z-40 sticky">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-manrope font-black tracking-tighter text-[#0c56d0]">Architect</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-slate-500 font-medium hover:text-[#0c56d0] transition-all duration-300" href="#">Dashboard</a>
+<a class="text-[#0c56d0] font-bold border-b-2 border-[#0c56d0] pb-1" href="#">Projects</a>
+<a class="text-slate-500 font-medium hover:text-[#0c56d0] transition-all duration-300" href="#">Kanban</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 w-64 focus:ring-2 focus:ring-primary/20 text-sm font-body outline-none transition-all focus:bg-surface-container-lowest focus:w-80 ghost-border" placeholder="Search projects..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 hover:bg-surface-container rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-surface-container rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="ml-2 w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm cursor-pointer active:scale-95 transition-transform">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="professional headshot of a smiling designer in a creative office studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHVr1Zzm1f42BEF24en3h_eoDlnHOaNQMR-Qlcwy1PrXRG_l-FbvCLQHOeLliBG5mfN0H4wZjA_1u_WcbVs8RGlAWiZfv-BtuVa4BJDoKHvQUL7uKezaCyumEpZNcu62ARc5VRnpnf9SpCcF2tXJBBSC9qkQPx2assibW3376gjJFciwJ7HaD5thxGZ6ZBMohHmZ4H0dl591ONZ4oQfDb0hTDa1i91qRVHsZDwldOpwVCrrLbsUMjEcDZBFqSlMXZVAvRKLbA_HklN"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="px-10 py-10 flex-grow">
+<!-- Hero Header -->
+<div class="mb-12 flex justify-between items-end">
+<div>
+<h1 class="font-manrope text-4xl font-extrabold tracking-tight text-on-surface mb-2">Projects</h1>
+<p class="text-secondary font-body text-md max-w-md">Manage your architectural blueprints and development pipelines with precision.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2.5 bg-surface-container-high rounded-xl text-on-secondary-container font-semibold text-sm hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2.5 bg-surface-container-high rounded-xl text-on-secondary-container font-semibold text-sm hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">sort</span>
+                        Sort
+                    </button>
+</div>
+</div>
+<!-- Project Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-on-surface/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden">
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-primary-container rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">apartment</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-help" data-icon="lock" title="PIN Protected">lock</span>
+</div>
+<div>
+<h3 class="font-manrope font-bold text-xl text-on-surface mb-1">Horizon Towers</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2">Master plan for a twin-tower commercial complex with integrated green spaces and smart city features.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-7 h-7 rounded-full border-2 border-white object-cover" data-alt="portrait of a male architect wearing glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC36WxbCdUqoc7JqZumcLeFPort_IHjNMnw6PoeeFInQULkqjA2Af3sFesvP7EyvZAywm7zoIgUi-cutHzABrao1a85nIM8WBlr1g_IbM13B0ri23PBsk8IEEVP86IN9MvlLquXwsBwkC35G9Vcle7rzq_itjJfwqBmcHi3Ra7mT3DjdBvwOkT4S5u1OqFPA_3aZbIaqjKrqvr3ErQqE_-edO5oVcgfg5GxJtqG_uPedRr47ed0fGkefhYZV2WBlAin_k0rNkw4yCBJ"/>
+<img class="w-7 h-7 rounded-full border-2 border-white object-cover" data-alt="portrait of a female civil engineer in professional attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHhb7_55n8pb2w1hw7KorL9u-mAyXlWBK8H7vAv4g9ClQAL7RlVUIPebaXlo2gwCY8AeOKFciDxPbe2EMLRHjOV7-NfcSdzk2zNLCGy1FxURKaOeitR_71LzZkPAfiFV0LtE6QztQduYn4-M2cI-JNDFeHR2FlDQIaFlpEV-ldKBONS2HBwdMsfwk2K1LiwvHaJGpKwjJPgMJmqsQosJJDYMHwycLSQ_fuxA2TpugztVsePUd35M-a2wGZajczCrwiI_XABvsYwe2A"/>
+<div class="w-7 h-7 rounded-full border-2 border-white bg-surface-container-highest text-[10px] flex items-center justify-center font-bold text-on-surface-variant">+3</div>
+</div>
+<span class="text-[11px] font-bold text-outline uppercase tracking-wider">Updated 2h ago</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-on-surface/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden">
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-tertiary-container rounded-lg flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="lock_open">lock_open</span>
+</div>
+<div>
+<h3 class="font-manrope font-bold text-xl text-on-surface mb-1">Nexus Eco-Hub</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2">Sustainable residential development focused on net-zero carbon emissions and modular timber construction.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-7 h-7 rounded-full border-2 border-white object-cover" data-alt="portrait of a young female designer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmTwbT6n6pwkno_z4TiMgEVC15_op8CwJ2wQTVcW6xLH3j22c6NkcrsA_bd5N5OsArIrI4elUekMpUO3p5G3IYM_img13G7LdL3tqKAkM25AiQPpkxM6ceZ1FCRlmHX7lg1XMdTN5q-1ubXH87ozjEYQw79kZ3YSYbtEuvUuLDNt5qjFp05L8-Cc84MBz8teMHJdTqY2aUpuwpYFQXx997Pfg_eFkRIf5to_mrhMrBFcg9AeKEU4iBVkwtJyHXs0EJt9c4zA6IJwYF"/>
+<img class="w-7 h-7 rounded-full border-2 border-white object-cover" data-alt="portrait of an older male project manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-pS1ruMbG2_Smg21kxohOkMAWbfz5n4F56nv0D6vggOd1YoPZKE5K3NxEK7wrhQ5fB5ZeT1pAfQ-T4Hk9PyDngzbuuDZlj5aomiQOK9Vn4X-J-T4tP4WjGtbJtDlHcR4K-0kdo_6gMDbgDxe9WsWOf8OiXJ48FbWsvbrCJKcAxXJGpv3rYV3NpX-6veDdTljVXPEltIapggQgdChvnq37B0Zkiw_yD66XvBnkniVkrxgIgxEH7M6PX9dWb5SEs51Tk80SpEv9lj-7"/>
+</div>
+<span class="text-[11px] font-bold text-outline uppercase tracking-wider">Updated 1d ago</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-on-surface/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden">
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-secondary-container rounded-lg flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">museum</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="lock">lock</span>
+</div>
+<div>
+<h3 class="font-manrope font-bold text-xl text-on-surface mb-1">Metropolis Gallery</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2">Expansion project for the downtown contemporary arts center, featuring cantilevered galleries and skylights.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-7 h-7 rounded-full border-2 border-white object-cover" data-alt="portrait of a creative director" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB2tuUclVMm7rM1_wM2sHmmvX1wc0DkYX8DAh64_pzDwumEnESC9tpX-jh5DrQwy_NT84OdP9GUUubbjn6Ol0F64ZD8x1quh01S5NjcVBkTJTDxzaiZE5zwZi2Pll92AW5KtsZfdD4G9mRpFR3Qw1XhGYnlN4zhd5vHk9NiVrOTRX0lbmVGJuNoIXN-lkDbQzdwBRnBLKj_5fH_QvMnMmD77dJJkogu3fUPfHcdC5iM9M596hQhSibDLM2FBD2Xn_phcfDJvwgqlAV"/>
+</div>
+<span class="text-[11px] font-bold text-outline uppercase tracking-wider">Updated 3d ago</span>
+</div>
+</div>
+<!-- Card 4 (Asymmetric Large Featured Card) -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-on-surface/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden md:col-span-2">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="md:w-1/3 h-48 rounded-lg overflow-hidden relative">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="modern glass and steel skyscraper reaching into a clear blue sky with reflection of other buildings" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3Nq09PPR6OoDDOTyI7TqpMS_eXsjZjOA-3tZDJM9mjo0sbj4xCkqrfsX1VJIIajvFI_6ToMaPqypPkZ5hWoCF_RQ1vOYNDrGu-XJc9icMiubveJoKBgV0MxCFJfTiD15InOPu5_OFy0NDdJIMW-EtyPN79-eedeEHlZp3sb4lONfx79Wo8YimeXg-9o3yoyX3Qa2dgsnz9jokFR46qMhqzhwSwY57K19B4GkGdOvcmz_Ce0m3herVpGIj4TIUHqiA0kR_83gK8gvb"/>
+<div class="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase">Flagship Project</span>
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<h3 class="font-manrope font-bold text-2xl text-on-surface mb-2">The Atrium Plaza</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Our largest ongoing commission. A massive multi-use redevelopment project in the heart of the tech district, integrating underground transit with vertical forests.</p>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="portrait of a smiling senior architect" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaX7NfJlIXJ9sSuyMpqy1TsmPgZII9lzhcDU6_9SaJi7HQqZJaLN7SVWfpvusbyDVX-9UsvQyVK_P1_zBRxUYJwCuU4016xz43haLBdeHiToIoDX5YBQjAKNWBA1kw5BOkzdIc-lypBXF14kA5Ym49W06rshhn3ITEjE7mAFTok5YB1Sy14fe02W00DKHXrHOIZm609hHaXodvxKCTzqzuSohHjl0C9WcMvgSGRbMMpcLU-ZWiI7JvJWe-S0JGI7lJ-SBMbQMBRmFc"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-primary text-[10px] flex items-center justify-center font-bold text-white">+8</div>
+</div>
+<span class="text-xs font-semibold text-secondary">12 active modules</span>
+</div>
+<span class="text-[11px] font-bold text-outline uppercase tracking-wider">Updated Just now</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Create New Placeholder -->
+<div class="border-2 border-dashed border-outline-variant/30 rounded-xl flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-surface-container-low transition-colors min-h-[220px]">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-outline group-hover:bg-primary-container group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[32px]">add_circle</span>
+</div>
+<div class="text-center">
+<span class="block font-manrope font-bold text-lg text-on-surface-variant">New Canvas</span>
+<span class="text-xs text-outline">Start from a template or blank</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-10 right-10 w-16 h-16 rounded-full primary-gradient text-white shadow-2xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform group z-50">
+<span class="material-symbols-outlined text-[32px]">add</span>
+<span class="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl">Start New Project</span>
+</button>
+</body></html>
