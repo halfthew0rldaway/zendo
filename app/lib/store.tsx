@@ -144,7 +144,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         .select(`
           project_id,
           role,
-          profiles (
+          profiles:user_id (
             id,
             username,
             avatar_url
@@ -156,7 +156,8 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       for (const row of allMembersRow ?? []) {
         const pid = row.project_id as string;
         if (!membersByProject[pid]) membersByProject[pid] = [];
-        const profile = row.profiles as any;
+        const profilesData = row.profiles;
+        const profile = Array.isArray(profilesData) ? profilesData[0] : profilesData;
         if (profile) {
           membersByProject[pid].push({
             id: profile.id,

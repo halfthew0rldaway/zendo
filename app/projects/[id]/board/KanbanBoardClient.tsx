@@ -176,8 +176,12 @@ interface KanbanBoardClientProps {
 
 export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps) {
   const router = useRouter();
-  const { projects, moveTask, unlockedProjectIds } = useProjects();
+  const { projects, moveTask, unlockedProjectIds, currentUserId } = useProjects();
   const project = projects.find((p) => p.id === projectId);
+  
+  const isOwner = project?.members.some((m) => m.id === currentUserId && m.role === "owner") ?? false;
+  const isMemberOrOwner = project?.members.some((m) => m.id === currentUserId && (m.role === "member" || m.role === "owner")) ?? false;
+  const isViewer = project?.members.some((m) => m.id === currentUserId && m.role === "viewer") ?? false;
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [addingToColumn, setAddingToColumn] = useState<TaskStatus | null>(null);
@@ -246,27 +250,34 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
           </div>
           <div className="flex items-center gap-3">
             <div className="flex -space-x-3">
-              {Array.from({ length: Math.min(project.memberCount, 3) }).map((_, i) => (
+              {project.members.slice(0, 4).map((m) => (
                 <div
-                  key={i}
-                  className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold"
+                  key={m.id}
+                  className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold overflow-hidden"
+                  title={`${m.username} (${m.role})`}
                 >
-                  {String.fromCharCode(65 + i)}
+                  {m.avatarUrl ? (
+                    <img src={m.avatarUrl} alt={m.username} className="w-full h-full object-cover" />
+                  ) : (
+                    m.username.slice(0, 2).toUpperCase()
+                  )}
                 </div>
               ))}
-              {project.memberCount > 3 && (
+              {project.members.length > 4 && (
                 <div className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#e3e9ec] flex items-center justify-center text-xs font-bold text-[#40555f]">
-                  +{project.memberCount - 3}
+                  +{project.members.length - 4}
                 </div>
               )}
             </div>
-            <button 
-              className="flex items-center gap-2 bg-[#e3e9ec] hover:bg-[#dbe4e7] px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95"
-              onClick={() => setIsInviteOpen(true)}
-            >
-              <span className="material-symbols-outlined text-sm">share</span>
-              Invite
-            </button>
+            {isMemberOrOwner && (
+              <button 
+                className="flex items-center gap-2 bg-[#e3e9ec] hover:bg-[#dbe4e7] px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95"
+                onClick={() => setIsInviteOpen(true)}
+              >
+                <span className="material-symbols-outlined text-sm">share</span>
+                Invite
+              </button>
+            )}
           </div>
         </div>
       </div>

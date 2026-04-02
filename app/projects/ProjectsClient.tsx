@@ -50,12 +50,16 @@ function getDueDateStatus(dueDate: string | null) {
 
 function ProjectCard({ project }: { project: Project }) {
   const router = useRouter();
-  const { unlockedProjectIds, deleteProject } = useProjects();
+  const { unlockedProjectIds, deleteProject, currentUserId } = useProjects();
   const [showConfirm, setShowConfirm] = useState(false);
   const [showPinEdit, setShowPinEdit] = useState(false);
   const [showMemberDetails, setShowMemberDetails] = useState(false);
   const isLocked = project.pin !== null && !unlockedProjectIds.has(project.id);
   const dueDateStatus = getDueDateStatus(project.dueDate);
+
+  const isOwner = project.members.some((m) => m.id === currentUserId && m.role === "owner");
+  const isMember = project.members.some((m) => m.id === currentUserId && (m.role === "member" || m.role === "owner"));
+  const isViewer = project.members.some((m) => m.id === currentUserId && m.role === "viewer");
 
   const handleClick = () => {
     if (isLocked) router.push(`/projects/${project.id}/pin`);
@@ -112,7 +116,7 @@ function ProjectCard({ project }: { project: Project }) {
             </button>
           )}
 
-          {!isLocked && (
+          {!isLocked && isOwner && (
             <button
               className="p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#e3e9ec] rounded text-[#737c7f] hover:text-[#0c56d0]"
               onClick={(e) => {
