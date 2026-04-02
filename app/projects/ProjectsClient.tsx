@@ -53,6 +53,7 @@ function ProjectCard({ project }: { project: Project }) {
   const { unlockedProjectIds, deleteProject } = useProjects();
   const [showConfirm, setShowConfirm] = useState(false);
   const [showPinEdit, setShowPinEdit] = useState(false);
+  const [showMemberDetails, setShowMemberDetails] = useState(false);
   const isLocked = project.pin !== null && !unlockedProjectIds.has(project.id);
   const dueDateStatus = getDueDateStatus(project.dueDate);
 
@@ -96,6 +97,19 @@ function ProjectCard({ project }: { project: Project }) {
                 setShowConfirm(false);
               }}
             />
+          )}
+
+          {!isLocked && (
+            <button
+              className={`p-1 opacity-0 group-hover:opacity-100 transition-opacity rounded text-[#737c7f] ${showMemberDetails ? "bg-[#0c56d0] text-white opacity-100" : "hover:bg-[#e3e9ec] hover:text-[#0c56d0]"}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMemberDetails(!showMemberDetails);
+              }}
+              title="Project Members"
+            >
+              <span className="material-symbols-outlined text-lg">info</span>
+            </button>
           )}
 
           {!isLocked && (
@@ -155,14 +169,25 @@ function ProjectCard({ project }: { project: Project }) {
 
       <div className="mt-2 pt-4 border-t border-[#eaeff1] flex items-center justify-between">
         <div className="flex -space-x-2">
-          {Array.from({ length: Math.min(project.memberCount, 2) }).map((_, i) => (
-            <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-[#0c56d0] flex items-center justify-center text-white text-[9px] font-bold">
-              {String.fromCharCode(65 + i)}
+          {project.members.slice(0, 3).map((m) => (
+            <div
+              key={m.id}
+              className="w-7 h-7 rounded-full border-2 border-white bg-[#0c56d0] flex items-center justify-center text-white text-[9px] font-bold overflow-hidden"
+              title={`${m.username} (${m.role})`}
+            >
+              {m.role === "owner" && (
+                <div className="absolute top-0 right-0 w-2 h-2 bg-yellow-400 border border-white rounded-full z-10" />
+              )}
+              {m.avatarUrl ? (
+                <img src={m.avatarUrl} alt={m.username} className="w-full h-full object-cover" />
+              ) : (
+                m.username.slice(0, 2).toUpperCase()
+              )}
             </div>
           ))}
-          {project.memberCount > 2 && (
+          {project.members.length > 3 && (
             <div className="w-7 h-7 rounded-full border-2 border-white bg-[#dbe4e7] text-[10px] flex items-center justify-center font-bold text-[#586064]">
-              +{project.memberCount - 2}
+              +{project.members.length - 3}
             </div>
           )}
         </div>
@@ -173,6 +198,37 @@ function ProjectCard({ project }: { project: Project }) {
           </span>
         </div>
       </div>
+
+      {/* Member Details Overlay */}
+      {showMemberDetails && !isLocked && (
+        <div 
+          className="absolute inset-0 bg-white/95 z-20 p-6 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-bold text-[#2b3437]">Project Members</h4>
+            <button onClick={() => setShowMemberDetails(false)}>
+              <span className="material-symbols-outlined text-xl text-[#abb3b7] hover:text-[#2b3437]">close</span>
+            </button>
+          </div>
+          <div className="flex-grow overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+            {project.members.map((m) => (
+              <div key={m.id} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#dae2ff] text-[#0c56d0] flex items-center justify-center text-[10px] font-bold">
+                  {m.username.slice(0, 2).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-grow">
+                  <p className="text-sm font-bold text-[#2b3437] truncate">@{m.username}</p>
+                  <p className="text-[10px] text-[#737c7f] capitalize">{m.role}</p>
+                </div>
+                {m.role === "owner" && (
+                  <span className="material-symbols-outlined text-xs text-yellow-500" title="Project Owner">stars</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

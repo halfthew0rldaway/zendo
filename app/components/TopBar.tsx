@@ -54,7 +54,7 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="absolute right-0 md:right-auto md:left-auto top-full mt-2 w-[calc(100vw-40px)] sm:w-96 bg-white rounded-xl shadow-2xl border border-[#abb3b7]/20 z-50 overflow-hidden"
+      className="absolute right-0 top-full mt-2 w-[calc(100vw-40px)] sm:w-96 bg-white rounded-xl shadow-2xl border border-[#abb3b7]/20 z-50 overflow-hidden"
       style={{ boxShadow: "0 16px 40px rgba(43,52,55,0.12)" }}
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#f1f4f6]">
@@ -146,7 +146,7 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="absolute right-0 md:right-auto md:left-auto top-full mt-2 w-[calc(100vw-40px)] sm:w-80 bg-white rounded-xl shadow-2xl border border-[#abb3b7]/20 z-50"
+      className="absolute right-0 top-full mt-2 w-[calc(100vw-40px)] sm:w-80 bg-white rounded-xl shadow-2xl border border-[#abb3b7]/20 z-50"
       style={{ boxShadow: "0 16px 40px rgba(43,52,55,0.12)" }}
     >
       <div className="px-5 py-4 border-b border-[#f1f4f6]">
@@ -248,10 +248,10 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
   };
 
   const nameToUse = currentProfile?.username ? `@${currentProfile.username}` : currentProfile?.fullName || currentUserId?.slice(0, 8);
-  const initials = currentProfile?.fullName 
-    ? currentProfile.fullName.slice(0, 2).toUpperCase()
-    : currentProfile?.username 
-      ? currentProfile.username.slice(0, 2).toUpperCase()
+  const initials = currentProfile?.username 
+    ? currentProfile.username.slice(0, 2).toUpperCase()
+    : currentProfile?.fullName 
+      ? currentProfile.fullName.slice(0, 2).toUpperCase()
       : currentUserId ? currentUserId.slice(0, 2).toUpperCase() : "?";
 
   return (
