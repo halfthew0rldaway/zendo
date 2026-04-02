@@ -320,7 +320,12 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateTask = useCallback(async (projectId: string, taskId: string, updates: Partial<Task>) => {
-    const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    const dbUpdates: Record<string, unknown> = { 
+      updated_at: new Date().toISOString(),
+      assignee_id: currentUserId,
+      assignee_name: currentProfile?.username ?? "Anonymous",
+      assignee_initials: currentProfile?.username ? currentProfile.username.slice(0, 2).toUpperCase() : "??"
+    };
     if (updates.title !== undefined) dbUpdates.title = updates.title;
     if (updates.description !== undefined) dbUpdates.description = updates.description;
     if (updates.status !== undefined) dbUpdates.status = updates.status;
@@ -351,14 +356,25 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const moveTask = useCallback(async (projectId: string, taskId: string, newStatus: TaskStatus) => {
-    await supabase.from("tasks").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", taskId);
+    const ts = new Date().toISOString();
+    const actorName = currentProfile?.username ?? "Anonymous";
+    const actorInitials = currentProfile?.username ? currentProfile.username.slice(0, 2).toUpperCase() : "??";
+    
+    await supabase.from("tasks").update({ 
+      status: newStatus, 
+      updated_at: ts,
+      assignee_id: currentUserId,
+      assignee_name: actorName,
+      assignee_initials: actorInitials
+    }).eq("id", taskId);
+
     setProjects((prev) => prev.map((p) =>
       p.id === projectId
-        ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, status: newStatus, updatedAt: new Date().toISOString() } : t) }
+        ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, status: newStatus, updatedAt: ts, assigneeName: actorName, assigneeInitials: actorInitials } : t), updatedAt: new Date().toISOString() }
         : p
     ));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentUserId, currentProfile]);
 
   const inviteUserToProject = useCallback(async (projectId: string, username: string, role: string) => {
     // Lookup user by username

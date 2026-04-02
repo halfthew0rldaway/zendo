@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useProjects } from "../lib/store";
+import { getUserColor } from "../lib/avatarColors";
 
 function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   const { projects } = useProjects();
@@ -82,7 +83,7 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
             >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5"
-                style={{ backgroundColor: "#0c56d0" }}
+                style={{ backgroundColor: getUserColor(act.assigneeName) }}
               >
                 {act.assigneeInitials}
               </div>
@@ -324,7 +325,8 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
           {/* Avatar + sign out */}
           <div ref={avatarRef} className="relative ml-1">
             <button
-              className="w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold active:scale-95 transition-transform shadow-sm"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold active:scale-95 transition-transform shadow-sm"
+              style={{ backgroundColor: getUserColor(currentProfile?.username || currentUserId || "") }}
               onClick={() => setAvatarOpen(v => !v)}
             >
               {initials}

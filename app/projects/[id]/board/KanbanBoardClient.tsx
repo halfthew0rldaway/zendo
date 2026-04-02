@@ -8,6 +8,7 @@ import TaskDrawer from "./TaskDrawer";
 import AddTaskModal from "./AddTaskModal";
 import InviteModal from "./InviteModal";
 import ConfirmModal from "../../../components/ConfirmModal";
+import { getUserColor } from "../../../lib/avatarColors";
 
 const COLUMNS: Column[] = [
   { id: "todo", title: "To Do", order: 0 },
@@ -162,7 +163,10 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
             </div>
           )}
         </div>
-        <div className="w-6 h-6 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-[9px] font-bold">
+        <div 
+          className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+          style={{ backgroundColor: getUserColor(task.assigneeName) }}
+        >
           {task.assigneeInitials}
         </div>
       </div>
@@ -253,7 +257,8 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
               {project.members.slice(0, 4).map((m) => (
                 <div
                   key={m.id}
-                  className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold overflow-hidden"
+                  className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] flex items-center justify-center text-white text-xs font-bold overflow-hidden"
+                  style={{ backgroundColor: getUserColor(m.username) }}
                   title={`${m.username} (${m.role})`}
                 >
                   {m.avatarUrl ? (

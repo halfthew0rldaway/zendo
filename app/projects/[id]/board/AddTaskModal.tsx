@@ -27,7 +27,7 @@ const LABEL_OPTIONS: { name: string; color: Label["color"] }[] = [
 ];
 
 export default function AddTaskModal({ projectId, status, onClose }: AddTaskModalProps) {
-  const { addTask } = useProjects();
+  const { addTask, currentProfile } = useProjects();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
@@ -62,8 +62,8 @@ export default function AddTaskModal({ projectId, status, onClose }: AddTaskModa
       checklist: [],
       attachments: [],
       testingNotes: "",
-      assigneeInitials: "ME",
-      assigneeName: "Me",
+      assigneeInitials: currentProfile?.username ? currentProfile.username.slice(0, 2).toUpperCase() : "??",
+      assigneeName: currentProfile?.username ?? "Anonymous",
       dueDate: dueDate ? new Date(dueDate).toISOString() : null,
     });
     onClose();

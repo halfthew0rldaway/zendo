@@ -7,6 +7,7 @@ import { Project } from "../types";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "../components/ConfirmModal";
 import EditPinModal from "../components/EditPinModal";
+import { getUserColor } from "../lib/avatarColors";
 
 const ICON_BG_MAP = {
   primary: "bg-[#dae2ff] text-[#0c56d0]",
@@ -176,7 +177,8 @@ function ProjectCard({ project }: { project: Project }) {
           {project.members.slice(0, 3).map((m) => (
             <div
               key={m.id}
-              className="w-7 h-7 rounded-full border-2 border-white bg-[#0c56d0] flex items-center justify-center text-white text-[9px] font-bold overflow-hidden"
+              className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-white text-[9px] font-bold overflow-hidden"
+              style={{ backgroundColor: getUserColor(m.username) }}
               title={`${m.username} (${m.role})`}
             >
               {m.role === "owner" && (
@@ -218,7 +220,10 @@ function ProjectCard({ project }: { project: Project }) {
           <div className="flex-grow overflow-y-auto space-y-3 pr-2 custom-scrollbar">
             {project.members.map((m) => (
               <div key={m.id} className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#dae2ff] text-[#0c56d0] flex items-center justify-center text-[10px] font-bold">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                  style={{ backgroundColor: getUserColor(m.username) }}
+                >
                   {m.username.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-grow">
