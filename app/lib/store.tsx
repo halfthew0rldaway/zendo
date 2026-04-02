@@ -158,27 +158,39 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addProject = useCallback(async (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount">) => {
-    if (!currentUserId) return null;
+    if (!currentUserId) {
+      console.error("Cannot create project: No current user ID");
+      return null;
+    }
+
     const { data: row, error } = await supabase
       .from("projects")
       .insert({
         name: data.name,
         description: data.description,
-        pin_hash: data.pin ?? null,
+        pin: data.pin ?? null,
         icon: data.icon,
         icon_bg: data.iconBg,
+        owner_id: currentUserId,
       })
       .select()
       .single();
 
-    if (error || !row) return null;
+    if (error || !row) {
+      console.error("Project creation error:", error?.message, error?.details);
+      return null;
+    }
 
-    // Add creator as admin member
-    await supabase.from("project_members").insert({
+    // Add creator as owner member
+    const { error: memberError } = await supabase.from("project_members").insert({
       project_id: row.id,
       user_id: currentUserId,
-      role: "admin",
+      role: "owner",
     });
+
+    if (memberError) {
+      console.error("Add member error:", memberError.message);
+    }
 
     const project = dbRowToProject(row as Record<string, unknown>);
     setProjects((prev) => [project, ...prev]);
