@@ -50,6 +50,25 @@ interface CalendarEvent {
   projectName: string;
   status?: TaskStatus;
   isDeadline?: boolean;
+  assigneeInitials?: string;
+}
+
+const USER_COLORS = [
+  "bg-[#0c56d0]", // primary blue
+  "bg-[#0ea5e9]", // light blue 
+  "bg-[#a855f7]", // purple
+  "bg-[#10b981]", // emerald
+  "bg-[#f43f5e]", // rose
+  "bg-[#f97316]", // orange
+  "bg-[#8b5cf6]", // violet
+  "bg-[#059669]", // dark green
+];
+
+function getUserColor(initials?: string) {
+  if (!initials) return "bg-[#abb3b7]";
+  let hash = 0;
+  for (let i = 0; i < initials.length; i++) hash = hash + initials.charCodeAt(i);
+  return USER_COLORS[hash % USER_COLORS.length];
 }
 
 // ── component ─────────────────────────────────────────────────────────────────
@@ -96,6 +115,7 @@ export default function CalendarClient() {
             projectId: p.id,
             projectName: p.name,
             status: t.status,
+            assigneeInitials: t.assigneeInitials,
           });
         }
       });
@@ -228,19 +248,27 @@ export default function CalendarClient() {
                     {day}
                   </span>
 
-                  {/* Event dots */}
-                  <div className="flex flex-wrap gap-1 mt-auto">
-                    {events.slice(0, 4).map((ev, ei) => (
-                      <span
-                        key={ei}
-                        className={`w-2 h-2 rounded-full shadow-sm ${
-                          ev.type === "project" ? "bg-[#f59e0b]" : STATUS_DOT[ev.status ?? "todo"]
-                        }`}
-                      />
-                    ))}
-                    {events.length > 4 && (
-                      <span className="text-[9px] text-[#737c7f] font-bold leading-none self-end ml-0.5">
-                        +{events.length - 4}
+                  {/* Event Blocks */}
+                  <div className="flex flex-col gap-1 mt-auto w-full">
+                    {events.slice(0, 3).map((ev, ei) => {
+                      if (ev.type === "project") {
+                        return (
+                          <div key={ei} className="w-full px-1.5 py-0.5 bg-[#fef3c7] text-[#92400e] border border-[#fde68a] text-[9px] font-bold rounded-sm truncate shadow-sm">
+                            {ev.title}
+                          </div>
+                        );
+                      }
+                      const colorClass = getUserColor(ev.assigneeInitials);
+                      return (
+                        <div key={ei} className={`w-full px-1.5 py-0.5 text-white ${colorClass} text-[9px] font-bold rounded-sm truncate shadow-sm`}>
+                          {ev.assigneeInitials && <span className="opacity-80 mr-1">{ev.assigneeInitials}</span>}
+                          {ev.title}
+                        </div>
+                      );
+                    })}
+                    {events.length > 3 && (
+                      <span className="text-[9px] text-[#586064] font-bold leading-none self-end pt-1">
+                        + {events.length - 3} more
                       </span>
                     )}
                   </div>
@@ -252,16 +280,12 @@ export default function CalendarClient() {
           {/* Legend */}
           <div className="mt-8 flex flex-wrap items-center gap-5 bg-white p-4 rounded-xl border border-[#e3e9ec]">
             <span className="text-[11px] text-[#737c7f] uppercase tracking-widest font-bold">Legend:</span>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] shadow-sm" />
-              <span className="text-[11px] font-semibold text-[#586064]">Project deadline</span>
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-[#fef3c7] text-[#92400e] border border-[#fde68a] text-[10px] font-bold rounded-sm">
+              Project Deadline
             </div>
-            {(Object.entries(STATUS_DOT) as [TaskStatus, string][]).map(([status, cls]) => (
-              <div key={status} className="flex items-center gap-1.5">
-                <span className={`w-2.5 h-2.5 rounded-full shadow-sm ${cls}`} />
-                <span className="text-[11px] font-semibold text-[#586064]">{STATUS_LABEL[status]}</span>
-              </div>
-            ))}
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-[#f1f4f6] text-[#586064] border border-[#e3e9ec] text-[10px] font-bold rounded-sm">
+              Task colors represent assigned users
+            </div>
           </div>
         </div>
 
@@ -342,7 +366,7 @@ export default function CalendarClient() {
                 );
                 return upcoming.slice(0, 5).map(({ dateStr, ev }, i) => (
                   <div key={i} className="flex items-center gap-3 bg-white p-2.5 rounded-lg border border-[#e3e9ec]">
-                    <span className={`w-2 h-2 rounded-full shrink-0 shadow-sm ${ev.type === "project" ? "bg-[#f59e0b]" : STATUS_DOT[ev.status ?? "todo"]}`} />
+                    <span className={`w-2.5 h-2.5 rounded-sm shrink-0 shadow-sm ${ev.type === "project" ? "bg-[#f59e0b]" : getUserColor(ev.assigneeInitials)}`} />
                     <div className="min-w-0">
                       <p className="text-[11px] text-[#2b3437] font-bold truncate">{ev.title}</p>
                       <p className="text-[9px] font-bold uppercase tracking-wider text-[#737c7f] mt-0.5">

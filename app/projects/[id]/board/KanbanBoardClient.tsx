@@ -6,6 +6,7 @@ import { useProjects } from "../../../lib/store";
 import { Task, TaskStatus, Priority, Column } from "../../../types";
 import TaskDrawer from "./TaskDrawer";
 import AddTaskModal from "./AddTaskModal";
+import InviteModal from "./InviteModal";
 
 const COLUMNS: Column[] = [
   { id: "todo", title: "To Do", order: 0 },
@@ -169,6 +170,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
   const [addingToColumn, setAddingToColumn] = useState<TaskStatus | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<TaskStatus | null>(null);
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const needsPin = !!project?.pin && !unlockedProjectIds.has(projectId);
 
@@ -245,7 +247,10 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-2 bg-[#e3e9ec] hover:bg-[#dbe4e7] px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95">
+            <button 
+              className="flex items-center gap-2 bg-[#e3e9ec] hover:bg-[#dbe4e7] px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95"
+              onClick={() => setIsInviteOpen(true)}
+            >
               <span className="material-symbols-outlined text-sm">share</span>
               Invite
             </button>
@@ -339,6 +344,14 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
           projectId={projectId}
           status={addingToColumn}
           onClose={() => setAddingToColumn(null)}
+        />
+      )}
+
+      {/* Invite Modal */}
+      {isInviteOpen && (
+        <InviteModal
+          projectId={projectId}
+          onClose={() => setIsInviteOpen(false)}
         />
       )}
     </div>

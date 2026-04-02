@@ -228,6 +228,7 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
   const router = useRouter();
   const { signOut, currentUserId, currentProfile } = useProjects();
   const [notifOpen, setNotifOpen] = useState(false);
+  const [hasUnread, setHasUnread] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
@@ -289,10 +290,13 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
           {/* Notifications */}
           <div className="relative">
             <button
-              className={`p-2 rounded-full transition-colors active:scale-95 ${notifOpen ? "bg-[#dae2ff] text-[#0c56d0]" : "text-slate-500 hover:bg-[#eaeff1]"}`}
-              onClick={() => { setNotifOpen((v) => !v); setSettingsOpen(false); }}
+              className={`p-2 rounded-full transition-colors relative active:scale-95 ${notifOpen ? "bg-[#dae2ff] text-[#0c56d0]" : "text-slate-500 hover:bg-[#eaeff1]"}`}
+              onClick={() => { setNotifOpen((v) => !v); setHasUnread(false); setSettingsOpen(false); }}
             >
               <span className="material-symbols-outlined">notifications</span>
+              {hasUnread && (
+                <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full bg-[#9f403d] border-2 border-white box-content shadow-sm" />
+              )}
             </button>
             {notifOpen && <NotificationsDropdown onClose={() => setNotifOpen(false)} />}
           </div>
