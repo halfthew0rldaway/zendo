@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useProjects } from "../../../lib/store";
 import { Task, TaskStatus, Priority, Column } from "../../../types";
@@ -283,7 +283,10 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                 {col.id !== "done" && (
                   <button
                     className="p-1 hover:bg-[#e3e9ec] rounded transition-colors"
-                    onClick={() => setAddingToColumn(col.id)}
+                    onClick={(e) => {
+                       e.stopPropagation(); // Prevent propagation bubbling
+                       startTransition(() => setAddingToColumn(col.id));
+                    }}
                   >
                     <span className="material-symbols-outlined text-lg text-[#586064]">
                       add

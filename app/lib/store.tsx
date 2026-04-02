@@ -153,10 +153,12 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         setProjects((prev) => {
           if (payload.eventType === "INSERT") {
             const t = dbRowToTask(payload.new as Record<string, unknown>);
-            return prev.map((p) =>
-              p.id === t.id ? p : p.id === (payload.new as Record<string, unknown>).project_id as string
-                ? { ...p, tasks: [...p.tasks, t] } : p
-            );
+            const pid = (payload.new as Record<string, unknown>).project_id as string;
+            return prev.map((p) => {
+              if (p.id !== pid) return p;
+              if (p.tasks.some((task) => task.id === t.id)) return p;
+              return { ...p, tasks: [...p.tasks, t] };
+            });
           }
           if (payload.eventType === "UPDATE") {
             const t = dbRowToTask(payload.new as Record<string, unknown>);
