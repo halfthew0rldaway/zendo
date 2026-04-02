@@ -9,13 +9,12 @@ export default function Sidebar() {
   const navItems = [
     { href: "/projects", icon: "grid_view", label: "Projects", exact: true, fill: true },
     { href: "/projects/board", icon: "view_kanban", label: "Board", fill: true },
-    { href: "/projects/schedule", icon: "calendar_today", label: "Schedule" },
+    { href: "/projects/schedule", icon: "calendar_month", label: "Calendar", fill: true },
     { href: "/projects/team", icon: "group", label: "Team", fill: true },
   ];
 
   const isActive = (item: typeof navItems[0]) => {
     if (item.exact) {
-      // Projects is active only on the project list and individual project sub-pages
       return pathname === "/projects" || /^\/projects\/(?!board|schedule|team|new)[^/]/.test(pathname);
     }
     return pathname.startsWith(item.href);

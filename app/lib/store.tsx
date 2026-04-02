@@ -27,7 +27,7 @@ interface ProjectStore {
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   unlockProject: (id: string) => void;
-  addTask: (projectId: string, task: Omit<Task, "id" | "updatedAt">) => Promise<void>;
+  addTask: (projectId: string, task: Omit<Task, "id" | "createdAt" | "updatedAt">) => Promise<void>;
   updateTask: (projectId: string, taskId: string, updates: Partial<Task>) => Promise<void>;
   deleteTask: (projectId: string, taskId: string) => Promise<void>;
   moveTask: (projectId: string, taskId: string, newStatus: TaskStatus) => Promise<void>;
@@ -48,6 +48,7 @@ function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = []): Proje
     pin: (row.pin_hash as string) ?? null,
     icon: (row.icon as string) ?? "apartment",
     iconBg: ((row.icon_bg as string) ?? "primary") as Project["iconBg"],
+    dueDate: (row.due_date as string) ?? null,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
     memberCount: (row.member_count as number) ?? 1,
@@ -68,6 +69,8 @@ function dbRowToTask(row: Record<string, unknown>): Task {
     testingNotes: (row.testing_notes as string) ?? "",
     assigneeInitials: (row.assignee_initials as string) ?? "?",
     assigneeName: (row.assignee_name as string) ?? "Unassigned",
+    dueDate: (row.due_date as string) ?? null,
+    createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
 }
@@ -196,6 +199,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         pin_hash: data.pin ?? null,
         icon: data.icon,
         icon_bg: data.iconBg,
+        due_date: data.dueDate ?? null,
         owner_id: currentUserId,
       })
       .select()
@@ -232,6 +236,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     if (updates.pin !== undefined) dbUpdates.pin_hash = updates.pin;
     if (updates.icon !== undefined) dbUpdates.icon = updates.icon;
     if (updates.iconBg !== undefined) dbUpdates.icon_bg = updates.iconBg;
+    if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;
     dbUpdates.updated_at = new Date().toISOString();
 
     await supabase.from("projects").update(dbUpdates).eq("id", id);
@@ -249,7 +254,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     setUnlockedProjectIds((prev) => new Set([...prev, id]));
   }, []);
 
-  const addTask = useCallback(async (projectId: string, taskData: Omit<Task, "id" | "updatedAt">) => {
+  const addTask = useCallback(async (projectId: string, taskData: Omit<Task, "id" | "createdAt" | "updatedAt">) => {
     const { data: row, error } = await supabase
       .from("tasks")
       .insert({
@@ -264,6 +269,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         testing_notes: taskData.testingNotes,
         assignee_name: taskData.assigneeName,
         assignee_initials: taskData.assigneeInitials,
+        due_date: taskData.dueDate ?? null,
       })
       .select()
       .single();
@@ -288,6 +294,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     if (updates.testingNotes !== undefined) dbUpdates.testing_notes = updates.testingNotes;
     if (updates.assigneeName !== undefined) dbUpdates.assignee_name = updates.assigneeName;
     if (updates.assigneeInitials !== undefined) dbUpdates.assignee_initials = updates.assigneeInitials;
+    if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;
 
     await supabase.from("tasks").update(dbUpdates).eq("id", taskId);
     setProjects((prev) => prev.map((p) =>

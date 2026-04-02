@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useProjects } from "../lib/store";
 import { Project } from "../types";
-import { formatDistanceToNow } from "../lib/utils";
 
 const ICON_BG_MAP = {
   primary: "bg-[#dae2ff] text-[#0c56d0]",
@@ -16,10 +15,42 @@ const ICON_BG_MAP = {
 type FilterValue = "all" | "locked" | "unlocked";
 type SortValue = "newest" | "oldest" | "name_asc" | "name_z" | "tasks";
 
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatRelative(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return formatDate(iso);
+}
+
+function getDueDateStatus(dueDate: string | null) {
+  if (!dueDate) return null;
+  const due = new Date(dueDate).getTime();
+  const now = Date.now();
+  const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return { label: "Overdue", color: "bg-[#fe8983]/20 text-[#9f403d]", icon: "warning" };
+  if (diffDays === 0) return { label: "Due today", color: "bg-[#fef3c7] text-[#92400e]", icon: "today" };
+  if (diffDays <= 3) return { label: `${diffDays}d left`, color: "bg-[#fef3c7] text-[#92400e]", icon: "schedule" };
+  return { label: `${diffDays}d left`, color: "bg-[#e3e9ec] text-[#586064]", icon: "event" };
+}
+
 function ProjectCard({ project }: { project: Project }) {
   const router = useRouter();
   const { unlockedProjectIds, deleteProject } = useProjects();
   const isLocked = project.pin !== null && !unlockedProjectIds.has(project.id);
+  const dueDateStatus = getDueDateStatus(project.dueDate);
 
   const handleClick = () => {
     if (isLocked) router.push(`/projects/${project.id}/pin`);
@@ -68,6 +99,15 @@ function ProjectCard({ project }: { project: Project }) {
         <p className="text-[#586064] text-sm line-clamp-2">{project.description}</p>
       </div>
 
+      {/* Due date badge */}
+      {dueDateStatus && (
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold w-fit ${dueDateStatus.color}`}>
+          <span className="material-symbols-outlined text-sm">{dueDateStatus.icon}</span>
+          {dueDateStatus.label}
+          <span className="opacity-60 font-normal ml-0.5">· deadline {formatDate(project.dueDate!)}</span>
+        </div>
+      )}
+
       {/* Progress */}
       {project.tasks.length > 0 && (
         <div className="space-y-1">
@@ -94,9 +134,12 @@ function ProjectCard({ project }: { project: Project }) {
             </div>
           )}
         </div>
-        <span className="text-[11px] font-bold text-[#737c7f] uppercase tracking-wider">
-          {formatDistanceToNow(new Date(project.updatedAt))}
-        </span>
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-[10px] text-[#abb3b7]">Created {formatDate(project.createdAt)}</span>
+          <span className="text-[11px] font-bold text-[#737c7f] uppercase tracking-wider">
+            {formatRelative(project.updatedAt)}
+          </span>
+        </div>
       </div>
     </div>
   );

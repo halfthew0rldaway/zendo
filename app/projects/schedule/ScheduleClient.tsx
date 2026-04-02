@@ -28,6 +28,19 @@ const STATUS_STYLES: Record<TaskStatus, { bg: string; text: string; icon: string
   done: { bg: "bg-[#cfe6f2]", text: "text-[#2d424c]", icon: "check_circle" },
 };
 
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function getDueBadge(dueDate: string | null, status: TaskStatus) {
+  if (!dueDate || status === "done") return null;
+  const diff = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return { label: "Overdue", color: "bg-[#fe8983]/20 text-[#9f403d]", icon: "warning" };
+  if (diff === 0) return { label: "Due today", color: "bg-[#fef3c7] text-[#92400e]", icon: "today" };
+  if (diff <= 3) return { label: `${diff}d left`, color: "bg-[#fef3c7] text-[#92400e]", icon: "schedule" };
+  return { label: formatDate(dueDate), color: "bg-[#e3e9ec] text-[#586064]", icon: "event" };
+}
+
 interface TaskRow {
   task: Task;
   projectName: string;
@@ -42,7 +55,6 @@ export default function ScheduleClient() {
   const [filterProject, setFilterProject] = useState<string>("all");
   const [view, setView] = useState<"list" | "group">("group");
 
-  // Flatten all tasks including unlocked projects
   const allTasks: TaskRow[] = projects.flatMap((p) => {
     const accessible = !p.pin || unlockedProjectIds.has(p.id);
     if (!accessible) return [];
@@ -59,17 +71,24 @@ export default function ScheduleClient() {
   const totalTasks = allTasks.length;
   const doneTasks = allTasks.filter((r) => r.task.status === "done").length;
   const urgentTasks = allTasks.filter((r) => r.task.priority === "urgent" && r.task.status !== "done").length;
+  const overdueTasks = allTasks.filter((r) => {
+    if (!r.task.dueDate || r.task.status === "done") return false;
+    return new Date(r.task.dueDate) < new Date();
+  }).length;
 
   const TaskRowItem = ({ row }: { row: TaskRow }) => {
     const p = PRIORITY_MAP[row.task.priority];
     const s = STATUS_STYLES[row.task.status];
+    const due = getDueBadge(row.task.dueDate, row.task.status);
     return (
       <Link
         href={`/projects/${row.projectId}/board`}
         className="flex items-center gap-4 px-5 py-4 bg-white rounded-xl hover:shadow-md transition-all group border border-[#abb3b7]/10"
       >
-        <span className={`material-symbols-outlined text-lg ${s.text}`}
-          style={row.task.status === "done" ? { fontVariationSettings: "'FILL' 1" } : undefined}>
+        <span
+          className={`material-symbols-outlined text-lg ${s.text}`}
+          style={row.task.status === "done" ? { fontVariationSettings: "'FILL' 1" } : undefined}
+        >
           {s.icon}
         </span>
         <div className="flex-1 min-w-0">
@@ -79,6 +98,13 @@ export default function ScheduleClient() {
           <p className="text-[11px] text-[#586064] mt-0.5">{row.projectName}</p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          {/* Due date badge */}
+          {due && (
+            <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${due.color}`}>
+              <span className="material-symbols-outlined text-xs">{due.icon}</span>
+              {due.label}
+            </span>
+          )}
           {row.task.labels.slice(0, 1).map((l) => (
             <span key={l.id} className="px-2 py-0.5 bg-[#e3e9ec] text-[#586064] text-[10px] font-bold rounded hidden md:block">
               {l.name}
@@ -100,23 +126,22 @@ export default function ScheduleClient() {
   };
 
   return (
-    <div className="px-10 py-10 flex-grow">
+    <div className="px-10 py-10 flex-grow overflow-y-auto">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
-          Schedule
+          Task List
         </h1>
-        <p className="text-[#4d626c] text-base">
-          All tasks across your accessible projects in one view.
-        </p>
+        <p className="text-[#4d626c] text-base">All tasks across your accessible projects in one view.</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: "Total Tasks", value: totalTasks, icon: "task_alt", color: "text-[#0c56d0]", bg: "bg-[#dae2ff]" },
           { label: "Completed", value: doneTasks, icon: "check_circle", color: "text-[#4d626c]", bg: "bg-[#cfe6f2]" },
           { label: "Urgent", value: urgentTasks, icon: "priority_high", color: "text-[#9f403d]", bg: "bg-[#fe8983]/20" },
+          { label: "Overdue", value: overdueTasks, icon: "warning", color: "text-[#92400e]", bg: "bg-[#fef3c7]" },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-xl p-5 ghost-border flex items-center gap-4">
             <div className={`w-11 h-11 rounded-lg ${stat.bg} flex items-center justify-center ${stat.color}`}>
@@ -167,7 +192,7 @@ export default function ScheduleClient() {
               className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${view === v ? "bg-[#0c56d0] text-white" : "text-[#586064] hover:bg-[#f1f4f6]"}`}
               onClick={() => setView(v)}
             >
-              {v === "list" ? "List" : "Group"}
+              {v === "list" ? "Flat" : "Grouped"}
             </button>
           ))}
         </div>

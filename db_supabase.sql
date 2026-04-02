@@ -22,6 +22,7 @@ create table projects (
   icon text default 'assignment',
   icon_bg text default 'blue',
   pin_hash text,
+  due_date timestamp with time zone,
   owner_id uuid references auth.users not null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
@@ -51,6 +52,7 @@ create table tasks (
   github_link text,
   testing_status text default 'not_tested',
   testing_notes text,
+  due_date timestamp with time zone,
   assignee_id uuid references auth.users,
   assignee_name text,
   assignee_initials text,
@@ -96,3 +98,9 @@ create policy "Allow all for authenticated users" on notifications for all using
 -- 6. ENABLE REALTIME
 DROP PUBLICATION IF EXISTS supabase_realtime;
 CREATE PUBLICATION supabase_realtime FOR TABLE projects, tasks, notifications;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- MIGRATION: Run these if tables already exist (adds due_date columns)
+-- ─────────────────────────────────────────────────────────────────────────────
+-- ALTER TABLE projects ADD COLUMN IF NOT EXISTS due_date timestamp with time zone;
+-- ALTER TABLE tasks    ADD COLUMN IF NOT EXISTS due_date timestamp with time zone;

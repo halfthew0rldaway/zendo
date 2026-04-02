@@ -34,6 +34,8 @@ export interface Task {
   testingNotes: string;
   assigneeInitials: string;
   assigneeName: string;
+  dueDate: string | null;
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -50,6 +52,7 @@ export interface Project {
   pin: string | null;
   icon: string;
   iconBg: "primary" | "secondary" | "tertiary";
+  dueDate: string | null;
   createdAt: string;
   updatedAt: string;
   tasks: Task[];

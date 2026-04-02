@@ -37,6 +37,15 @@ const COL_BADGE_MAP: Record<TaskStatus, string> = {
   done: "bg-[#cfe6f2] text-[#2d424c]",
 };
 
+function getDueDateBadge(dueDate: string | null, status: TaskStatus) {
+  if (!dueDate || status === "done") return null;
+  const diff = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return { label: "Overdue", color: "bg-[#fe8983]/20 text-[#9f403d]", icon: "warning", urgent: true };
+  if (diff === 0) return { label: "Due today", color: "bg-[#fef3c7] text-[#92400e]", icon: "today", urgent: true };
+  if (diff <= 3) return { label: `${diff}d left`, color: "bg-[#fef3c7] text-[#92400e]", icon: "schedule", urgent: false };
+  return { label: `${diff}d`, color: "bg-[#e3e9ec] text-[#586064]", icon: "event", urgent: false };
+}
+
 interface TaskCardProps {
   task: Task;
   projectId: string;
@@ -48,6 +57,8 @@ interface TaskCardProps {
 function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCardProps) {
   const priority = PRIORITY_MAP[task.priority];
   const { deleteTask } = useProjects();
+  const badge = getDueDateBadge(task.dueDate, task.status);
+  const isOverdue = badge?.urgent && badge.label === "Overdue";
 
   return (
     <div
@@ -55,9 +66,11 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
         isInProgress
           ? "border-l-4 border-[#0c56d0] ring-2 ring-[#0c56d0]/5"
           : ""
-      } ${task.status === "testing" && task.labels.some((l) => l.color === "error")
-        ? "border-l-4 border-[#9f403d]/50"
-        : ""}`}
+      } ${isOverdue ? "border-l-4 border-[#9f403d]/60" : ""} ${
+        task.status === "testing" && task.labels.some((l) => l.color === "error")
+          ? "border-l-4 border-[#9f403d]/50"
+          : ""
+      }`}
       draggable
       onClick={() => onOpen(task)}
       onDragStart={(e) => {
@@ -87,9 +100,7 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
               }
             }}
           >
-            <span className="material-symbols-outlined text-sm text-[#9f403d]">
-              delete
-            </span>
+            <span className="material-symbols-outlined text-sm text-[#9f403d]">delete</span>
           </button>
           <span className="material-symbols-outlined text-[#586064] text-base opacity-0 group-hover:opacity-100 transition-opacity">
             drag_indicator
@@ -105,17 +116,23 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
       </h4>
 
       {task.description && (
-        <p className="text-xs text-[#586064] line-clamp-2 leading-relaxed mb-4">
+        <p className="text-xs text-[#586064] line-clamp-2 leading-relaxed mb-3">
           {task.description}
         </p>
       )}
 
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#f1f4f6]">
+      {/* Due date badge */}
+      {badge && (
+        <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold w-fit mb-3 ${badge.color}`}>
+          <span className="material-symbols-outlined text-xs">{badge.icon}</span>
+          {badge.label}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between pt-3 border-t border-[#f1f4f6]">
         <div className="flex items-center gap-3">
           <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${priority.color}`}>
-            <span className="material-symbols-outlined text-xs">
-              {priority.icon}
-            </span>
+            <span className="material-symbols-outlined text-xs">{priority.icon}</span>
             {priority.label}
           </div>
           {task.checklist.length > 0 && (
@@ -166,19 +183,14 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
     return (
       <div className="flex-1 flex items-center justify-center text-[#586064]">
         <div className="text-center">
-          <span className="material-symbols-outlined text-5xl mb-3 block text-[#abb3b7]">
-            folder_off
-          </span>
+          <span className="material-symbols-outlined text-5xl mb-3 block text-[#abb3b7]">folder_off</span>
           <p className="font-semibold">Project not found.</p>
         </div>
       </div>
     );
   }
 
-  // Show nothing while redirecting to PIN page
-  if (needsPin) {
-    return null;
-  }
+  if (needsPin) return null;
 
   const tasksByStatus = (status: TaskStatus) =>
     project.tasks.filter((t) => t.status === status);
@@ -215,22 +227,18 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                 {project.name}
               </h2>
             </div>
-            <p className="text-[#586064] max-w-2xl leading-relaxed">
-              {project.description}
-            </p>
+            <p className="text-[#586064] max-w-2xl leading-relaxed">{project.description}</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex -space-x-3">
-              {Array.from({ length: Math.min(project.memberCount, 3) }).map(
-                (_, i) => (
-                  <div
-                    key={i}
-                    className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold"
-                  >
-                    {String.fromCharCode(65 + i)}
-                  </div>
-                )
-              )}
+              {Array.from({ length: Math.min(project.memberCount, 3) }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold"
+                >
+                  {String.fromCharCode(65 + i)}
+                </div>
+              ))}
               {project.memberCount > 3 && (
                 <div className="w-10 h-10 rounded-full border-2 border-[#f8f9fa] bg-[#e3e9ec] flex items-center justify-center text-xs font-bold text-[#40555f]">
                   +{project.memberCount - 3}
@@ -254,9 +262,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
           return (
             <div
               key={col.id}
-              className={`flex-shrink-0 w-80 flex flex-col gap-4 transition-all ${
-                isDragOver ? "opacity-80" : ""
-              }`}
+              className={`flex-shrink-0 w-80 flex flex-col gap-4 transition-all ${isDragOver ? "opacity-80" : ""}`}
               onDragOver={(e) => handleDragOver(e, col.id)}
               onDragLeave={() => setDragOverColumn(null)}
               onDrop={(e) => handleDrop(e, col.id)}
@@ -272,11 +278,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                   >
                     {col.title}
                   </h3>
-                  <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                      COL_BADGE_MAP[col.id]
-                    }`}
-                  >
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${COL_BADGE_MAP[col.id]}`}>
                     {tasks.length}
                   </span>
                 </div>
@@ -284,18 +286,16 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                   <button
                     className="p-1 hover:bg-[#e3e9ec] rounded transition-colors"
                     onClick={(e) => {
-                       e.stopPropagation(); // Prevent propagation bubbling
-                       startTransition(() => setAddingToColumn(col.id));
+                      e.stopPropagation();
+                      startTransition(() => setAddingToColumn(col.id));
                     }}
                   >
-                    <span className="material-symbols-outlined text-lg text-[#586064]">
-                      add
-                    </span>
+                    <span className="material-symbols-outlined text-lg text-[#586064]">add</span>
                   </button>
                 )}
               </div>
 
-              {/* Drop zone highlight */}
+              {/* Drop zone */}
               <div
                 className={`flex flex-col gap-4 min-h-[200px] p-2 rounded-xl transition-all ${
                   isDragOver ? "bg-[#dae2ff]/30 border-2 border-dashed border-[#0c56d0]/30" : ""

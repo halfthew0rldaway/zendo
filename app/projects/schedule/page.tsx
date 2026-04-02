@@ -1,10 +1,10 @@
-import ScheduleClient from "./ScheduleClient";
+import CalendarPage from "./CalendarPage";
 
 export const metadata = {
-  title: "Schedule | Architect",
-  description: "All tasks across your projects in one view.",
+  title: "Calendar | Zendo",
+  description: "View project deadlines and task due dates on a calendar.",
 };
 
 export default function SchedulePage() {
-  return <ScheduleClient />;
+  return <CalendarPage />;
 }
