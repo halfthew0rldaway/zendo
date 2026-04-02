@@ -10,7 +10,7 @@ export default function CalendarPage() {
   return (
     <div className="flex-grow flex flex-col h-full overflow-hidden bg-[#f8f9fa]">
       {/* Tab switcher */}
-      <div className="flex items-center gap-1 px-10 pt-6 pb-0 bg-white border-b border-[#e3e9ec]">
+      <div className="flex items-center gap-1 px-5 md:px-10 pt-4 md:pt-6 pb-0 bg-white border-b border-[#e3e9ec] overflow-x-auto hide-scrollbar">
         <button
           onClick={() => setTab("calendar")}
           className={`flex items-center gap-2 px-5 py-3 border-b-2 text-sm font-bold transition-all duration-200 ${

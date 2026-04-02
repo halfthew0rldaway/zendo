@@ -9,7 +9,7 @@ interface InviteModalProps {
 }
 
 export default function InviteModal({ projectId, onClose }: InviteModalProps) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [role, setRole] = useState("Member");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const { updateProject, projects } = useProjects();
@@ -17,7 +17,7 @@ export default function InviteModal({ projectId, onClose }: InviteModalProps) {
 
   const handleInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !project) return;
+    if (!username.trim() || !project) return;
     setStatus("loading");
 
     // Simulate network delay and update member count
@@ -54,16 +54,19 @@ export default function InviteModal({ projectId, onClose }: InviteModalProps) {
         ) : (
           <form onSubmit={handleInvite} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-[#586064] block mb-1">Email Address</label>
-              <input
-                type="email"
-                required
-                autoFocus
-                className="w-full px-3 py-2.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg text-sm outline-none focus:bg-white focus:border-[#0c56d0]/40 transition-all"
-                placeholder="colleague@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <label className="text-xs font-semibold text-[#586064] block mb-1">Username</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#abb3b7] font-bold">@</span>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  className="w-full pl-8 pr-3 py-2.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg text-sm outline-none focus:bg-white focus:border-[#0c56d0]/40 transition-all font-medium"
+                  placeholder="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
             </div>
             
             <div>
@@ -81,7 +84,7 @@ export default function InviteModal({ projectId, onClose }: InviteModalProps) {
 
             <button
               type="submit"
-              disabled={!email.trim() || status === "loading"}
+              disabled={!username.trim() || status === "loading"}
               className="w-full primary-gradient text-white py-3 rounded-lg text-sm font-bold active:scale-95 transition-all mt-6 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {status === "loading" ? (

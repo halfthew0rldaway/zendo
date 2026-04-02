@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar() {
+export default function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
 
   const navItems = [
@@ -21,7 +21,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="h-screen sticky top-0 left-0 w-64 bg-slate-50 flex flex-col gap-8 p-6 z-50 shrink-0 border-r border-slate-100">
+    <aside className={`h-screen sticky top-0 left-0 w-64 bg-slate-50 flex-col gap-8 p-6 z-50 shrink-0 border-r border-slate-100 ${className || "flex"}`}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-2">
         <div className="w-10 h-10 rounded-lg primary-gradient flex items-center justify-center text-white shadow-lg">

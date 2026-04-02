@@ -153,8 +153,8 @@ export default function CalendarClient() {
   return (
     <div className="flex-grow flex flex-col h-full bg-[#f8f9fa] text-[#2b3437]">
       {/* Top bar */}
-      <div className="px-10 pt-10 pb-6 border-b border-[#e3e9ec] bg-white">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="px-5 md:px-10 pt-6 md:pt-10 pb-6 border-b border-[#e3e9ec] bg-white">
+        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <span className="material-symbols-outlined text-[#0c56d0]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -168,7 +168,7 @@ export default function CalendarClient() {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center gap-6 bg-[#f1f4f6] px-6 py-3 rounded-xl border border-[#e3e9ec]">
+          <div className="flex items-center gap-4 md:gap-6 bg-[#f1f4f6] px-4 md:px-6 py-3 rounded-xl border border-[#e3e9ec] overflow-x-auto hide-scrollbar">
             {[
               { label: "Events", value: totalEvents, color: "text-[#0c56d0]" },
               { label: "Overdue", value: overdueEvents, color: "text-[#9f403d]" },
@@ -183,9 +183,9 @@ export default function CalendarClient() {
         </div>
       </div>
 
-      <div className="flex flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col xl:flex-row flex-1 min-h-0 overflow-hidden">
         {/* Main calendar */}
-        <div className="flex-1 overflow-y-auto p-10">
+        <div className="flex-1 overflow-y-auto p-5 md:p-10 hide-scrollbar">
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-8">
             <button
@@ -205,8 +205,10 @@ export default function CalendarClient() {
             </button>
           </div>
 
-          {/* Day-of-week headers */}
-          <div className="grid grid-cols-7 mb-2">
+          <div className="overflow-x-auto hide-scrollbar pb-4 -mx-5 px-5 md:mx-0 md:px-0">
+            <div className="min-w-[700px]">
+              {/* Day-of-week headers */}
+              <div className="grid grid-cols-7 mb-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
               <div key={d} className="text-center text-[11px] font-bold text-[#586064] uppercase tracking-widest py-1">
                 {d}
@@ -275,6 +277,8 @@ export default function CalendarClient() {
                 </button>
               );
             })}
+            </div>
+            </div>
           </div>
 
           {/* Legend */}
@@ -290,8 +294,8 @@ export default function CalendarClient() {
         </div>
 
         {/* Side panel */}
-        <div className="w-80 shrink-0 border-l border-[#e3e9ec] bg-white flex flex-col overflow-hidden shadow-[-4px_0_16px_rgba(43,52,55,0.02)] z-10">
-          <div className="p-6 border-b border-[#e3e9ec] bg-[#f8f9fa]">
+        <div className="w-full xl:w-80 shrink-0 border-t xl:border-l xl:border-t-0 border-[#e3e9ec] bg-white flex flex-col overflow-hidden shadow-[0_-16px_24px_rgba(43,52,55,0.02)] xl:shadow-[-4px_0_16px_rgba(43,52,55,0.02)] z-10 max-h-[50vh] xl:max-h-full">
+          <div className="p-6 border-b border-[#e3e9ec] bg-[#f8f9fa] sticky top-0 z-10">
             <h3 className="text-sm font-extrabold text-[#2b3437] uppercase tracking-widest">
               {selectedDay
                 ? new Date(selectedDay + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })

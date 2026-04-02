@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useProjects } from "../lib/store";
 import { Project } from "../types";
+import { useRouter } from "next/navigation";
+import ConfirmModal from "../components/ConfirmModal";
 
 const ICON_BG_MAP = {
   primary: "bg-[#dae2ff] text-[#0c56d0]",
@@ -49,6 +50,7 @@ function getDueDateStatus(dueDate: string | null) {
 function ProjectCard({ project }: { project: Project }) {
   const router = useRouter();
   const { unlockedProjectIds, deleteProject } = useProjects();
+  const [showConfirm, setShowConfirm] = useState(false);
   const isLocked = project.pin !== null && !unlockedProjectIds.has(project.id);
   const dueDateStatus = getDueDateStatus(project.dueDate);
 
@@ -76,13 +78,23 @@ function ProjectCard({ project }: { project: Project }) {
             className="p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#fe8983]/20 rounded text-[#737c7f] hover:text-[#9f403d]"
             onClick={(e) => {
               e.stopPropagation();
-              if (confirm(`Delete "${project.name}"? This cannot be undone.`)) {
-                deleteProject(project.id);
-              }
+              setShowConfirm(true);
             }}
           >
             <span className="material-symbols-outlined text-lg">delete</span>
           </button>
+          {showConfirm && (
+            <ConfirmModal
+              title="Delete Project"
+              message={`Are you sure you want to completely delete "${project.name}"? This action cannot be undone.`}
+              confirmText="Delete"
+              onCancel={() => setShowConfirm(false)}
+              onConfirm={() => {
+                deleteProject(project.id);
+                setShowConfirm(false);
+              }}
+            />
+          )}
           <span
             className={`material-symbols-outlined transition-colors ${isLocked ? "text-[#737c7f] group-hover:text-[#0c56d0]" : "text-[#abb3b7]"}`}
             title={isLocked ? "PIN Protected" : "Open"}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useProjects } from "../../lib/store";
 import { TeamMember } from "../../types";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const MEMBER_COLORS = [
   "#0c56d0", "#615b77", "#4d626c", "#9f403d", "#004aba",
@@ -198,6 +199,7 @@ export default function TeamClient() {
   const { members, addMember, removeMember, updateMember } = useProjects();
   const [showForm, setShowForm] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | undefined>();
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
 
   const handleSave = (data: Omit<TeamMember, "id" | "joinedAt">) => {
     if (editingMember) {
@@ -209,7 +211,7 @@ export default function TeamClient() {
   };
 
   const handleRemove = (id: string) => {
-    if (confirm("Remove this team member?")) removeMember(id);
+    setConfirmRemoveId(id);
   };
 
   const handleEdit = (member: TeamMember) => {
@@ -301,6 +303,20 @@ export default function TeamClient() {
           initial={editingMember}
           onSave={handleSave}
           onClose={() => { setShowForm(false); setEditingMember(undefined); }}
+        />
+      )}
+
+      {/* Confirm Delete Modal */}
+      {confirmRemoveId && (
+        <ConfirmModal
+          title="Remove Member"
+          message="Are you sure you want to remove this team member from the workspace? This action cannot be undone."
+          confirmText="Remove"
+          onCancel={() => setConfirmRemoveId(null)}
+          onConfirm={() => {
+            removeMember(confirmRemoveId);
+            setConfirmRemoveId(null);
+          }}
         />
       )}
     </div>

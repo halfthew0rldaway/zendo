@@ -256,9 +256,19 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
       : currentUserId ? currentUserId.slice(0, 2).toUpperCase() : "?";
 
   return (
-    <header className="bg-[#f8f9fa] flex justify-between items-center w-full px-10 py-4 sticky top-0 z-40 border-b border-slate-100">
+    <header className="bg-[#f8f9fa] flex justify-between items-center w-full px-5 md:px-10 py-4 sticky top-0 z-40 border-b border-slate-100 min-h-[72px]">
       <div className="flex items-center gap-8">
-        <span className="text-2xl font-black tracking-tighter text-[#0c56d0] opacity-0 pointer-events-none" style={{ fontFamily: "Outfit, sans-serif" }}>
+        <div className="flex items-center gap-2 md:hidden">
+          <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center text-white shadow-lg">
+            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+              architecture
+            </span>
+          </div>
+          <span className="text-xl font-black tracking-tighter text-[#0c56d0]" style={{ fontFamily: "Outfit, sans-serif" }}>
+            ZENDO
+          </span>
+        </div>
+        <span className="hidden md:block text-2xl font-black tracking-tighter text-[#0c56d0] opacity-0 pointer-events-none" style={{ fontFamily: "Outfit, sans-serif" }}>
           ZENDO
         </span>
         <nav className="hidden md:flex gap-6">
@@ -276,10 +286,10 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
 
       <div className="flex items-center gap-4">
         {showSearch && (
-          <div className="relative group">
+          <div className="relative group hidden sm:block">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737c7f] text-[20px]">search</span>
             <input
-              className="bg-[#f1f4f6] border border-transparent rounded-full py-2 pl-10 pr-4 w-64 focus:ring-2 focus:ring-[#0c56d0]/20 text-sm outline-none transition-all focus:bg-white focus:w-80"
+              className="bg-[#f1f4f6] border border-transparent rounded-full py-2 pl-10 pr-4 w-48 lg:w-64 focus:ring-2 focus:ring-[#0c56d0]/20 text-sm outline-none transition-all focus:bg-white focus:w-64 lg:focus:w-80"
               placeholder={searchPlaceholder}
               type="text"
             />

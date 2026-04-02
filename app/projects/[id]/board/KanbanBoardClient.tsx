@@ -7,6 +7,7 @@ import { Task, TaskStatus, Priority, Column } from "../../../types";
 import TaskDrawer from "./TaskDrawer";
 import AddTaskModal from "./AddTaskModal";
 import InviteModal from "./InviteModal";
+import ConfirmModal from "../../../components/ConfirmModal";
 
 const COLUMNS: Column[] = [
   { id: "todo", title: "To Do", order: 0 },
@@ -58,6 +59,7 @@ interface TaskCardProps {
 function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCardProps) {
   const priority = PRIORITY_MAP[task.priority];
   const { deleteTask } = useProjects();
+  const [showConfirm, setShowConfirm] = useState(false);
   const badge = getDueDateBadge(task.dueDate, task.status);
   const isOverdue = badge?.urgent && badge.label === "Overdue";
 
@@ -96,9 +98,7 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
             className="p-0.5 rounded hover:bg-[#f1f4f6] transition-colors opacity-0 group-hover:opacity-100"
             onClick={(e) => {
               e.stopPropagation();
-              if (confirm("Delete this task?")) {
-                deleteTask(projectId, task.id);
-              }
+              setShowConfirm(true);
             }}
           >
             <span className="material-symbols-outlined text-sm text-[#9f403d]">delete</span>
@@ -106,6 +106,19 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
           <span className="material-symbols-outlined text-[#586064] text-base opacity-0 group-hover:opacity-100 transition-opacity">
             drag_indicator
           </span>
+          {showConfirm && (
+            <ConfirmModal
+              title="Delete Task"
+              message={`Are you sure you want to completely delete "${task.title}"? This cannot be undone.`}
+              confirmText="Delete"
+              onCancel={(e?: any) => { e?.stopPropagation(); setShowConfirm(false); }}
+              onConfirm={(e?: any) => {
+                e?.stopPropagation();
+                deleteTask(projectId, task.id);
+                setShowConfirm(false);
+              }}
+            />
+          )}
         </div>
       </div>
 
@@ -215,7 +228,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative">
       {/* Kanban Header */}
-      <div className="px-10 py-8">
+      <div className="px-5 md:px-10 py-6 md:py-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-1">
@@ -259,7 +272,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
       </div>
 
       {/* Kanban Columns */}
-      <div className="flex-1 overflow-x-auto px-10 pb-8 flex gap-6 items-start hide-scrollbar">
+      <div className="flex-1 overflow-x-auto px-5 md:px-10 pb-8 flex gap-6 items-start hide-scrollbar">
         {COLUMNS.map((col) => {
           const tasks = tasksByStatus(col.id);
           const isDragOver = dragOverColumn === col.id;
