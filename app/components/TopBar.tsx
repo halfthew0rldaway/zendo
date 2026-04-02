@@ -7,31 +7,20 @@ import { useProjects } from "../lib/store";
 import { getUserColor } from "../lib/avatarColors";
 
 function NotificationsDropdown({ onClose }: { onClose: () => void }) {
-  const { projects } = useProjects();
+  const { notifications, markNotificationsRead } = useProjects();
   const ref = useRef<HTMLDivElement>(null);
 
-  // Derive recent activity from tasks sorted by updatedAt
-  const activities = projects
-    .flatMap((p) =>
-      p.tasks.map((t) => ({
-        projectName: p.name,
-        projectId: p.id,
-        taskTitle: t.title,
-        assigneeName: t.assigneeName,
-        assigneeInitials: t.assigneeInitials,
-        status: t.status,
-        updatedAt: t.updatedAt,
-      }))
-    )
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 8);
+  useEffect(() => {
+    markNotificationsRead();
+  }, [markNotificationsRead]);
 
-  const STATUS_LABELS: Record<string, string> = {
-    todo: "added to To Do",
-    in_progress: "moved to In Progress",
-    review: "sent to Review",
-    testing: "sent to Testing",
-    done: "marked as Done",
+  // Use persistent notifications from DB
+  const displayNotifications = notifications.slice(0, 10);
+
+  const STATUS_ICON_MAP: Record<string, string> = {
+    task_added: "add_circle",
+    task_updated: "edit",
+    task_moved: "swap_horiz",
   };
 
   const formatTime = (iso: string) => {
@@ -63,43 +52,40 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
           Notifications
         </h3>
         <span className="text-[10px] font-bold bg-[#0c56d0] text-white px-2 py-0.5 rounded-full">
-          {activities.length}
+          {displayNotifications.length}
         </span>
       </div>
 
-      {activities.length === 0 ? (
+      {displayNotifications.length === 0 ? (
         <div className="py-12 text-center text-[#737c7f] text-sm">
           <span className="material-symbols-outlined text-3xl block mb-2 text-[#abb3b7]">notifications_none</span>
           No recent activity
         </div>
       ) : (
         <div className="max-h-80 overflow-y-auto hide-scrollbar">
-          {activities.map((act, i) => (
-            <Link
-              key={i}
-              href={`/projects/${act.projectId}/board`}
-              onClick={onClose}
+          {displayNotifications.map((notif, i) => (
+            <div
+              key={notif.id || i}
               className="flex items-start gap-3 px-5 py-3.5 hover:bg-[#f1f4f6] transition-colors border-b border-[#f1f4f6] last:border-0"
             >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5"
-                style={{ backgroundColor: getUserColor(act.assigneeName) }}
+                style={{ backgroundColor: "#0c56d0" }}
               >
-                {act.assigneeInitials}
+                <span className="material-symbols-outlined text-sm">{STATUS_ICON_MAP[notif.type] || "notifications"}</span>
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm text-[#2b3437] leading-snug">
-                  <span className="font-bold">{act.assigneeName}</span>{" "}
-                  <span className="text-[#586064]">{STATUS_LABELS[act.status] ?? "updated"}</span>{" "}
-                  <span className="font-medium text-[#0c56d0] truncate">{act.taskTitle}</span>
+                  {notif.content}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] text-[#737c7f]">{act.projectName}</span>
-                  <span className="w-1 h-1 bg-[#abb3b7] rounded-full" />
-                  <span className="text-[10px] text-[#737c7f]">{formatTime(act.updatedAt)}</span>
+                  <span className="text-[10px] text-[#737c7f]">{formatTime(notif.created_at)}</span>
                 </div>
               </div>
-            </Link>
+              {!notif.is_read && (
+                <div className="w-1.5 h-1.5 bg-[#0c56d0] rounded-full mt-2" />
+              )}
+            </div>
           ))}
         </div>
       )}

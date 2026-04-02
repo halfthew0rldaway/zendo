@@ -22,6 +22,7 @@ interface ProjectStore {
   currentUserId: string | null;
   currentProfile: UserProfile | null;
   loading: boolean;
+  notifications: any[];
   addProject: (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount" | "members">) => Promise<Project | null>;
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
@@ -30,6 +31,7 @@ interface ProjectStore {
   updateTask: (projectId: string, taskId: string, updates: Partial<Task>) => Promise<void>;
   deleteTask: (projectId: string, taskId: string) => Promise<void>;
   moveTask: (projectId: string, taskId: string, newStatus: TaskStatus) => Promise<void>;
+  markNotificationsRead: () => Promise<void>;
   inviteUserToProject: (projectId: string, username: string, role: string) => Promise<{ success: boolean; error?: string }>;
   resetData: () => void;
   signOut: () => Promise<void>;
@@ -79,6 +81,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   const supabase = createClient();
 
@@ -130,6 +133,14 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         .in("project_id", projectIds)
         .order("created_at", { ascending: true });
 
+      // Fetch persistent notifications
+      const { data: notifData } = await supabase
+        .from("notifications")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(20);
+      setNotifications(notifData ?? []);
+
       const tasksByProject: Record<string, Task[]> = {};
       for (const row of taskRows ?? []) {
         const r = row as Record<string, unknown>;
@@ -176,42 +187,36 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Realtime: task changes
+  // Realtime: task changes & Notifications
   useEffect(() => {
     const channel = supabase
-      .channel("tasks-realtime")
+      .channel("changes-realtime")
       .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, (payload) => {
         setProjects((prev) => {
           if (payload.eventType === "INSERT") {
             const t = dbRowToTask(payload.new as Record<string, unknown>);
             const pid = (payload.new as Record<string, unknown>).project_id as string;
-            return prev.map((p) => {
-              if (p.id !== pid) return p;
-              if (p.tasks.some((task) => task.id === t.id)) return p;
-              return { ...p, tasks: [...p.tasks, t] };
-            });
+            return prev.map((p) => p.id === pid ? { ...p, tasks: [...p.tasks, t] } : p);
           }
           if (payload.eventType === "UPDATE") {
             const t = dbRowToTask(payload.new as Record<string, unknown>);
             const pid = (payload.new as Record<string, unknown>).project_id as string;
-            return prev.map((p) =>
-              p.id === pid ? { ...p, tasks: p.tasks.map((task) => task.id === t.id ? t : task) } : p
-            );
+            return prev.map((p) => p.id === pid ? { ...p, tasks: p.tasks.map((task) => task.id === t.id ? t : task) } : p);
           }
           if (payload.eventType === "DELETE") {
             const pid = (payload.old as Record<string, unknown>).project_id as string;
             const tid = (payload.old as Record<string, unknown>).id as string;
-            return prev.map((p) =>
-              p.id === pid ? { ...p, tasks: p.tasks.filter((t) => t.id !== tid) } : p
-            );
+            return prev.map((p) => p.id === pid ? { ...p, tasks: p.tasks.filter((t) => t.id !== tid) } : p);
           }
           return prev;
         });
       })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications" }, (payload) => {
+        setNotifications((prev) => [payload.new, ...prev.slice(0, 19)]);
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [supabase]);
 
   const addProject = useCallback(async (data: Omit<Project, "id" | "createdAt" | "updatedAt" | "tasks" | "memberCount" | "members">) => {
     if (!currentUserId) {
@@ -311,13 +316,20 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       .select()
       .single();
 
-    if (error || !row) return;
+    // Create persistent notification
+    await supabase.from("notifications").insert({
+      user_id: currentUserId,
+      actor_id: currentUserId,
+      project_id: projectId,
+      type: "task_added",
+      content: `${currentProfile?.username ?? "Anonymous"} added task "${row.title}"`
+    });
+
     const newTask = dbRowToTask(row as Record<string, unknown>);
     setProjects((prev) => prev.map((p) =>
       p.id === projectId ? { ...p, tasks: [...p.tasks, newTask], updatedAt: new Date().toISOString() } : p
     ));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentUserId, currentProfile]);
 
   const updateTask = useCallback(async (projectId: string, taskId: string, updates: Partial<Task>) => {
     const dbUpdates: Record<string, unknown> = { 
@@ -338,14 +350,21 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     if (updates.assigneeInitials !== undefined) dbUpdates.assignee_initials = updates.assigneeInitials;
     if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;
 
-    await supabase.from("tasks").update(dbUpdates).eq("id", taskId);
+    // Create persistent notification
+    await supabase.from("notifications").insert({
+      user_id: currentUserId,
+      actor_id: currentUserId,
+      project_id: projectId,
+      type: "task_updated",
+      content: `${currentProfile?.username ?? "Anonymous"} updated task "${updates.title || 'a task'}"`
+    });
+
     setProjects((prev) => prev.map((p) =>
       p.id === projectId
-        ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, ...updates, updatedAt: dbUpdates.updated_at as string } : t), updatedAt: new Date().toISOString() }
+        ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, ...updates, updatedAt: dbUpdates.updated_at as string, assigneeName: dbUpdates.assignee_name as string, assigneeInitials: dbUpdates.assignee_initials as string } : t), updatedAt: new Date().toISOString() }
         : p
     ));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentUserId, currentProfile]);
 
   const deleteTask = useCallback(async (projectId: string, taskId: string) => {
     await supabase.from("tasks").delete().eq("id", taskId);
@@ -367,6 +386,15 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       assignee_name: actorName,
       assignee_initials: actorInitials
     }).eq("id", taskId);
+
+    // Create persistent notification for move
+    await supabase.from("notifications").insert({
+      user_id: currentUserId,
+      actor_id: currentUserId,
+      project_id: projectId,
+      type: "task_moved",
+      content: `${actorName} moved a task to ${newStatus.replace('_', ' ')}`
+    });
 
     setProjects((prev) => prev.map((p) =>
       p.id === projectId
@@ -430,6 +458,11 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     return { success: true };
   }, []);
 
+  const markNotificationsRead = useCallback(async () => {
+    await supabase.from("notifications").update({ is_read: true }).eq("is_read", false);
+    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+  }, []);
+
   const resetData = useCallback(() => {
     setProjects([]);
   }, []);
@@ -443,10 +476,10 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ProjectContext.Provider value={{
-      projects, unlockedProjectIds, currentUserId, currentProfile, loading,
+      projects, unlockedProjectIds, currentUserId, currentProfile, loading, notifications,
       addProject, updateProject, deleteProject, unlockProject,
       addTask, updateTask, deleteTask, moveTask,
-      inviteUserToProject, resetData, signOut,
+      markNotificationsRead, inviteUserToProject, resetData, signOut,
     }}>
       {children}
     </ProjectContext.Provider>
