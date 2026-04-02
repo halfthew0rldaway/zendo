@@ -1,94 +1,43 @@
--- Enable extension
+-- 1. DROP EVERYTHING FIRST to start clean
+DROP TABLE IF EXISTS notifications, tasks, project_members, projects, profiles CASCADE;
+
+-- 2. ENABLE EXTENSION
 create extension if not exists "uuid-ossp";
 
--- =========================
--- PROFILES (User Public Data)
--- =========================
+-- 3. CREATE TABLES (ORDER MATTERS)
+-- Profiles
 create table profiles (
   id uuid references auth.users on delete cascade primary key,
   username text unique not null,
   full_name text,
   avatar_url text,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
+  created_at timestamp with time zone default now()
 );
 
-alter table profiles enable row level security;
-
-create policy "Profiles are viewable by everyone"
-on profiles for select using (true);
-
-create policy "Users can insert own profile"
-on profiles for insert with check (auth.uid() = id);
-
-create policy "Users can update own profile"
-on profiles for update using (auth.uid() = id);
-
-
--- =========================
--- PROJECTS
--- =========================
+-- Projects
 create table projects (
   id uuid default uuid_generate_v4() primary key,
   name text not null,
   description text,
+  icon text default 'assignment',
+  icon_bg text default 'blue',
   pin_hash text,
+  owner_id uuid references auth.users not null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
 
-alter table projects enable row level security;
-
-
--- =========================
--- PROJECT MEMBERS (JOIN TABLE)
--- =========================
+-- Project Members
 create table project_members (
+  id uuid default uuid_generate_v4() primary key,
   project_id uuid references projects(id) on delete cascade,
-  user_id uuid references profiles(id) on delete cascade,
-  role text default 'member',
+  user_id uuid references auth.users on delete cascade,
+  role text default 'member' check (role in ('owner', 'member')),
   joined_at timestamp with time zone default now(),
-  primary key (project_id, user_id)
+  unique(project_id, user_id)
 );
 
-alter table project_members enable row level security;
-
-create policy "Users can see their memberships"
-on project_members for select
-using (user_id = auth.uid());
-
-
--- =========================
--- PROJECT RLS (BASED ON MEMBERSHIP)
--- =========================
-create policy "Members can view projects"
-on projects for select
-using (
-  exists (
-    select 1 from project_members
-    where project_members.project_id = projects.id
-    and project_members.user_id = auth.uid()
-  )
-);
-
-create policy "Members can update projects"
-on projects for update
-using (
-  exists (
-    select 1 from project_members
-    where project_members.project_id = projects.id
-    and project_members.user_id = auth.uid()
-  )
-);
-
-create policy "Authenticated users can create projects"
-on projects for insert
-with check (auth.uid() is not null);
-
-
--- =========================
--- TASKS
--- =========================
+-- Tasks
 create table tasks (
   id uuid default uuid_generate_v4() primary key,
   project_id uuid references projects(id) on delete cascade not null,
@@ -102,41 +51,18 @@ create table tasks (
   github_link text,
   testing_status text default 'not_tested',
   testing_notes text,
-  assignee_id uuid references profiles(id),
+  assignee_id uuid references auth.users,
+  assignee_name text,
+  assignee_initials text,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
 
-alter table tasks enable row level security;
-
-create policy "Members can view tasks"
-on tasks for select
-using (
-  exists (
-    select 1 from project_members
-    where project_members.project_id = tasks.project_id
-    and project_members.user_id = auth.uid()
-  )
-);
-
-create policy "Members can modify tasks"
-on tasks for all
-using (
-  exists (
-    select 1 from project_members
-    where project_members.project_id = tasks.project_id
-    and project_members.user_id = auth.uid()
-  )
-);
-
-
--- =========================
--- NOTIFICATIONS
--- =========================
+-- Notifications
 create table notifications (
   id uuid default uuid_generate_v4() primary key,
-  user_id uuid references profiles(id) on delete cascade,
-  actor_id uuid references profiles(id),
+  user_id uuid references auth.users on delete cascade,
+  actor_id uuid references auth.users,
   project_id uuid references projects(id),
   type text,
   content text,
@@ -144,37 +70,43 @@ create table notifications (
   created_at timestamp with time zone default now()
 );
 
+-- 4. ENABLE RLS
+alter table profiles enable row level security;
+alter table projects enable row level security;
+alter table project_members enable row level security;
+alter table tasks enable row level security;
 alter table notifications enable row level security;
 
-create policy "Users can view their notifications"
-on notifications for select
-using (user_id = auth.uid());
+-- 5. CREATE POLICIES
+-- Profiles
+create policy "Profiles viewable by everyone" on profiles for select using (true);
+create policy "Users update own profile" on profiles for update using (auth.uid() = id);
 
-create policy "System can insert notifications"
-on notifications for insert
-with check (true);
+-- Projects
+create policy "Auth users create projects" on projects for insert with check (auth.uid() is not null);
+create policy "Owners do everything on projects" on projects for all using (auth.uid() = owner_id);
+create policy "Members view projects" on projects for select using (
+  exists (select 1 from project_members where project_id = projects.id and user_id = auth.uid())
+);
 
+-- Members
+create policy "Users see memberships" on project_members for select using (user_id = auth.uid() or exists (
+  select 1 from projects where id = project_id and owner_id = auth.uid()
+));
+create policy "Owners add members" on project_members for insert with check (exists (
+  select 1 from projects where id = project_id and owner_id = auth.uid()
+) or auth.uid() = user_id);
 
--- =========================
--- TRIGGER FUNCTION (TASK UPDATE NOTIFICATION)
--- =========================
-create or replace function notify_task_update()
-returns trigger as $$
-begin
-  if old.status is distinct from new.status then
-    insert into notifications (user_id, actor_id, project_id, type, content)
-    select user_id, auth.uid(), new.project_id, 'task_moved',
-           'Task "' || new.title || '" updated'
-    from project_members
-    where project_id = new.project_id
-    and user_id != auth.uid();
-  end if;
+-- Tasks
+create policy "Members see tasks" on tasks for select using (exists (
+  select 1 from project_members where project_id = tasks.project_id and user_id = auth.uid()
+));
+create policy "Members modify tasks" on tasks for all using (exists (
+  select 1 from project_members where project_id = tasks.project_id and user_id = auth.uid()
+));
 
-  return new;
-end;
-$$ language plpgsql security definer;
+-- Notifications
+create policy "Users view notifications" on notifications for select using (user_id = auth.uid());
 
-create trigger on_task_update
-after update on tasks
-for each row
-execute function notify_task_update();
+-- 6. ENABLE REALTIME
+create publication supabase_realtime for table projects, tasks, notifications;
