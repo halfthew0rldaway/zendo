@@ -168,7 +168,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       .insert({
         name: data.name,
         description: data.description,
-        pin: data.pin ?? null,
+        pin_hash: data.pin ?? null,
         icon: data.icon,
         icon_bg: data.iconBg,
         owner_id: currentUserId,

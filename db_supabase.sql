@@ -82,20 +82,44 @@ alter table notifications enable row level security;
 create policy "Profiles viewable by everyone" on profiles for select using (true);
 create policy "Users update own profile" on profiles for update using (auth.uid() = id);
 
--- Projects
-create policy "Auth users create projects" on projects for insert with check (auth.uid() is not null);
-create policy "Owners do everything on projects" on projects for all using (auth.uid() = owner_id);
-create policy "Members view projects" on projects for select using (
+-- Project Members (Dependencies broken from projects table to prevent recursion)
+create policy "Memberships viewable by participants" on project_members for select using (
+  user_id = auth.uid() or
+  exists (select 1 from project_members pm where pm.project_id = project_members.project_id and pm.user_id = auth.uid())
+);
+
+create policy "Users can add memberships" on project_members for insert with check (
+  user_id = auth.uid() or 
+  exists (select 1 from project_members pm where pm.project_id = project_members.project_id and pm.user_id = auth.uid() and pm.role = 'owner')
+);
+
+create policy "Users can update memberships" on project_members for update using (
+  exists (select 1 from project_members pm where pm.project_id = project_members.project_id and pm.user_id = auth.uid() and pm.role = 'owner')
+);
+
+create policy "Users can delete memberships" on project_members for delete using (
+  user_id = auth.uid() or 
+  exists (select 1 from project_members pm where pm.project_id = project_members.project_id and pm.user_id = auth.uid() and pm.role = 'owner')
+);
+
+-- Projects (Safely depends on project_members without infinite loops)
+create policy "Projects view" on projects for select using (
+  owner_id = auth.uid() or 
   exists (select 1 from project_members where project_id = projects.id and user_id = auth.uid())
 );
 
--- Members
-create policy "Users see memberships" on project_members for select using (user_id = auth.uid() or exists (
-  select 1 from projects where id = project_id and owner_id = auth.uid()
-));
-create policy "Owners add members" on project_members for insert with check (exists (
-  select 1 from projects where id = project_id and owner_id = auth.uid()
-) or auth.uid() = user_id);
+create policy "Projects insert" on projects for insert with check (
+  auth.uid() is not null
+);
+
+create policy "Projects update" on projects for update using (
+  owner_id = auth.uid() or 
+  exists (select 1 from project_members where project_id = projects.id and user_id = auth.uid() and role = 'owner')
+);
+
+create policy "Projects delete" on projects for delete using (
+  owner_id = auth.uid()
+);
 
 -- Tasks
 create policy "Members see tasks" on tasks for select using (exists (
@@ -109,4 +133,5 @@ create policy "Members modify tasks" on tasks for all using (exists (
 create policy "Users view notifications" on notifications for select using (user_id = auth.uid());
 
 -- 6. ENABLE REALTIME
-create publication supabase_realtime for table projects, tasks, notifications;
+DROP PUBLICATION IF EXISTS supabase_realtime;
+CREATE PUBLICATION supabase_realtime FOR TABLE projects, tasks, notifications;
