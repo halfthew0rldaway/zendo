@@ -2,6 +2,9 @@ import { ProjectProvider } from "../lib/store";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
+// Force dynamic rendering so Supabase env vars are available at request time, not build time
+export const dynamic = "force-dynamic";
+
 export default function ProjectsLayout({
   children,
 }: {
