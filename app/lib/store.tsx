@@ -177,7 +177,9 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       .single();
 
     if (error || !row) {
-      console.error("Project creation error:", error?.message, error?.details);
+      const msg = error?.message || "Unknown error";
+      console.error("Project creation error:", error);
+      alert("Project Create Failed: " + msg + "\nDetails: " + (error as any)?.details);
       return null;
     }
 
