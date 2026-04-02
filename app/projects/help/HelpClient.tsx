@@ -15,11 +15,11 @@ export default function HelpClient() {
   return (
     <div className="px-10 py-10 flex-grow max-w-4xl">
       <div className="mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
           Help & FAQ
         </h1>
         <p className="text-[#4d626c] text-base">
-          Answers to common questions about Architect Project Studio.
+          Answers to common questions about Architect Zendo.
         </p>
       </div>
 

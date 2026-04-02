@@ -99,7 +99,7 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
 
       <h4
         className={`font-bold text-[#2b3437] mb-2 ${task.status === "done" ? "line-through text-[#586064]" : ""}`}
-        style={{ fontFamily: "Manrope, sans-serif" }}
+        style={{ fontFamily: "Outfit, sans-serif" }}
       >
         {task.title}
       </h4>
@@ -210,7 +210,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
               </span>
               <h2
                 className="text-3xl font-extrabold tracking-tight text-[#2b3437]"
-                style={{ fontFamily: "Manrope, sans-serif" }}
+                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 {project.name}
               </h2>
@@ -268,7 +268,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                     className={`font-bold text-sm tracking-wide uppercase ${
                       col.id === "done" ? "text-[#4d626c]" : "text-[#2b3437]"
                     }`}
-                    style={{ fontFamily: "Manrope, sans-serif" }}
+                    style={{ fontFamily: "Outfit, sans-serif" }}
                   >
                     {col.title}
                   </h3>

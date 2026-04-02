@@ -22,7 +22,7 @@ export default function ArchivedClient() {
   return (
     <div className="px-10 py-10 flex-grow">
       <div className="mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
           Archived
         </h1>
         <p className="text-[#4d626c] text-base">
@@ -33,7 +33,7 @@ export default function ArchivedClient() {
       {archivedProjects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-4">
           <span className="material-symbols-outlined text-5xl text-[#abb3b7]">archive</span>
-          <p className="font-bold text-[#2b3437]" style={{ fontFamily: "Manrope, sans-serif" }}>No archived projects yet</p>
+          <p className="font-bold text-[#2b3437]" style={{ fontFamily: "Outfit, sans-serif" }}>No archived projects yet</p>
           <p className="text-sm text-[#586064]">Projects appear here once all their tasks are marked done.</p>
         </div>
       ) : (
@@ -55,7 +55,7 @@ export default function ArchivedClient() {
                   Completed
                 </span>
               </div>
-              <h3 className="font-bold text-xl text-[#2b3437] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>
+              <h3 className="font-bold text-xl text-[#2b3437] mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>
                 {project.name}
               </h3>
               <p className="text-[#586064] text-sm line-clamp-2 mb-4">{project.description}</p>

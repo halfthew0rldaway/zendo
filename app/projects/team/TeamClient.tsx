@@ -54,7 +54,7 @@ function MemberCard({ member, onRemove, onEdit }: {
       </div>
 
       <div>
-        <h3 className="font-bold text-[#2b3437] text-base" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h3 className="font-bold text-[#2b3437] text-base" style={{ fontFamily: "Outfit, sans-serif" }}>
           {member.name}
         </h3>
         <p className="text-sm text-[#586064]">{member.role}</p>
@@ -107,7 +107,7 @@ function MemberFormModal({
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
       <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl" style={{ boxShadow: "0 24px 48px rgba(43,52,55,0.12)" }}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-bold text-lg text-[#2b3437]" style={{ fontFamily: "Manrope, sans-serif" }}>
+          <h2 className="font-bold text-lg text-[#2b3437]" style={{ fontFamily: "Outfit, sans-serif" }}>
             {initial ? "Edit Member" : "Add Member"}
           </h2>
           <button className="p-1 hover:bg-[#e3e9ec] rounded-full transition-colors" onClick={onClose}>
@@ -224,7 +224,7 @@ export default function TeamClient() {
       {/* Header */}
       <div className="mb-10 flex items-end justify-between">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+          <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
             Team
           </h1>
           <p className="text-[#4d626c] text-base">

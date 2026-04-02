@@ -31,8 +31,8 @@ export default function Sidebar() {
           </span>
         </div>
         <div>
-          <div className="font-bold text-lg text-slate-900" style={{ fontFamily: "Manrope, sans-serif" }}>
-            Project io
+          <div className="font-bold text-lg text-slate-900 tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+            ZENDO
           </div>
         </div>
       </div>

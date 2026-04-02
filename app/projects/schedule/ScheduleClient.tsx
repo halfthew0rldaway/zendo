@@ -103,7 +103,7 @@ export default function ScheduleClient() {
     <div className="px-10 py-10 flex-grow">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
           Schedule
         </h1>
         <p className="text-[#4d626c] text-base">
@@ -123,7 +123,7 @@ export default function ScheduleClient() {
               <span className="material-symbols-outlined">{stat.icon}</span>
             </div>
             <div>
-              <p className="text-2xl font-extrabold text-[#2b3437]" style={{ fontFamily: "Manrope, sans-serif" }}>{stat.value}</p>
+              <p className="text-2xl font-extrabold text-[#2b3437]" style={{ fontFamily: "Outfit, sans-serif" }}>{stat.value}</p>
               <p className="text-[11px] text-[#737c7f] font-medium">{stat.label}</p>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function ScheduleClient() {
               <div key={col.id}>
                 <div className="flex items-center gap-2 mb-3">
                   <span className={`material-symbols-outlined text-lg ${s.text}`}>{col.icon}</span>
-                  <h2 className="font-bold text-sm uppercase tracking-wider text-[#2b3437]" style={{ fontFamily: "Manrope, sans-serif" }}>
+                  <h2 className="font-bold text-sm uppercase tracking-wider text-[#2b3437]" style={{ fontFamily: "Outfit, sans-serif" }}>
                     {col.title}
                   </h2>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${s.bg} ${s.text}`}>

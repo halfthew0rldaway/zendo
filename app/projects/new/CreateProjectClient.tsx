@@ -54,11 +54,14 @@ export default function CreateProjectClient() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    setSubmitting(true);
 
-    const project = addProject({
+    const project = await addProject({
       name: name.trim(),
       description: description.trim(),
       pin: pin.trim() || null,
@@ -66,7 +69,12 @@ export default function CreateProjectClient() {
       iconBg,
     });
 
-    router.push(`/projects/${project.id}/board`);
+    if (project) {
+      router.push(`/projects/${project.id}/board`);
+    } else {
+      setErrors({ name: "Failed to create project. Please try again." });
+      setSubmitting(false);
+    }
   };
 
   const selectedColor = COLOR_OPTIONS.find((c) => c.value === iconBg);
@@ -86,7 +94,7 @@ export default function CreateProjectClient() {
           <div className="mb-10 text-center sm:text-left">
             <h1
               className="font-extrabold text-4xl tracking-tight text-[#2b3437] mb-3"
-              style={{ fontFamily: "Manrope, sans-serif" }}
+              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Initialize Project
             </h1>

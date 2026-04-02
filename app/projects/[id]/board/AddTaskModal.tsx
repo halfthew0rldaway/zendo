@@ -81,7 +81,7 @@ export default function AddTaskModal({
         <div className="flex items-center justify-between mb-6">
           <h2
             className="font-bold text-lg text-[#2b3437]"
-            style={{ fontFamily: "Manrope, sans-serif" }}
+            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             Add Task
           </h2>

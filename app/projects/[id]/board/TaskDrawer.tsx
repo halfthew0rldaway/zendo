@@ -100,7 +100,7 @@ export default function TaskDrawer({
             <input
               autoFocus
               className="text-3xl font-extrabold text-[#2b3437] mb-6 w-full bg-transparent border-b-2 border-[#0c56d0] outline-none pb-1"
-              style={{ fontFamily: "Manrope, sans-serif" }}
+              style={{ fontFamily: "Outfit, sans-serif" }}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onBlur={handleTitleSave}
@@ -109,7 +109,7 @@ export default function TaskDrawer({
           ) : (
             <h2
               className="text-3xl font-extrabold text-[#2b3437] mb-6 cursor-pointer hover:text-[#0c56d0] transition-colors"
-              style={{ fontFamily: "Manrope, sans-serif" }}
+              style={{ fontFamily: "Outfit, sans-serif" }}
               onClick={() => setEditingTitle(true)}
               title="Click to edit"
             >

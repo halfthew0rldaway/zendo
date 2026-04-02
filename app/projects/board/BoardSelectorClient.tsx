@@ -50,7 +50,7 @@ function BoardProjectCard({ project }: { project: Project }) {
       </div>
 
       <div>
-        <h3 className="font-bold text-xl text-[#2b3437] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h3 className="font-bold text-xl text-[#2b3437] mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>
           {project.name}
         </h3>
         <p className="text-[#586064] text-sm line-clamp-2">{project.description}</p>
@@ -110,7 +110,7 @@ export default function BoardSelectorClient() {
   return (
     <div className="px-10 py-10 flex-grow">
       <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
           Kanban Boards
         </h1>
         <p className="text-[#4d626c] text-base max-w-md">

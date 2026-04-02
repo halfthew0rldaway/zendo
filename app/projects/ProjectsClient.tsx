@@ -62,7 +62,7 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
 
       <div>
-        <h3 className="font-bold text-xl text-[#2b3437] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h3 className="font-bold text-xl text-[#2b3437] mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>
           {project.name}
         </h3>
         <p className="text-[#586064] text-sm line-clamp-2">{project.description}</p>
@@ -109,7 +109,7 @@ function EmptyState() {
         <span className="material-symbols-outlined text-4xl">folder_open</span>
       </div>
       <div className="text-center">
-        <p className="font-bold text-[#2b3437] text-lg mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>No Projects Yet</p>
+        <p className="font-bold text-[#2b3437] text-lg mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>No Projects Yet</p>
         <p className="text-sm text-[#586064]">Create your first project to get started.</p>
       </div>
       <Link href="/projects/new" className="primary-gradient text-white px-6 py-3 rounded-full font-semibold text-sm shadow-lg active:scale-95 transition-transform">
@@ -148,7 +148,7 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="mb-10 flex justify-between items-end flex-wrap gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+          <h1 className="text-4xl font-extrabold tracking-tight text-[#2b3437] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
             Projects
           </h1>
           <p className="text-[#4d626c] text-base max-w-md">
@@ -232,7 +232,7 @@ export default function ProjectsPage() {
                 <span className="material-symbols-outlined text-[32px]">add_circle</span>
               </div>
               <div className="text-center">
-                <span className="block font-bold text-lg text-[#586064]" style={{ fontFamily: "Manrope, sans-serif" }}>New Canvas</span>
+                <span className="block font-bold text-lg text-[#586064]" style={{ fontFamily: "Outfit, sans-serif" }}>New Canvas</span>
                 <span className="text-xs text-[#737c7f]">Start from a template or blank</span>
               </div>
             </Link>

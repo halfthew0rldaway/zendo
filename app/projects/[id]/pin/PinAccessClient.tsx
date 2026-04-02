@@ -74,7 +74,7 @@ export default function PinAccessClient({ projectId }: PinAccessClientProps) {
         <div className="text-center mb-10">
           <h1
             className="font-black text-4xl tracking-tighter text-[#0c56d0] mb-2"
-            style={{ fontFamily: "Manrope, sans-serif" }}
+            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             Architect
           </h1>
@@ -96,7 +96,7 @@ export default function PinAccessClient({ projectId }: PinAccessClientProps) {
             </div>
             <h2
               className="font-bold text-2xl text-[#2b3437] tracking-tight"
-              style={{ fontFamily: "Manrope, sans-serif" }}
+              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Unlock Project
             </h2>

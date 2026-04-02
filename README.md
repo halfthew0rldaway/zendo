@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="https://raw.githubusercontent.com/google/material-design-icons/master/symbols/web/architecture/materialsymbolslight/architecture_48px.svg" width="80" height="80" alt="Zendo Logo" />
+</p>
 
-## Getting Started
+<h1 align="center">ZENDO</h1>
 
-First, run the development server:
+<p align="center">
+  <strong>Elite Project Management for the Modern Architect</strong><br />
+  A Zen-inspired workspace for high-precision project planning and development pipelines.
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<p align="center">
+  <img src="https://img.shields.io/badge/Stack-Next.js%2016-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/CSS-Tailwind%20v4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Language-TypeScript-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Design-Stitch-E33E7F?style=for-the-badge" alt="Stitch" />
+</p>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Zendo** is a ultra-refined project management application designed for precision. Born from a minimalist aesthetic and powered by a robust Next.js 16 core, Zendo provides a distraction-free environment to manage architectural blueprints, software development, or any high-stakes development pipeline.
 
-## Learn More
+It features a modular Kanban board, security PIN-protected projects, and a comprehensive team management suite—all wrapped in a premium, fluid interface.
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Key Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 💎 **Elite UI/UX**: Built with the **Stitch design system** using **Outfit** and **Inter** typography for a premium, lightweight feel.
+- 🏗️ **Modular Kanban**: Drag-and-drop task management across customizable pipeline stages (To Do, In Progress, Review, Testing, Done).
+- 🔒 **Security First**: Per-project PIN protection for sensitive development tracks.
+- 📊 **Global Schedule**: A centralized hub to view all active tasks across all accessible projects.
+- 👥 **Team Management**: Dedicated workspace to manage members, roles, and collaboration.
+- 🌓 **Dynamic Themes**: Precision-tuned color palettes (Blue, Teal, Purple) for individual project identification.
+- 📁 **Task Drawers**: High-density task details including checklists, attachments, and testing notes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Technology Stack
 
-## Deploy on Vercel
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) (CSS-first configuration)
+- **Icons**: [Material Symbols](https://fonts.google.com/icons)
+- **State**: React Context API with LocalStorage persistence (Seed data ready)
+- **Platform**: Optimized for **Vercel** deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎬 Getting Started
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Prerequisites
+
+- Node.js 18+
+- npm / pnpm / yarn
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/zendo.git
+   cd zendo
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Professional production build:
+   ```bash
+   npm run build
+   ```
+
+## 🗺️ Roadmap & Future Updates
+
+Zendo is evolving. Upcoming milestones include:
+- **Supabase Integration**: Move from LocalStorage to a cloud-native PostgreSQL backend.
+- **Team Collaboration**: Invitation-based project sharing and role-based access control.
+- **Real-time Notifications**: Instant alerts when team members update common goals.
+- **Enhanced Security**: OAuth2 and multi-factor authentication.
+
+---
+
+<p align="center">
+  Built with precision by <strong>Architect</strong>.
+</p>

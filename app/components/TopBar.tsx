@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useProjects } from "../lib/store";
 
@@ -58,7 +58,7 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
       style={{ boxShadow: "0 16px 40px rgba(43,52,55,0.12)" }}
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#f1f4f6]">
-        <h3 className="font-bold text-[#2b3437] text-sm" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h3 className="font-bold text-[#2b3437] text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>
           Notifications
         </h3>
         <span className="text-[10px] font-bold bg-[#0c56d0] text-white px-2 py-0.5 rounded-full">
@@ -115,7 +115,7 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
 function SettingsPanel({ onClose }: { onClose: () => void }) {
   const { resetData } = useProjects();
   const ref = useRef<HTMLDivElement>(null);
-  const [appName, setAppName] = useState("Project io");
+  const [appName, setAppName] = useState("Zendo");
   const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
@@ -150,7 +150,7 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
       style={{ boxShadow: "0 16px 40px rgba(43,52,55,0.12)" }}
     >
       <div className="px-5 py-4 border-b border-[#f1f4f6]">
-        <h3 className="font-bold text-[#2b3437] text-sm" style={{ fontFamily: "Manrope, sans-serif" }}>
+        <h3 className="font-bold text-[#2b3437] text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>
           Settings
         </h3>
       </div>
@@ -225,22 +225,35 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
 
 export default function TopBar({ showSearch = true, searchPlaceholder = "Search projects..." }: { showSearch?: boolean; searchPlaceholder?: string }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut, currentUserId } = useProjects();
   const [notifOpen, setNotifOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const avatarRef = useRef<HTMLDivElement>(null);
 
-  const navLinks = [
-    { label: "Dashboard", href: "/projects" },
-    { label: "Projects", href: "/projects" },
-    { label: "Kanban", href: "/projects/board" },
-  ];
+  // Close avatar menu on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) setAvatarOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
-  const isActive = (href: string) => pathname.startsWith(href) && href !== "#";
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+  };
+
+  // Derive initials from userId as fallback
+  const initials = currentUserId ? currentUserId.slice(0, 2).toUpperCase() : "?";
 
   return (
     <header className="bg-[#f8f9fa] flex justify-between items-center w-full px-10 py-4 sticky top-0 z-40 border-b border-slate-100">
       <div className="flex items-center gap-8">
-        <span className="text-2xl font-black tracking-tighter text-[#0c56d0] opacity-0 pointer-events-none" style={{ fontFamily: "Manrope, sans-serif" }}>
-          Architect
+        <span className="text-2xl font-black tracking-tighter text-[#0c56d0] opacity-0 pointer-events-none" style={{ fontFamily: "Outfit, sans-serif" }}>
+          ZENDO
         </span>
         <nav className="hidden md:flex gap-6">
           <Link href="/projects" className={`font-medium transition-all duration-300 text-sm ${pathname === "/projects" ? "text-[#0c56d0] font-bold border-b-2 border-[#0c56d0] pb-1" : "text-slate-500 hover:text-[#0c56d0]"}`}>
@@ -290,9 +303,29 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
             {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
           </div>
 
-          {/* Avatar */}
-          <div className="ml-1 w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold cursor-pointer active:scale-95 transition-transform shadow-sm">
-            JD
+          {/* Avatar + sign out */}
+          <div ref={avatarRef} className="relative ml-1">
+            <button
+              className="w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold active:scale-95 transition-transform shadow-sm"
+              onClick={() => setAvatarOpen(v => !v)}
+            >
+              {initials}
+            </button>
+            {avatarOpen && (
+              <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-[#abb3b7]/20 overflow-hidden z-50 min-w-[160px]">
+                <div className="px-4 py-3 border-b border-[#f1f4f6]">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#737c7f]">Signed in</p>
+                  <p className="text-xs text-[#2b3437] font-medium truncate">{currentUserId?.slice(0, 8)}...</p>
+                </div>
+                <button
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-[#9f403d] hover:bg-[#fe8983]/10 transition-colors font-semibold"
+                  onClick={handleSignOut}
+                >
+                  <span className="material-symbols-outlined text-lg">logout</span>
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
