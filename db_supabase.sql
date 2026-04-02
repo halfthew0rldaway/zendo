@@ -33,7 +33,7 @@ create table project_members (
   id uuid default uuid_generate_v4() primary key,
   project_id uuid references projects(id) on delete cascade,
   user_id uuid references auth.users on delete cascade,
-  role text default 'member' check (role in ('owner', 'member')),
+  role text default 'member' check (role in ('owner', 'member', 'viewer')),
   joined_at timestamp with time zone default now(),
   unique(project_id, user_id)
 );
@@ -104,3 +104,9 @@ CREATE PUBLICATION supabase_realtime FOR TABLE projects, tasks, notifications;
 -- ─────────────────────────────────────────────────────────────────────────────
 -- ALTER TABLE projects ADD COLUMN IF NOT EXISTS due_date timestamp with time zone;
 -- ALTER TABLE tasks    ADD COLUMN IF NOT EXISTS due_date timestamp with time zone;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- MIGRATION: Update check constraint for roles on project_members table
+-- ─────────────────────────────────────────────────────────────────────────────
+-- ALTER TABLE project_members DROP CONSTRAINT IF EXISTS project_members_role_check;
+-- ALTER TABLE project_members ADD CONSTRAINT project_members_role_check CHECK (role IN ('owner', 'member', 'viewer'));

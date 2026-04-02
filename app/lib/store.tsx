@@ -34,6 +34,7 @@ interface ProjectStore {
   addMember: (member: Omit<TeamMember, "id" | "joinedAt">) => void;
   removeMember: (id: string) => void;
   updateMember: (id: string, updates: Partial<TeamMember>) => void;
+  inviteUserToProject: (projectId: string, username: string, role: string) => Promise<{ success: boolean; error?: string }>;
   resetData: () => void;
   signOut: () => Promise<void>;
 }
@@ -336,6 +337,45 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     setMembers((prev) => prev.map((m) => m.id === id ? { ...m, ...updates } : m));
   }, []);
 
+  const inviteUserToProject = useCallback(async (projectId: string, username: string, role: string) => {
+    // Lookup user by username
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("username", username)
+      .single();
+
+    if (profileError || !profile) {
+      return { success: false, error: "User not found" };
+    }
+
+    // Map UI role to DB role, assuming DB accepts 'owner', 'member', 'viewer'
+    let dbRole = "member";
+    if (role === "Admin") dbRole = "owner";
+    if (role === "Viewer") dbRole = "viewer";
+
+    // Insert into project_members
+    const { error: insertError } = await supabase
+      .from("project_members")
+      .insert({
+        project_id: projectId,
+        user_id: profile.id,
+        role: dbRole
+      });
+
+    if (insertError) {
+      if (insertError.code === '23505') { // Unique violation
+        return { success: false, error: "User is already a member" };
+      }
+      return { success: false, error: insertError.message };
+    }
+
+    // Increment member count in local state just so UI reflects immediately if we care, or trigger an update
+    setProjects((prev) => prev.map((p) => p.id === projectId ? { ...p, memberCount: p.memberCount + 1 } : p));
+    
+    return { success: true };
+  }, []);
+
   const resetData = useCallback(() => {
     setProjects([]);
     setMembers([]);
@@ -354,7 +394,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       projects, members, unlockedProjectIds, currentUserId, currentProfile, loading,
       addProject, updateProject, deleteProject, unlockProject,
       addTask, updateTask, deleteTask, moveTask,
-      addMember, removeMember, updateMember, resetData, signOut,
+      addMember, removeMember, updateMember, inviteUserToProject, resetData, signOut,
     }}>
       {children}
     </ProjectContext.Provider>

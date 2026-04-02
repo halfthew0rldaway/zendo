@@ -11,21 +11,26 @@ interface InviteModalProps {
 export default function InviteModal({ projectId, onClose }: InviteModalProps) {
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("Member");
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const { updateProject, projects } = useProjects();
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { inviteUserToProject, projects } = useProjects();
   const project = projects.find(p => p.id === projectId);
 
-  const handleInvite = (e: React.FormEvent) => {
+  const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !project) return;
     setStatus("loading");
+    setErrorMessage("");
 
-    // Simulate network delay and update member count
-    setTimeout(() => {
-      updateProject(projectId, { memberCount: project.memberCount + 1 });
+    const result = await inviteUserToProject(projectId, username, role);
+    
+    if (result.success) {
       setStatus("success");
       setTimeout(onClose, 1500);
-    }, 800);
+    } else {
+      setStatus("error");
+      setErrorMessage(result.error || "An error occurred");
+    }
   };
 
   return (
@@ -53,6 +58,11 @@ export default function InviteModal({ projectId, onClose }: InviteModalProps) {
           </div>
         ) : (
           <form onSubmit={handleInvite} className="space-y-4">
+            {status === "error" && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-medium border border-red-200">
+                {errorMessage}
+              </div>
+            )}
             <div>
               <label className="text-xs font-semibold text-[#586064] block mb-1">Username</label>
               <div className="relative">
