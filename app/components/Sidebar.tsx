@@ -10,12 +10,12 @@ export default function Sidebar({ className }: { className?: string }) {
     { href: "/projects", icon: "grid_view", label: "Projects", exact: true, fill: true },
     { href: "/projects/board", icon: "view_kanban", label: "Board", fill: true },
     { href: "/projects/schedule", icon: "calendar_month", label: "Calendar", fill: true },
-    { href: "/projects/team", icon: "group", label: "Team", fill: true },
+    { href: "/projects/analytics", icon: "monitoring", label: "Analytics", fill: true },
   ];
 
   const isActive = (item: typeof navItems[0]) => {
     if (item.exact) {
-      return pathname === "/projects" || /^\/projects\/(?!board|schedule|team|new)[^/]/.test(pathname);
+      return pathname === "/projects" || /^\/projects\/(?!board|schedule|analytics|new)[^/]/.test(pathname);
     }
     return pathname.startsWith(item.href);
   };

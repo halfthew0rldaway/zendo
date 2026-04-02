@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from "react";
 import { createClient } from "../../utils/supabase/client";
-import { Project, Task, TaskStatus, TeamMember } from "../types";
+import { Project, Task, TaskStatus, ProjectMember } from "../types";
 
 export interface UserProfile {
   username: string;
@@ -18,7 +18,6 @@ export interface UserProfile {
 
 interface ProjectStore {
   projects: Project[];
-  members: TeamMember[];
   unlockedProjectIds: Set<string>;
   currentUserId: string | null;
   currentProfile: UserProfile | null;
@@ -31,9 +30,6 @@ interface ProjectStore {
   updateTask: (projectId: string, taskId: string, updates: Partial<Task>) => Promise<void>;
   deleteTask: (projectId: string, taskId: string) => Promise<void>;
   moveTask: (projectId: string, taskId: string, newStatus: TaskStatus) => Promise<void>;
-  addMember: (member: Omit<TeamMember, "id" | "joinedAt">) => void;
-  removeMember: (id: string) => void;
-  updateMember: (id: string, updates: Partial<TeamMember>) => void;
   inviteUserToProject: (projectId: string, username: string, role: string) => Promise<{ success: boolean; error?: string }>;
   resetData: () => void;
   signOut: () => Promise<void>;
@@ -41,7 +37,7 @@ interface ProjectStore {
 
 const ProjectContext = createContext<ProjectStore | null>(null);
 
-function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = [], members: import("../types").ProjectMember[] = []): Project {
+function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = [], members: ProjectMember[] = []): Project {
   return {
     id: row.id as string,
     name: row.name as string,
@@ -52,7 +48,7 @@ function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = [], member
     dueDate: (row.due_date as string) ?? null,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
-    memberCount: (row.member_count as number) ?? members.length || 1,
+    memberCount: (row.member_count !== null && row.member_count !== undefined) ? (row.member_count as number) : (members.length || 1),
     tasks,
     members,
   };
@@ -79,7 +75,6 @@ function dbRowToTask(row: Record<string, unknown>): Task {
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [members, setMembers] = useState<TeamMember[]>([]);
   const [unlockedProjectIds, setUnlockedProjectIds] = useState<Set<string>>(new Set());
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
@@ -157,7 +152,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         `)
         .in("project_id", projectIds);
       
-      const membersByProject: Record<string, import("../types").ProjectMember[]> = {};
+      const membersByProject: Record<string, ProjectMember[]> = {};
       for (const row of allMembersRow ?? []) {
         const pid = row.project_id as string;
         if (!membersByProject[pid]) membersByProject[pid] = [];
@@ -364,19 +359,6 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Members — still managed locally for now (team page uses project_members join from DB)
-  const addMember = useCallback((data: Omit<TeamMember, "id" | "joinedAt">) => {
-    setMembers((prev) => [...prev, { ...data, id: `m-${Date.now()}`, joinedAt: new Date().toISOString() }]);
-  }, []);
-
-  const removeMember = useCallback((id: string) => {
-    setMembers((prev) => prev.filter((m) => m.id !== id));
-  }, []);
-
-  const updateMember = useCallback((id: string, updates: Partial<TeamMember>) => {
-    setMembers((prev) => prev.map((m) => m.id === id ? { ...m, ...updates } : m));
-  }, []);
-
   const inviteUserToProject = useCallback(async (projectId: string, username: string, role: string) => {
     // Lookup user by username
     const { data: profile, error: profileError } = await supabase
@@ -433,23 +415,21 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
   const resetData = useCallback(() => {
     setProjects([]);
-    setMembers([]);
   }, []);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setProjects([]);
-    setMembers([]);
     setCurrentUserId(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <ProjectContext.Provider value={{
-      projects, members, unlockedProjectIds, currentUserId, currentProfile, loading,
+      projects, unlockedProjectIds, currentUserId, currentProfile, loading,
       addProject, updateProject, deleteProject, unlockProject,
       addTask, updateTask, deleteTask, moveTask,
-      addMember, removeMember, updateMember, inviteUserToProject, resetData, signOut,
+      inviteUserToProject, resetData, signOut,
     }}>
       {children}
     </ProjectContext.Provider>

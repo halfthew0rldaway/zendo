@@ -67,13 +67,3 @@ export interface Project {
   memberCount: number;
   members: ProjectMember[];
 }
-
-export interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-  initials: string;
-  color: string;
-  joinedAt: string;
-}

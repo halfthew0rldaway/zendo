@@ -8,7 +8,7 @@ export default function HelpClient() {
     { q: "Can I move tasks between columns?", a: "Yes. You can drag and drop task cards across columns, or click on a task to open its detail drawer and change its status from the dropdown." },
     { q: "How does the Schedule view work?", a: "Schedule aggregates all tasks from all your accessible (unlocked) projects in one list. Use filters to narrow by status, priority, or specific project." },
     { q: "How do I export my data?", a: "Open Settings (gear icon in the top bar) and click 'Export data as JSON'. This downloads a backup file of all your projects and team members." },
-    { q: "How do I add team members?", a: "Go to the Team page via the sidebar. Click 'Add Member', fill in name, role, email, and pick an avatar color." },
+    { q: "How do I see project analytics?", a: "Go to the Analytics page via the sidebar. You can view total projects, tasks, completion rates, and individual progress breakdowns." },
     { q: "Is my data stored in the cloud?", a: "Currently all data is stored locally in your browser's localStorage. Use the Export feature to back up your data." },
   ];
 
@@ -27,7 +27,7 @@ export default function HelpClient() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {[
           { icon: "add_circle", title: "Create Project", desc: "Start a new project", href: "/projects/new" },
-          { icon: "group", title: "Manage Team", desc: "Add or edit members", href: "/projects/team" },
+          { icon: "monitoring", title: "View Analytics", desc: "Track project progress", href: "/projects/analytics" },
           { icon: "view_kanban", title: "Open Board", desc: "Jump to kanban view", href: "/projects/board" },
         ].map((item) => (
           <a
