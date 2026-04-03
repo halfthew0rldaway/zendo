@@ -33,6 +33,8 @@ export interface Task {
   attachments: Attachment[];
   testingStatus: "not_tested" | "passed" | "failed" | "under_review";
   testingNotes: string;
+  githubLink?: string;
+  assigneeId: string | null;
   assigneeInitials: string;
   assigneeName: string;
   dueDate: string | null;

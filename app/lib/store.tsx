@@ -69,6 +69,8 @@ function dbRowToTask(row: Record<string, unknown>): Task {
     attachments: (row.attachments as Task["attachments"]) ?? [],
     testingStatus: (row.testing_status as Task["testingStatus"]) ?? "not_tested",
     testingNotes: (row.testing_notes as string) ?? "",
+    githubLink: (row.github_link as string) ?? "",
+    assigneeId: (row.assignee_id as string) ?? null,
     assigneeInitials: (row.assignee_initials as string) ?? "?",
     assigneeName: (row.assignee_name as string) ?? "Unassigned",
     dueDate: (row.due_date as string) ?? null,
@@ -85,7 +87,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<any[]>([]);
 
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   // Load current user and their projects
   useEffect(() => {
@@ -313,6 +315,8 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         checklist: taskData.checklist,
         attachments: taskData.attachments,
         testing_notes: taskData.testingNotes,
+        github_link: taskData.githubLink,
+        assignee_id: taskData.assigneeId,
         assignee_name: taskData.assigneeName,
         assignee_initials: taskData.assigneeInitials,
         due_date: taskData.dueDate ?? null,
@@ -337,10 +341,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
   const updateTask = useCallback(async (projectId: string, taskId: string, updates: Partial<Task>) => {
     const dbUpdates: Record<string, unknown> = { 
-      updated_at: new Date().toISOString(),
-      assignee_id: currentUserId,
-      assignee_name: currentProfile?.username ?? "Anonymous",
-      assignee_initials: currentProfile?.username ? currentProfile.username.slice(0, 2).toUpperCase() : "??"
+      updated_at: new Date().toISOString()
     };
     if (updates.title !== undefined) dbUpdates.title = updates.title;
     if (updates.description !== undefined) dbUpdates.description = updates.description;
@@ -351,6 +352,11 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     if (updates.attachments !== undefined) dbUpdates.attachments = updates.attachments;
     if (updates.testingNotes !== undefined) dbUpdates.testing_notes = updates.testingNotes;
     if (updates.testingStatus !== undefined) dbUpdates.testing_status = updates.testingStatus;
+    if (updates.githubLink !== undefined) dbUpdates.github_link = updates.githubLink;
+    // Don't auto-override assignee on every update unless explicitly requested. 
+    // The instructions say "Update updated_at on every edit" but doesn't mention auto-assigning. 
+    // Let's only update if explicitly provided
+    if (updates.assigneeId !== undefined) dbUpdates.assignee_id = updates.assigneeId;
     if (updates.assigneeName !== undefined) dbUpdates.assignee_name = updates.assigneeName;
     if (updates.assigneeInitials !== undefined) dbUpdates.assignee_initials = updates.assigneeInitials;
     if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;

@@ -39,6 +39,8 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
   const [testingNotes, setTestingNotes] = useState(task.testingNotes || "");
   const [editingTitle, setEditingTitle] = useState(false);
   const [title, setTitle] = useState(task.title);
+  const [editingDesc, setEditingDesc] = useState(false);
+  const [desc, setDesc] = useState(task.description);
   const [newCheckItem, setNewCheckItem] = useState("");
   const [showAddCheck, setShowAddCheck] = useState(false);
   const [showAddAttachment, setShowAddAttachment] = useState(false);
@@ -111,6 +113,41 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
     updateTask(projectId, task.id, { testingStatus: newTestingStatus });
   };
 
+  const handleDescSave = () => {
+    updateTask(projectId, task.id, { description: desc.trim() });
+    setEditingDesc(false);
+  };
+  
+  const handlePriorityChange = (newPrio: Priority) => {
+    updateTask(projectId, task.id, { priority: newPrio });
+  };
+  
+  const handleAssigneeChange = (memberId: string) => {
+    if (!memberId) {
+      updateTask(projectId, task.id, { assigneeId: null, assigneeName: "Unassigned", assigneeInitials: "?" });
+      return;
+    }
+    const member = project?.members.find(m => m.id === memberId);
+    if (member) {
+      updateTask(projectId, task.id, { 
+        assigneeId: member.id, 
+        assigneeName: member.username, 
+        assigneeInitials: member.username.slice(0,2).toUpperCase() 
+      });
+    }
+  };
+
+  const handleRemoveCheckItem = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    updateTask(projectId, task.id, { checklist: task.checklist.filter(c => c.id !== id) });
+  };
+
+  const handleRemoveAttachment = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateTask(projectId, task.id, { attachments: task.attachments.filter(a => a.id !== id) });
+  };
+
   const filteredNotifications = notifications.filter(n => n.project_id === projectId).slice(0, 8);
 
   return (
@@ -169,7 +206,16 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                   <div className="w-9 h-9 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold shadow-inner">
                     {task.assigneeInitials}
                   </div>
-                  <span className="text-sm font-bold text-[#2b3437]">{task.assigneeName}</span>
+                  <select 
+                    className="flex-1 text-sm font-bold text-[#2b3437] bg-transparent outline-none cursor-pointer"
+                    value={task.assigneeId || ""}
+                    onChange={e => handleAssigneeChange(e.target.value)}
+                  >
+                    <option value="">Unassigned</option>
+                    {project?.members.map(m => (
+                      <option key={m.id} value={m.id}>{m.username}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -177,7 +223,15 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                 <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-3">Priority</label>
                 <div className={`flex items-center gap-2 text-sm font-bold ${priority.color}`}>
                   <span className="material-symbols-outlined text-xl">{priority.icon}</span>
-                  {priority.label}
+                  <select 
+                    className="flex-1 font-bold bg-transparent outline-none cursor-pointer appearance-none"
+                    value={task.priority}
+                    onChange={e => handlePriorityChange(e.target.value as Priority)}
+                  >
+                    {Object.entries(PRIORITY_MAP).map(([val, p]) => (
+                      <option key={val} value={val} className="text-black">{p.label}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -195,15 +249,49 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
               </div>
             </div>
 
+            {/* GitHub Link */}
+            <div className="mb-10">
+              <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-lg">code</span>
+                GitHub Link
+              </h3>
+              <div className="bg-white p-3 rounded-2xl border border-[#eaeff1] flex items-center gap-3 shadow-sm hover:border-[#0c56d0]/40 transition-all">
+                <input
+                  className="flex-1 bg-transparent border-none text-sm outline-none text-[#586064] px-2"
+                  placeholder="Paste GitHub commit or PR link..."
+                  value={task.githubLink || ""}
+                  onChange={(e) => updateTask(projectId, task.id, { githubLink: e.target.value })}
+                />
+              </div>
+            </div>
+
             {/* Description Card */}
             <div className="mb-10 group">
               <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-lg">subject</span>
                 Description
               </h3>
-              <div className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm group-hover:shadow-md transition-shadow italic">
-                {task.description || "No description provided."}
-              </div>
+              {editingDesc ? (
+                <div className="bg-white p-6 rounded-2xl border border-[#0c56d0] shadow-sm transform transition-all">
+                  <textarea
+                    autoFocus
+                    className="w-full bg-transparent border-none rounded-xl text-sm p-0 outline-none min-h-[100px] resize-y text-[#586064]"
+                    value={desc}
+                    onChange={e => setDesc(e.target.value)}
+                    onBlur={handleDescSave}
+                  />
+                  <div className="flex justify-end mt-2">
+                     <button onClick={handleDescSave} className="text-xs text-white bg-[#0c56d0] px-3 py-1.5 rounded-lg font-bold">Save</button>
+                  </div>
+                </div>
+              ) : (
+                <div 
+                  className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm hover:shadow-md hover:border-[#0c56d0]/30 transition-all italic cursor-pointer min-h-[100px]"
+                  onClick={() => { setDesc(task.description || ""); setEditingDesc(true); }}
+                >
+                  {task.description || "Click to add description..."}
+                </div>
+              )}
             </div>
 
             {/* Checklist */}
@@ -246,9 +334,15 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                     <div className={`w-5 h-5 border-2 rounded-md flex items-center justify-center transition-all ${item.done ? "bg-[#0c56d0] border-[#0c56d0] text-white shadow-lg shadow-[#0c56d0]/20" : "border-[#abb3b7] group-hover:border-[#0c56d0]"}`}>
                       {item.done && <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>check</span>}
                     </div>
-                    <span className={`text-[13px] font-medium transition-colors ${item.done ? "text-[#abb3b7] line-through" : "text-[#2b3437]"}`}>
+                    <span className={`text-[13px] font-medium transition-colors flex-1 ${item.done ? "text-[#abb3b7] line-through" : "text-[#2b3437]"}`}>
                       {item.text}
                     </span>
+                    <button 
+                      className="opacity-0 group-hover:opacity-100 p-1 text-[#abb3b7] hover:text-[#9f403d] hover:bg-[#fe8983]/10 rounded-lg transition-all"
+                      onClick={(e) => handleRemoveCheckItem(item.id, e)}
+                    >
+                      <span className="material-symbols-outlined text-sm">delete</span>
+                    </button>
                   </div>
                 )) : (
                   <p className="text-xs text-[#abb3b7] italic">No items yet</p>
@@ -291,15 +385,22 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {task.attachments?.length > 0 ? task.attachments.map((att) => (
-                  <a key={att.id} href={att.url} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 bg-white border border-[#eaeff1] rounded-2xl hover:border-[#0c56d0] hover:shadow-md transition-all group">
-                    <div className="w-11 h-11 bg-[#f1f4f6] rounded-xl flex items-center justify-center text-[#586064] group-hover:bg-[#dae2ff] group-hover:text-[#0c56d0] transition-colors">
+                  <div key={att.id} className="relative flex items-center gap-4 p-4 bg-white border border-[#eaeff1] rounded-2xl hover:border-[#0c56d0] hover:shadow-md transition-all group">
+                    <a href={att.url} target="_blank" rel="noreferrer" className="absolute inset-0 rounded-2xl z-0" />
+                    <div className="w-11 h-11 bg-[#f1f4f6] rounded-xl flex items-center justify-center text-[#586064] group-hover:bg-[#dae2ff] group-hover:text-[#0c56d0] transition-colors relative z-10 pointer-events-none">
                       <span className="material-symbols-outlined">{att.icon || 'link'}</span>
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1 relative z-10 pointer-events-none">
                       <p className="text-sm font-bold text-[#2b3437] truncate">{att.name}</p>
                       <p className="text-[10px] font-medium text-[#abb3b7] uppercase tracking-tight">{att.subtitle}</p>
                     </div>
-                  </a>
+                    <button 
+                      className="opacity-0 group-hover:opacity-100 p-2 text-[#abb3b7] hover:text-[#9f403d] hover:bg-[#fe8983]/10 rounded-xl transition-all relative z-20"
+                      onClick={(e) => handleRemoveAttachment(att.id, e)}
+                    >
+                      <span className="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                  </div>
                 )) : (
                   <p className="text-xs text-[#abb3b7] italic col-span-2">No attachments yet</p>
                 )}
