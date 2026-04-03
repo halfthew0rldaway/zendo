@@ -33,7 +33,7 @@ const TESTING_STATUS_OPTIONS: { value: Task["testingStatus"]; label: string; col
 ];
 
 export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps) {
-  const { updateTask, projects, notifications, currentUserId } = useProjects();
+  const { updateTask, updateProject, projects, notifications, currentUserId } = useProjects();
   const project = projects.find(p => p.id === projectId);
   
   const [testingNotes, setTestingNotes] = useState(task.testingNotes || "");
@@ -46,6 +46,12 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
   const [showAddAttachment, setShowAddAttachment] = useState(false);
   const [newAttName, setNewAttName] = useState("");
   const [newAttUrl, setNewAttUrl] = useState("");
+  
+  const [editingSprintGoal, setEditingSprintGoal] = useState(false);
+  const [sprintGoal, setSprintGoal] = useState(project?.sprintGoal || "");
+
+  const currentAssigneeMember = project?.members.find(m => m.id === task.assigneeId || (task.assigneeId === null && m.username === task.assigneeName));
+  const currentAssigneeId = currentAssigneeMember?.id || "";
 
   const priority = PRIORITY_MAP[task.priority];
   const completedItems = task.checklist?.filter((c) => c.done).length || 0;
@@ -116,6 +122,11 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
   const handleDescSave = () => {
     updateTask(projectId, task.id, { description: desc.trim() });
     setEditingDesc(false);
+  };
+  
+  const handleSprintGoalSave = () => {
+    updateProject(projectId, { sprintGoal: sprintGoal.trim() });
+    setEditingSprintGoal(false);
   };
   
   const handlePriorityChange = (newPrio: Priority) => {
@@ -204,11 +215,11 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                 <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-3">Assignee</label>
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold shadow-inner">
-                    {task.assigneeInitials}
+                    {currentAssigneeMember ? currentAssigneeMember.username.slice(0,2).toUpperCase() : task.assigneeInitials}
                   </div>
                   <select 
                     className="flex-1 text-sm font-bold text-[#2b3437] bg-transparent outline-none cursor-pointer"
-                    value={task.assigneeId || ""}
+                    value={currentAssigneeId}
                     onChange={e => handleAssigneeChange(e.target.value)}
                   >
                     <option value="">Unassigned</option>
@@ -475,11 +486,32 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
           </div>
 
           <div className="mt-auto p-8 border-t border-[#eaeff1] bg-[#f8f9fa]/50">
-             <div className="bg-white p-5 rounded-2xl border border-dashed border-[#eaeff1]">
-                <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-2">Sprint Goal</label>
-                <p className="text-[11px] leading-relaxed text-[#586064] font-medium">
-                  {project?.sprintGoal || "No sprint goal defined for this project."}
-                </p>
+             <div className="bg-white p-5 rounded-2xl border border-dashed border-[#eaeff1] hover:border-[#0c56d0]/30 transition-colors">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block">Sprint Goal</label>
+                  {!editingSprintGoal && (
+                    <button onClick={() => setEditingSprintGoal(true)} className="text-[#abb3b7] hover:text-[#0c56d0]">
+                      <span className="material-symbols-outlined text-sm">edit</span>
+                    </button>
+                  )}
+                </div>
+                {editingSprintGoal ? (
+                  <div>
+                    <textarea 
+                      autoFocus
+                      className="w-full bg-transparent border border-[#eaeff1] rounded text-[11px] leading-relaxed text-[#586064] outline-none focus:border-[#0c56d0] p-2 resize-y h-16 shadow-inner"
+                      value={sprintGoal}
+                      onChange={e => setSprintGoal(e.target.value)}
+                    />
+                    <div className="flex justify-end mt-2">
+                       <button onClick={handleSprintGoalSave} className="text-[10px] text-white bg-[#0c56d0] px-2 py-1 rounded font-bold shadow-sm">Save</button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-[11px] leading-relaxed text-[#586064] font-medium" onClick={() => setEditingSprintGoal(true)}>
+                    {project?.sprintGoal || "No sprint goal defined for this project. Click to add one."}
+                  </p>
+                )}
              </div>
           </div>
         </div>

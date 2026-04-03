@@ -361,7 +361,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
       {/* Task Drawer */}
       {selectedTask && (
         <TaskDrawer
-          task={selectedTask}
+          task={project.tasks.find(t => t.id === selectedTask.id) || selectedTask}
           projectId={projectId}
           onClose={() => setSelectedTask(null)}
         />
