@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Task, Priority, TaskStatus, ChecklistItem, Attachment } from "../../../types";
 import { useProjects } from "../../../lib/store";
+import { getUserColor } from "../../../lib/avatarColors";
 
 interface TaskDrawerProps {
   task: Task;
@@ -162,8 +163,8 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
   const filteredNotifications = notifications.filter(n => n.project_id === projectId).slice(0, 8);
 
   return (
-    <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-50 flex justify-end">
-      <div className="w-full max-w-[1000px] bg-white h-full shadow-2xl flex border-l border-[#eaeff1]">
+    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-[100] flex justify-end md:p-4">
+      <div className="w-full max-w-[1000px] h-full bg-white md:rounded-2xl shadow-2xl flex flex-col md:flex-row md:overflow-hidden overflow-y-auto">
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col bg-[#f8f9fa] overflow-hidden">
           {/* Header */}
@@ -187,7 +188,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-8 pb-12 hide-scrollbar">
+          <div className="flex-1 overflow-y-auto px-5 md:px-8 pb-12 hide-scrollbar">
             {/* Title */}
             {editingTitle ? (
               <input
@@ -214,7 +215,10 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
               <div className="bg-white p-4 rounded-2xl border border-[#eaeff1] shadow-sm hover:shadow-md transition-shadow">
                 <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-3">Assignee</label>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold shadow-inner">
+                  <div 
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-inner"
+                    style={{ backgroundColor: currentAssigneeMember ? getUserColor(currentAssigneeMember.username) : "#0c56d0" }}
+                  >
                     {currentAssigneeMember ? currentAssigneeMember.username.slice(0,2).toUpperCase() : task.assigneeInitials}
                   </div>
                   <select 
@@ -263,7 +267,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             {/* GitHub Link */}
             <div className="mb-10">
               <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-lg">code</span>
+                <span className="material-symbols-outlined text-lg text-[#181717]">code</span>
                 GitHub Link
               </h3>
               <div className="bg-white p-3 rounded-2xl border border-[#eaeff1] flex items-center gap-3 shadow-sm hover:border-[#0c56d0]/40 transition-all">
@@ -279,7 +283,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             {/* Description Card */}
             <div className="mb-10 group">
               <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-lg">subject</span>
+                <span className="material-symbols-outlined text-lg text-[#0c56d0]">subject</span>
                 Description
               </h3>
               {editingDesc ? (
@@ -309,7 +313,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             <div className="mb-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg">checklist</span>
+                  <span className="material-symbols-outlined text-lg text-[#059669]">checklist</span>
                   Checklist
                 </h3>
                 <div className="flex items-center gap-4">
@@ -365,7 +369,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             <div className="mb-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg">attachment</span>
+                  <span className="material-symbols-outlined text-lg text-[#d97706]">attachment</span>
                   Attachments
                 </h3>
                  <button 
@@ -421,7 +425,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             {/* Testing Notes Card */}
             <div>
               <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-lg">description</span>
+                <span className="material-symbols-outlined text-lg text-[#7c3aed]">description</span>
                 Testing Notes
               </h3>
               <div className="bg-white p-6 rounded-2xl border border-[#eaeff1] mb-4 shadow-sm">
@@ -451,8 +455,8 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
         </div>
 
         {/* Sidebar: Activity & Footer */}
-        <div className="w-80 border-l border-[#eaeff1] flex flex-col bg-white">
-          <div className="p-8 pb-4">
+        <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-[#eaeff1] flex flex-col bg-white shrink-0">
+          <div className="p-5 md:p-8 pb-4">
             <div className="flex items-center justify-between mb-8">
                <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest">Recent Activity</h3>
                <button className="p-2 hover:bg-[#f1f4f6] rounded-full transition-colors hidden md:block" onClick={onClose}>
@@ -461,22 +465,33 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             </div>
 
             <div className="space-y-8">
-              {filteredNotifications.length > 0 ? filteredNotifications.map((notif) => (
-                <div key={notif.id} className="flex gap-4 relative">
-                  <div className="w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-md">
-                    {notif.actor_id === currentUserId ? 'ME' : (notif.profiles?.username || '??').slice(0, 2).toUpperCase()}
+              {filteredNotifications.length > 0 ? filteredNotifications.map((notif) => {
+                const actorMember = project?.members.find(m => m.id === notif.actor_id);
+                const actorName = actorMember?.username || notif.profiles?.username || 'Somebody';
+                const actorInitial = actorName.slice(0, 2).toUpperCase();
+                const isMe = notif.actor_id === currentUserId;
+                const actorColor = isMe ? '#0c56d0' : getUserColor(actorName);
+                
+                return (
+                 <div key={notif.id} className="flex gap-4 relative">
+                  <div 
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-md"
+                    style={{ backgroundColor: actorColor }}
+                  >
+                    {isMe ? 'ME' : actorInitial}
                   </div>
                   <div>
                     <p className="text-[13px] leading-snug text-[#2b3437]">
-                      <span className="font-bold">{notif.actor_id === currentUserId ? 'You' : (notif.profiles?.username || 'Somebody')}</span> {notif.content ? notif.content.split(' ').slice(1).join(' ') : 'updated something'}
+                      <span className="font-bold" style={{ color: actorColor }}>{isMe ? 'You' : actorName}</span> {notif.content ? notif.content.split(' ').slice(1).join(' ') : 'updated something'}
                     </p>
                     <p className="text-[10px] text-[#abb3b7] mt-1 flex items-center gap-1 font-medium">
                        <span className="material-symbols-outlined text-[10px]">schedule</span>
                        {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
-                </div>
-              )) : (
+                 </div>
+                );
+              }) : (
                 <div className="flex flex-col items-center justify-center py-10 text-center opacity-40">
                   <span className="material-symbols-outlined text-4xl mb-2">history</span>
                   <p className="text-xs">No activity log yet</p>
@@ -485,7 +500,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             </div>
           </div>
 
-          <div className="mt-auto p-8 border-t border-[#eaeff1] bg-[#f8f9fa]/50">
+          <div className="mt-auto p-5 md:p-8 border-t border-[#eaeff1] bg-[#f8f9fa]/50">
              <div className="bg-white p-5 rounded-2xl border border-dashed border-[#eaeff1] hover:border-[#0c56d0]/30 transition-colors">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block">Sprint Goal</label>
