@@ -42,6 +42,7 @@ export default function CreateProjectClient() {
   const [icon, setIcon] = useState("apartment");
   const [iconBg, setIconBg] = useState<IconBg>("primary");
   const [dueDate, setDueDate] = useState("");
+  const [sprintGoal, setSprintGoal] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPinText, setShowPinText] = useState(false);
 
@@ -69,6 +70,7 @@ export default function CreateProjectClient() {
       icon,
       iconBg,
       dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+      sprintGoal: sprintGoal.trim() || null,
     });
 
     if (project) {
@@ -186,6 +188,20 @@ export default function CreateProjectClient() {
                   className="w-full px-4 py-3.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg focus:bg-white focus:border-[#0c56d0]/40 transition-all outline-none"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
+                />
+              </div>
+
+              {/* Sprint Goal */}
+              <div className="flex flex-col gap-2 group md:col-span-2">
+                <label className="text-sm font-semibold tracking-wide text-[#586064] ml-1">
+                  Sprint Goal (Primary Objective)
+                </label>
+                <input
+                  type="text"
+                  placeholder="E.g. Complete all API migrations and finalize documentation."
+                  className="w-full px-4 py-3.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg focus:bg-white focus:border-[#0c56d0]/40 transition-all outline-none"
+                  value={sprintGoal}
+                  onChange={(e) => setSprintGoal(e.target.value)}
                 />
               </div>
 

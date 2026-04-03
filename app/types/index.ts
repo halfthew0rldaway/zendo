@@ -62,7 +62,7 @@ export interface Project {
   icon: string;
   iconBg: "primary" | "secondary" | "tertiary";
   dueDate: string | null;
-  sprintGoal: string | null;
+  sprintGoal?: string | null;
   createdAt: string;
   updatedAt: string;
   tasks: Task[];

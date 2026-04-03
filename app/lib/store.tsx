@@ -235,6 +235,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         icon: data.icon,
         icon_bg: data.iconBg,
         due_date: data.dueDate ?? null,
+        sprint_goal: data.sprintGoal ?? null,
         owner_id: currentUserId,
       })
       .select()
