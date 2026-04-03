@@ -1,144 +1,74 @@
--- 1. DROP EVERYTHING FIRST to start clean
-DROP TABLE IF EXISTS notifications, tasks, project_members, projects, profiles CASCADE;
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
--- 2. ENABLE EXTENSION
-create extension if not exists "uuid-ossp";
-
--- 3. CREATE TABLES (ORDER MATTERS)
--- Profiles
-create table profiles (
-  id uuid references auth.users on delete cascade primary key,
-  username text unique not null,
-  full_name text,
-  avatar_url text,
-  created_at timestamp with time zone default now()
-);
-
--- Projects
-create table projects (
-  id uuid default uuid_generate_v4() primary key,
-  name text not null,
-  description text,
-  icon text default 'assignment',
-  icon_bg text default 'blue',
-  pin_hash text,
-  due_date timestamp with time zone,
-  sprint_goal text,
-  owner_id uuid references auth.users not null,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
-);
-
--- Project Members
-create table project_members (
-  id uuid default uuid_generate_v4() primary key,
-  project_id uuid references projects(id) on delete cascade,
-  user_id uuid references auth.users on delete cascade,
-  role text default 'member' check (role in ('owner', 'member', 'viewer')),
-  joined_at timestamp with time zone default now(),
-  unique(project_id, user_id)
-);
-
--- Tasks
-create table tasks (
-  id uuid default uuid_generate_v4() primary key,
-  project_id uuid references projects(id) on delete cascade not null,
-  title text not null,
-  description text,
-  status text default 'todo',
-  priority text default 'medium',
-  labels jsonb default '[]',
-  checklist jsonb default '[]',
-  attachments jsonb default '[]',
-  github_link text,
-  testing_status text default 'not_tested',
-  testing_notes text,
-  due_date timestamp with time zone,
-  assignee_id uuid references auth.users,
-  assignee_name text,
-  assignee_initials text,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
-);
-
--- Notifications
-create table notifications (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users on delete cascade,
-  actor_id uuid references auth.users,
-  project_id uuid references projects(id),
+CREATE TABLE public.notifications (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid,
+  actor_id uuid,
+  project_id uuid,
   type text,
   content text,
-  is_read boolean default false,
-  created_at timestamp with time zone default now()
-);
-
--- 4. ENABLE RLS
-alter table profiles enable row level security;
-alter table projects enable row level security;
-alter table project_members enable row level security;
-alter table tasks enable row level security;
-alter table notifications enable row level security;
-
--- 5. CREATE POLICIES (Simplified for small team - no recursion possible)
--- Profiles
-create policy "Allow all for authenticated users" on profiles for all using (auth.uid() is not null);
-
--- Project Members
-create policy "Allow all for authenticated users" on project_members for all using (auth.uid() is not null);
-
--- Projects
-create policy "Allow all for authenticated users" on projects for all using (auth.uid() is not null);
-
--- Tasks
-create policy "Allow all for authenticated users" on tasks for all using (auth.uid() is not null);
-
--- Notifications
-create policy "Allow all for authenticated users" on notifications for all using (auth.uid() is not null);
-
--- 6. ENABLE REALTIME
-DROP PUBLICATION IF EXISTS supabase_realtime;
-CREATE PUBLICATION supabase_realtime FOR TABLE projects, tasks, notifications;
-
--- ─────────────────────────────────────────────────────────────────────────────
--- MIGRATION: Run these if tables already exist (adds due_date columns)
--- ─────────────────────────────────────────────────────────────────────────────
--- ALTER TABLE projects ADD COLUMN IF NOT EXISTS due_date timestamp with time zone;
--- ALTER TABLE tasks    ADD COLUMN IF NOT EXISTS due_date timestamp with time zone;
-
--- ─────────────────────────────────────────────────────────────────────────────
--- MIGRATION: Update check constraint for roles on project_members table
--- ─────────────────────────────────────────────────────────────────────────────
--- ALTER TABLE project_members DROP CONSTRAINT IF EXISTS project_members_role_check;
--- ALTER TABLE project_members ADD CONSTRAINT project_members_role_check CHECK (role IN ('owner', 'member', 'viewer'));
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS sprint_goal text;
--- 1. Ensure tasks have testing_status and testing_notes
--- 1. Ensure tasks have testing_status and testing_notes
-ALTER TABLE tasks 
-ADD COLUMN IF NOT EXISTS testing_status text DEFAULT 'not_tested',
-ADD COLUMN IF NOT EXISTS testing_notes text;
-
--- 2. Ensure notifications table exists and has actor tracking
-CREATE TABLE IF NOT EXISTS notifications (
-  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id uuid REFERENCES auth.users ON DELETE CASCADE, -- Target user
-  actor_id uuid REFERENCES auth.users,                 -- The person who did the action
-  project_id uuid REFERENCES projects(id) ON DELETE CASCADE,
-  type text,                                           -- 'task_moved', 'member_added', etc.
-  content text,                                        -- Human readable description
   is_read boolean DEFAULT false,
-  created_at timestamp with time zone DEFAULT now()
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT notifications_pkey PRIMARY KEY (id),
+  CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT notifications_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES auth.users(id),
+  CONSTRAINT notifications_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id)
 );
-
--- 3. Add to Realtime Publication (if not already there)
-ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
-
--- Run this in Supabase to enable the new features
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS sprint_goal text;
-ALTER TABLE tasks 
-ADD COLUMN IF NOT EXISTS checklist jsonb DEFAULT '[]',
-ADD COLUMN IF NOT EXISTS attachments jsonb DEFAULT '[]',
-ADD COLUMN IF NOT EXISTS testing_status text DEFAULT 'not_tested',
-ADD COLUMN IF NOT EXISTS testing_notes text,
-ADD COLUMN IF NOT EXISTS assignee_name text,
-ADD COLUMN IF NOT EXISTS assignee_initials text;
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  username text NOT NULL UNIQUE,
+  full_name text,
+  avatar_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.project_members (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  project_id uuid,
+  user_id uuid,
+  role text DEFAULT 'member'::text CHECK (role = ANY (ARRAY['owner'::text, 'member'::text, 'viewer'::text])),
+  joined_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT project_members_pkey PRIMARY KEY (id),
+  CONSTRAINT project_members_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT project_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.projects (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  name text NOT NULL,
+  description text,
+  icon text DEFAULT 'assignment'::text,
+  icon_bg text DEFAULT 'blue'::text,
+  pin_hash text,
+  owner_id uuid NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  due_date timestamp with time zone,
+  sprint_goal text,
+  CONSTRAINT projects_pkey PRIMARY KEY (id),
+  CONSTRAINT projects_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.tasks (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  project_id uuid NOT NULL,
+  title text NOT NULL,
+  description text,
+  status text DEFAULT 'todo'::text CHECK (status = ANY (ARRAY['todo'::text, 'in_progress'::text, 'review'::text, 'testing'::text, 'done'::text])),
+  priority text DEFAULT 'medium'::text CHECK (priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])),
+  labels jsonb DEFAULT '[]'::jsonb,
+  checklist jsonb DEFAULT '[]'::jsonb,
+  attachments jsonb DEFAULT '[]'::jsonb,
+  github_link text,
+  testing_status text DEFAULT 'not_tested'::text,
+  testing_notes text,
+  assignee_id uuid,
+  assignee_name text,
+  assignee_initials text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  due_date timestamp with time zone,
+  CONSTRAINT tasks_pkey PRIMARY KEY (id),
+  CONSTRAINT tasks_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT tasks_assignee_id_fkey FOREIGN KEY (assignee_id) REFERENCES auth.users(id)
+);
