@@ -104,11 +104,6 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
     updateTask(projectId, task.id, { testingNotes });
   };
 
-  const handleMarkPassed = () => {
-    updateTask(projectId, task.id, { testingNotes, testingStatus: "passed", status: "done" });
-    onClose();
-  };
-
   const handleTitleSave = () => {
     if (title.trim()) {
       updateTask(projectId, task.id, { title: title.trim() });
@@ -436,18 +431,12 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                   onChange={(e) => setTestingNotes(e.target.value)}
                 />
               </div>
-              <div className="flex gap-3">
+              <div className="flex">
                 <button
-                  className="px-6 py-2.5 bg-white border border-[#eaeff1] rounded-xl text-xs font-bold text-[#586064] hover:bg-[#f1f4f6] transition-all active:scale-95 shadow-sm"
+                  className="px-6 py-2.5 bg-white border border-[#eaeff1] rounded-xl text-xs font-bold text-[#586064] hover:bg-[#f1f4f6] transition-all active:scale-95 shadow-sm w-full"
                   onClick={handleSaveNotes}
                 >
                   Save Draft
-                </button>
-                <button
-                  className="px-6 py-2.5 bg-[#0c56d0] text-white rounded-xl text-xs font-bold hover:shadow-lg shadow-[#0c56d0]/20 transition-all active:scale-95"
-                  onClick={handleMarkPassed}
-                >
-                  Mark as Passed
                 </button>
               </div>
             </div>

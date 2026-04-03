@@ -35,9 +35,42 @@ const LABEL_COLOR_MAP: Record<string, string> = {
 const COL_BADGE_MAP: Record<TaskStatus, string> = {
   todo: "bg-[#e3e9ec]",
   in_progress: "bg-[#dae2ff] text-[#004ab9]",
-  review: "bg-[#e3e9ec]",
-  testing: "bg-[#e3e9ec]",
-  done: "bg-[#cfe6f2] text-[#2d424c]",
+  review: "bg-[#fef3c7] text-[#92400e]",
+  testing: "bg-[#e3dbfd] text-[#524c68]",
+  done: "bg-[#d1fae5] text-[#065f46]",
+};
+
+const STATUS_THEME_MAP: Record<TaskStatus, { card: string; bar: string; icon: string; iconColor: string }> = {
+  todo: { 
+    card: "border-l-4 border-[#e3e9ec]", 
+    bar: "bg-[#e3e9ec]", 
+    icon: "assignment", 
+    iconColor: "text-[#586064]" 
+  },
+  in_progress: { 
+    card: "border-l-4 border-[#0c56d0] bg-[#dae2ff]/10 shadow-[#0c56d0]/5 shadow-lg", 
+    bar: "bg-[#0c56d0]", 
+    icon: "sync", 
+    iconColor: "text-[#0c56d0]" 
+  },
+  review: { 
+    card: "border-l-4 border-[#d97706] bg-[#fef3c7]/10", 
+    bar: "bg-[#d97706]", 
+    icon: "visibility", 
+    iconColor: "text-[#d97706]" 
+  },
+  testing: { 
+    card: "border-l-4 border-[#7c3aed] bg-[#f5f3ff]/40", 
+    bar: "bg-[#7c3aed]", 
+    icon: "biotech", 
+    iconColor: "text-[#7c3aed]" 
+  },
+  done: { 
+    card: "border-l-4 border-[#059669] opacity-75 grayscale-[0.2] hover:grayscale-0 hover:opacity-100", 
+    bar: "bg-[#059669]", 
+    icon: "check_circle", 
+    iconColor: "text-[#059669]" 
+  },
 };
 
 function getDueDateBadge(dueDate: string | null, status: TaskStatus) {
@@ -63,18 +96,16 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
   const [showConfirm, setShowConfirm] = useState(false);
   const badge = getDueDateBadge(task.dueDate, task.status);
   const isOverdue = badge?.urgent && badge.label === "Overdue";
+  const theme = STATUS_THEME_MAP[task.status];
+  
+  // Custom border override for specific error state in testing
+  const testingError = task.status === "testing" && task.labels.some((l) => l.color === "error");
 
   return (
     <div
-      className={`group bg-white p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-black/5 transition-all cursor-pointer ${
-        isInProgress
-          ? "border-l-4 border-[#0c56d0] ring-2 ring-[#0c56d0]/5"
-          : ""
-      } ${isOverdue ? "border-l-4 border-[#9f403d]/60" : ""} ${
-        task.status === "testing" && task.labels.some((l) => l.color === "error")
-          ? "border-l-4 border-[#9f403d]/50"
-          : ""
-      }`}
+      className={`group bg-white p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-black/5 transition-all duration-300 cursor-pointer relative overflow-hidden ${theme.card} ${
+        testingError ? "!border-[#9f403d]/70 !bg-[#fee2e2]/20" : ""
+      } ${isOverdue ? "!border-[#9f403d]/70" : ""}`}
       draggable
       onClick={() => onOpen(task)}
       onDragStart={(e) => {
@@ -136,13 +167,18 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
         </p>
       )}
 
-      {/* Due date badge */}
+      {/* Due date badge with enhanced UI */}
       {badge && (
-        <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold w-fit mb-3 ${badge.color}`}>
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold w-fit mb-3 shadow-sm ${badge.color}`}>
           <span className="material-symbols-outlined text-xs">{badge.icon}</span>
           {badge.label}
         </div>
       )}
+
+      {/* Subtle background status icon */}
+      <span className={`material-symbols-outlined absolute -right-2 -bottom-2 text-6xl opacity-[0.03] select-none pointer-events-none group-hover:opacity-[0.06] transition-opacity ${theme.iconColor}`}>
+        {theme.icon}
+      </span>
 
       <div className="flex items-center justify-between pt-3 border-t border-[#f1f4f6]">
         <div className="flex items-center gap-3">
