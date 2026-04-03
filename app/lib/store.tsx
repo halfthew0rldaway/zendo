@@ -66,6 +66,7 @@ function dbRowToTask(row: Record<string, unknown>): Task {
     labels: (row.labels as Task["labels"]) ?? [],
     checklist: (row.checklist as Task["checklist"]) ?? [],
     attachments: (row.attachments as Task["attachments"]) ?? [],
+    testingStatus: (row.testing_status as Task["testingStatus"]) ?? "not_tested",
     testingNotes: (row.testing_notes as string) ?? "",
     assigneeInitials: (row.assignee_initials as string) ?? "?",
     assigneeName: (row.assignee_name as string) ?? "Unassigned",
@@ -346,25 +347,37 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     if (updates.checklist !== undefined) dbUpdates.checklist = updates.checklist;
     if (updates.attachments !== undefined) dbUpdates.attachments = updates.attachments;
     if (updates.testingNotes !== undefined) dbUpdates.testing_notes = updates.testingNotes;
+    if (updates.testingStatus !== undefined) dbUpdates.testing_status = updates.testingStatus;
     if (updates.assigneeName !== undefined) dbUpdates.assignee_name = updates.assigneeName;
     if (updates.assigneeInitials !== undefined) dbUpdates.assignee_initials = updates.assigneeInitials;
     if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;
 
-    // Create persistent notification
+    // Create persistent notification for real-time feed
+    let notifType = "task_updated";
+    let content = `${currentProfile?.username ?? "Anonymous"} updated task "${updates.title || 'a task'}"`;
+    
+    if (updates.status) {
+      notifType = "task_moved";
+      content = `${currentProfile?.username ?? "Anonymous"} moved task to ${updates.status.replace('_', ' ')}`;
+    } else if (updates.testingStatus) {
+      notifType = "task_tested";
+      content = `${currentProfile?.username ?? "Anonymous"} marked task as ${updates.testingStatus.replace('_', ' ')}`;
+    }
+
     await supabase.from("notifications").insert({
       user_id: currentUserId,
       actor_id: currentUserId,
       project_id: projectId,
-      type: "task_updated",
-      content: `${currentProfile?.username ?? "Anonymous"} updated task "${updates.title || 'a task'}"`
+      type: notifType,
+      content: content
     });
 
     setProjects((prev) => prev.map((p) =>
       p.id === projectId
-        ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, ...updates, updatedAt: dbUpdates.updated_at as string, assigneeName: dbUpdates.assignee_name as string, assigneeInitials: dbUpdates.assignee_initials as string } : t), updatedAt: new Date().toISOString() }
+        ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, ...updates, updatedAt: dbUpdates.updated_at as string } : t), updatedAt: new Date().toISOString() }
         : p
     ));
-  }, [currentUserId, currentProfile]);
+  }, [currentUserId, currentProfile, supabase]);
 
   const deleteTask = useCallback(async (projectId: string, taskId: string) => {
     await supabase.from("tasks").delete().eq("id", taskId);

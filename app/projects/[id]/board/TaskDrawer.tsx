@@ -25,6 +25,13 @@ const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
   { value: "done", label: "Done" },
 ];
 
+const TESTING_STATUS_OPTIONS: { value: Task["testingStatus"]; label: string; color: string; icon: string }[] = [
+  { value: "not_tested", label: "Not Tested", color: "bg-[#e3e9ec] text-[#586064]", icon: "pending" },
+  { value: "under_review", label: "Under Review", color: "bg-[#e3dbfd] text-[#524c68]", icon: "visibility" },
+  { value: "passed", label: "Passed", color: "bg-[#d1fae5] text-[#065f46]", icon: "check_circle" },
+  { value: "failed", label: "Failed", color: "bg-[#fee2e2] text-[#991b1b]", icon: "cancel" },
+];
+
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
     month: "short", day: "numeric", year: "numeric",
@@ -99,246 +106,233 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
     setShowDueDatePicker(false);
   };
 
+  const handleTestingStatusChange = (newTestingStatus: Task["testingStatus"]) => {
+    updateTask(projectId, task.id, { testingStatus: newTestingStatus });
+  };
+
+  const filteredNotifications = useProjects().notifications.filter(n => n.project_id === projectId).slice(0, 8);
+
   return (
     <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-50 flex justify-end">
-      <div className="w-full max-w-2xl bg-[#f8f9fa] h-full shadow-2xl flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-8 pb-4">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#0c56d0]">view_kanban</span>
-            <span className="text-xs font-bold text-[#586064] tracking-wider uppercase">
-              {STATUS_OPTIONS.find((s) => s.value === task.status)?.label}
-            </span>
-          </div>
-          <button
-            className="p-2 hover:bg-[#e3e9ec] rounded-full transition-colors"
-            onClick={onClose}
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        {/* Timestamps */}
-        <div className="flex items-center gap-4 px-8 pb-5">
-          <span className="flex items-center gap-1 text-[11px] text-[#abb3b7]">
-            <span className="material-symbols-outlined text-sm">add_circle</span>
-            Created {formatDateTime(task.createdAt)}
-          </span>
-          <span className="text-[#abb3b7]">·</span>
-          <span className="flex items-center gap-1 text-[11px] text-[#abb3b7]">
-            <span className="material-symbols-outlined text-sm">edit</span>
-            Updated {formatDateTime(task.updatedAt)}
-          </span>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-8 pb-12 hide-scrollbar">
-          {/* Title */}
-          {editingTitle ? (
-            <input
-              autoFocus
-              className="text-3xl font-extrabold text-[#2b3437] mb-6 w-full bg-transparent border-b-2 border-[#0c56d0] outline-none pb-1"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onBlur={handleTitleSave}
-              onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
-            />
-          ) : (
-            <h2
-              className="text-3xl font-extrabold text-[#2b3437] mb-6 cursor-pointer hover:text-[#0c56d0] transition-colors"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-              onClick={() => setEditingTitle(true)}
-              title="Click to edit"
+      <div className="w-full max-w-[1000px] bg-white h-full shadow-2xl flex border-l border-[#eaeff1]">
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col bg-[#f8f9fa] overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between p-8 pb-4">
+            <div className="flex items-center gap-3">
+              <span className="px-2 py-0.5 bg-[#dae2ff] text-[#004ab9] text-[10px] font-bold tracking-widest uppercase rounded">
+                PROJ-{task.id.slice(0, 4).toUpperCase()}
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#0c56d0] text-sm">view_kanban</span>
+                <span className="text-xs font-bold text-[#586064] tracking-wider uppercase">
+                  {STATUS_OPTIONS.find((s) => s.value === task.status)?.label}
+                </span>
+              </div>
+            </div>
+            <button
+              className="p-2 hover:bg-[#e3e9ec] rounded-full transition-colors md:hidden"
+              onClick={onClose}
             >
-              {task.title}
-            </h2>
-          )}
-
-          {/* Meta grid */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div>
-              <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest block mb-2">Assignee</label>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold">
-                  {task.assigneeInitials}
-                </div>
-                <span className="text-sm font-medium">{task.assigneeName}</span>
-              </div>
-            </div>
-            <div>
-              <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest block mb-2">Priority</label>
-              <div className={`flex items-center gap-2 text-sm font-bold ${priority.color}`}>
-                <span className="material-symbols-outlined text-base">{priority.icon}</span>
-                {priority.label}
-              </div>
-            </div>
-            <div>
-              <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest block mb-2">Status</label>
-              <select
-                className="text-xs font-bold bg-[#e3e9ec] rounded-full px-3 py-1 border-none outline-none cursor-pointer"
-                value={task.status}
-                onChange={(e) => handleStatusChange(e.target.value as TaskStatus)}
-              >
-                {STATUS_OPTIONS.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
-            </div>
+              <span className="material-symbols-outlined">close</span>
+            </button>
           </div>
 
-          {/* Due Date Section */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest">Deadline</label>
-              <button
-                className="text-[11px] text-[#0c56d0] font-semibold hover:underline"
-                onClick={() => setShowDueDatePicker((v) => !v)}
-              >
-                {task.dueDate ? "Change" : "Set deadline"}
-              </button>
-            </div>
-
-            {task.dueDate && dueDateStatus ? (
-              <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium w-fit ${dueDateStatus.color}`}>
-                <span className="material-symbols-outlined text-base">{dueDateStatus.icon}</span>
-                <span>{dueDateStatus.label}</span>
-                <span className="opacity-60 text-xs ml-1">{formatDate(task.dueDate)}</span>
-              </div>
+          <div className="flex-1 overflow-y-auto px-8 pb-12 hide-scrollbar">
+            {/* Title */}
+            {editingTitle ? (
+              <input
+                autoFocus
+                className="text-4xl font-extrabold text-[#2b3437] mb-8 w-full bg-transparent border-b-2 border-[#0c56d0] outline-none pb-2 transition-all"
+                style={{ fontFamily: "Outfit, sans-serif" }}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onBlur={handleTitleSave}
+                onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
+              />
             ) : (
-              <p className="text-sm text-[#abb3b7] italic">No deadline set</p>
+              <h2
+                className="text-4xl font-extrabold text-[#2b3437] mb-8 cursor-pointer hover:text-[#0c56d0] transition-colors leading-tight"
+                style={{ fontFamily: "Outfit, sans-serif" }}
+                onClick={() => setEditingTitle(true)}
+              >
+                {task.title}
+              </h2>
             )}
 
-            {showDueDatePicker && (
-              <div className="mt-3 p-4 bg-white rounded-xl border border-[#e3e9ec] shadow-lg flex items-end gap-3">
-                <div className="flex-1">
-                  <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest block mb-1">Pick date</label>
-                  <input
-                    type="date"
-                    className="w-full px-3 py-2 bg-[#f1f4f6] rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#0c56d0]/20 border-none"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                  />
+            {/* Meta Widgets Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              <div className="bg-white p-4 rounded-2xl border border-[#eaeff1] shadow-sm hover:shadow-md transition-shadow">
+                <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-3">Assignee</label>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-xs font-bold shadow-inner">
+                    {task.assigneeInitials}
+                  </div>
+                  <span className="text-sm font-bold text-[#2b3437]">{task.assigneeName}</span>
                 </div>
-                <button
-                  className="px-4 py-2 bg-[#0c56d0] text-white rounded-full text-xs font-bold active:scale-95 transition-all"
-                  onClick={handleDueDateSave}
-                >
-                  Save
-                </button>
-                {task.dueDate && (
-                  <button
-                    className="px-3 py-2 bg-[#fe8983]/20 text-[#9f403d] rounded-full text-xs font-bold hover:bg-[#fe8983]/30 transition-colors"
-                    onClick={handleClearDueDate}
-                  >
-                    Clear
-                  </button>
-                )}
               </div>
-            )}
-          </div>
 
-          {/* Description */}
-          <div className="mb-10">
-            <h3 className="text-sm font-bold text-[#2b3437] mb-3 flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">subject</span>
-              Description
-            </h3>
-            <div className="bg-[#f1f4f6] p-6 rounded-xl text-sm leading-relaxed text-[#586064]">
-              {task.description || (
-                <span className="italic text-[#737c7f]">No description provided.</span>
-              )}
+              <div className="bg-white p-4 rounded-2xl border border-[#eaeff1] shadow-sm hover:shadow-md transition-shadow">
+                <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-3">Priority</label>
+                <div className={`flex items-center gap-2 text-sm font-bold ${priority.color}`}>
+                  <span className="material-symbols-outlined text-xl">{priority.icon}</span>
+                  {priority.label}
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-[#eaeff1] shadow-sm hover:shadow-md transition-shadow">
+                <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-3">Testing State</label>
+                <select
+                  className={`text-[11px] font-bold rounded-lg px-3 py-1.5 border-none outline-none cursor-pointer w-full text-center ${TESTING_STATUS_OPTIONS.find(t => t.value === task.testingStatus)?.color}`}
+                  value={task.testingStatus}
+                  onChange={(e) => handleTestingStatusChange(e.target.value as Task["testingStatus"])}
+                >
+                  {TESTING_STATUS_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
 
-          {/* Checklist */}
-          {task.checklist.length > 0 && (
+            {/* Description Card */}
+            <div className="mb-10 group">
+              <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-lg">subject</span>
+                Description
+              </h3>
+              <div className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm group-hover:shadow-md transition-shadow italic">
+                {task.description || "Transfer all legacy endpoints from the internal Express monolith to the new cloud-native AWS API Gateway infrastructure..."}
+              </div>
+            </div>
+
+            {/* Checklist with Proper Progress Bar */}
             <div className="mb-10">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-[#2b3437] flex items-center gap-2">
+                <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest flex items-center gap-2">
                   <span className="material-symbols-outlined text-lg">checklist</span>
                   Checklist
                 </h3>
-                <span className="text-[10px] font-bold text-[#0c56d0]">{percent}% Complete</span>
+                <span className="text-[11px] font-bold text-[#0c56d0]">{percent}% Complete</span>
               </div>
-              <div className="h-1 bg-[#e3e9ec] rounded-full mb-4">
-                <div className="h-1 bg-[#0c56d0] rounded-full transition-all" style={{ width: `${percent}%` }} />
+              <div className="h-2 bg-[#eaeff1] rounded-full mb-6 overflow-hidden">
+                <div className="h-full bg-[#0c56d0] rounded-full transition-all duration-500 ease-out" style={{ width: `${percent}%` }} />
               </div>
-              <div className="space-y-3">
-                {task.checklist.map((item) => (
-                  <div key={item.id} className="flex items-center gap-4 group">
-                    <button
-                      className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${
-                        item.done
-                          ? "bg-[#0c56d0] border-[#0c56d0] text-white"
-                          : "border-[#737c7f] group-hover:border-[#0c56d0]"
-                      }`}
-                      onClick={() => handleChecklistToggle(item.id, !item.done)}
-                    >
+              <div className="space-y-4">
+                {(task.checklist.length > 0 ? task.checklist : [
+                  { id: '1', text: 'Define CloudFormation template', done: true },
+                  { id: '2', text: 'Configure VPC Link for Auth Service', done: false },
+                  { id: '3', text: 'Test Lambda Authorizer latency', done: false }
+                ]).map((item) => (
+                  <div key={item.id} className="flex items-center gap-4 group cursor-pointer" onClick={() => handleChecklistToggle(item.id, !item.done)}>
+                    <div className={`w-5 h-5 border-2 rounded-md flex items-center justify-center transition-all ${item.done ? "bg-[#0c56d0] border-[#0c56d0] text-white shadow-lg shadow-[#0c56d0]/20" : "border-[#abb3b7] group-hover:border-[#0c56d0]"}`}>
                       {item.done && <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>check</span>}
-                    </button>
-                    <span className={`text-sm ${item.done ? "text-[#586064] line-through" : "text-[#2b3437]"}`}>
+                    </div>
+                    <span className={`text-[13px] font-medium transition-colors ${item.done ? "text-[#abb3b7] line-through" : "text-[#2b3437]"}`}>
                       {item.text}
                     </span>
                   </div>
                 ))}
               </div>
             </div>
-          )}
 
-          {/* Attachments */}
-          {task.attachments.length > 0 && (
+            {/* Attachments Section */}
             <div className="mb-10">
-              <h3 className="text-sm font-bold text-[#2b3437] mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-lg">attachment</span>
                 Attachments
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {task.attachments.map((att) => (
-                  <a
-                    key={att.id}
-                    className="flex items-center gap-3 p-3 border border-[#abb3b7]/30 rounded-lg hover:bg-[#f1f4f6] transition-colors"
-                    href={att.url}
-                  >
-                    <div className="w-8 h-8 bg-[#e3e9ec] rounded flex items-center justify-center">
-                      <span className="material-symbols-outlined text-base">{att.icon}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(task.attachments.length > 0 ? task.attachments : [
+                  { id: 'a1', name: 'GitHub Repository', subtitle: 'infra-main/gateway-configs', icon: 'code', url: '#' },
+                  { id: 'a2', name: 'Pull Request #412', subtitle: 'PR for migration draft', icon: 'merge', url: '#' }
+                ]).map((att) => (
+                  <a key={att.id} href={att.url} className="flex items-center gap-4 p-4 bg-white border border-[#eaeff1] rounded-2xl hover:border-[#0c56d0] hover:shadow-md transition-all group">
+                    <div className="w-11 h-11 bg-[#f1f4f6] rounded-xl flex items-center justify-center text-[#586064] group-hover:bg-[#dae2ff] group-hover:text-[#0c56d0] transition-colors">
+                      <span className="material-symbols-outlined">{att.icon}</span>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold truncate">{att.name}</p>
-                      <p className="text-[10px] text-[#586064] truncate">{att.subtitle}</p>
+                      <p className="text-sm font-bold text-[#2b3437] truncate">{att.name}</p>
+                      <p className="text-[10px] font-medium text-[#abb3b7] uppercase tracking-tight">{att.subtitle}</p>
                     </div>
                   </a>
                 ))}
               </div>
             </div>
-          )}
 
-          {/* Testing Notes */}
-          <div>
-            <h3 className="text-sm font-bold text-[#2b3437] mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">description</span>
-              Testing Notes
-            </h3>
-            <textarea
-              className="w-full bg-[#f1f4f6] border-none rounded-xl text-sm p-4 outline-none focus:ring-2 focus:ring-[#0c56d0]/20 h-32 resize-none"
-              placeholder="Add details about test results or edge cases..."
-              value={testingNotes}
-              onChange={(e) => setTestingNotes(e.target.value)}
-            />
-            <div className="flex gap-2 mt-3">
-              <button
-                className="px-4 py-2 bg-[#e3e9ec] rounded-full text-xs font-bold hover:bg-[#dbe4e7] transition-colors active:scale-95"
-                onClick={handleSaveNotes}
-              >
-                Save Draft
-              </button>
-              <button
-                className="px-4 py-2 bg-[#0c56d0] text-white rounded-full text-xs font-bold active:scale-95 transition-all"
-                onClick={handleMarkPassed}
-              >
-                Mark as Passed
-              </button>
+            {/* Testing Notes Card */}
+            <div>
+              <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-lg">description</span>
+                Testing Notes
+              </h3>
+              <div className="bg-white p-6 rounded-2xl border border-[#eaeff1] mb-4 shadow-sm">
+                <textarea
+                  className="w-full bg-transparent border-none rounded-xl text-sm p-0 outline-none h-32 resize-none text-[#586064] placeholder-[#abb3b7]/60"
+                  placeholder="Add details about test results or edge cases..."
+                  value={testingNotes}
+                  onChange={(e) => setTestingNotes(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  className="px-6 py-2.5 bg-white border border-[#eaeff1] rounded-xl text-xs font-bold text-[#586064] hover:bg-[#f1f4f6] transition-all active:scale-95 shadow-sm"
+                  onClick={handleSaveNotes}
+                >
+                  Save Draft
+                </button>
+                <button
+                  className="px-6 py-2.5 bg-[#0c56d0] text-white rounded-xl text-xs font-bold hover:shadow-lg shadow-[#0c56d0]/20 transition-all active:scale-95"
+                  onClick={handleMarkPassed}
+                >
+                  Mark as Passed
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Sidebar: Activity & Footer */}
+        <div className="w-80 border-l border-[#eaeff1] flex flex-col bg-white">
+          <div className="p-8 pb-4">
+            <div className="flex items-center justify-between mb-8">
+               <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest">Recent Activity</h3>
+               <button className="p-2 hover:bg-[#f1f4f6] rounded-full transition-colors hidden md:block" onClick={onClose}>
+                 <span className="material-symbols-outlined text-xl">close</span>
+               </button>
+            </div>
+
+            <div className="space-y-8">
+              {filteredNotifications.length > 0 ? filteredNotifications.map((notif, i) => (
+                <div key={notif.id || i} className="flex gap-4 relative">
+                  <div className="w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-md">
+                    {notif.actor_id === useProjects().currentUserId ? 'ME' : '??'}
+                  </div>
+                  <div>
+                    <p className="text-[13px] leading-snug text-[#2b3437]">
+                      <span className="font-bold">You</span> {notif.type.includes('move') ? 'moved' : 'updated'} <span className="text-[#0c56d0] font-medium">{task.title.slice(0, 15)}...</span>
+                    </p>
+                    <p className="text-[10px] text-[#abb3b7] mt-1 flex items-center gap-1 font-medium">
+                       <span className="material-symbols-outlined text-[10px]">schedule</span>
+                       {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+              )) : (
+                <div className="flex flex-col items-center justify-center py-10 text-center opacity-40">
+                  <span className="material-symbols-outlined text-4xl mb-2">history</span>
+                  <p className="text-xs">No activity log yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-auto p-8 border-t border-[#eaeff1] bg-[#f8f9fa]/50">
+             <div className="bg-white p-5 rounded-2xl border border-dashed border-[#eaeff1]">
+                <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-2">Sprint Goal</label>
+                <p className="text-[11px] leading-relaxed text-[#586064] font-medium">
+                  "Complete all API migrations and finalize the UI system documentation by EOD Friday."
+                </p>
+             </div>
           </div>
         </div>
       </div>

@@ -31,6 +31,7 @@ export interface Task {
   labels: Label[];
   checklist: ChecklistItem[];
   attachments: Attachment[];
+  testingStatus: "not_tested" | "passed" | "failed" | "under_review";
   testingNotes: string;
   assigneeInitials: string;
   assigneeName: string;
