@@ -48,6 +48,7 @@ function dbRowToProject(row: Record<string, unknown>, tasks: Task[] = [], member
     icon: (row.icon as string) ?? "apartment",
     iconBg: ((row.icon_bg as string) ?? "primary") as Project["iconBg"],
     dueDate: (row.due_date as string) ?? null,
+    sprintGoal: (row.sprint_goal as string) ?? null,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
     memberCount: (row.member_count !== null && row.member_count !== undefined) ? (row.member_count as number) : (members.length || 1),
@@ -280,6 +281,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     if (updates.icon !== undefined) dbUpdates.icon = updates.icon;
     if (updates.iconBg !== undefined) dbUpdates.icon_bg = updates.iconBg;
     if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;
+    if (updates.sprintGoal !== undefined) dbUpdates.sprint_goal = updates.sprintGoal;
     dbUpdates.updated_at = new Date().toISOString();
 
     await supabase.from("projects").update(dbUpdates).eq("id", id);

@@ -23,6 +23,7 @@ create table projects (
   icon_bg text default 'blue',
   pin_hash text,
   due_date timestamp with time zone,
+  sprint_goal text,
   owner_id uuid references auth.users not null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
@@ -110,3 +111,34 @@ CREATE PUBLICATION supabase_realtime FOR TABLE projects, tasks, notifications;
 -- ─────────────────────────────────────────────────────────────────────────────
 -- ALTER TABLE project_members DROP CONSTRAINT IF EXISTS project_members_role_check;
 -- ALTER TABLE project_members ADD CONSTRAINT project_members_role_check CHECK (role IN ('owner', 'member', 'viewer'));
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS sprint_goal text;
+-- 1. Ensure tasks have testing_status and testing_notes
+-- 1. Ensure tasks have testing_status and testing_notes
+ALTER TABLE tasks 
+ADD COLUMN IF NOT EXISTS testing_status text DEFAULT 'not_tested',
+ADD COLUMN IF NOT EXISTS testing_notes text;
+
+-- 2. Ensure notifications table exists and has actor tracking
+CREATE TABLE IF NOT EXISTS notifications (
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users ON DELETE CASCADE, -- Target user
+  actor_id uuid REFERENCES auth.users,                 -- The person who did the action
+  project_id uuid REFERENCES projects(id) ON DELETE CASCADE,
+  type text,                                           -- 'task_moved', 'member_added', etc.
+  content text,                                        -- Human readable description
+  is_read boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now()
+);
+
+-- 3. Add to Realtime Publication (if not already there)
+ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
+
+-- Run this in Supabase to enable the new features
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS sprint_goal text;
+ALTER TABLE tasks 
+ADD COLUMN IF NOT EXISTS checklist jsonb DEFAULT '[]',
+ADD COLUMN IF NOT EXISTS attachments jsonb DEFAULT '[]',
+ADD COLUMN IF NOT EXISTS testing_status text DEFAULT 'not_tested',
+ADD COLUMN IF NOT EXISTS testing_notes text,
+ADD COLUMN IF NOT EXISTS assignee_name text,
+ADD COLUMN IF NOT EXISTS assignee_initials text;

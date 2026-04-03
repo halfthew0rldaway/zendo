@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Task, Priority, TaskStatus } from "../../../types";
+import { Task, Priority, TaskStatus, ChecklistItem, Attachment } from "../../../types";
 import { useProjects } from "../../../lib/store";
 
 interface TaskDrawerProps {
@@ -32,41 +32,23 @@ const TESTING_STATUS_OPTIONS: { value: Task["testingStatus"]; label: string; col
   { value: "failed", label: "Failed", color: "bg-[#fee2e2] text-[#991b1b]", icon: "cancel" },
 ];
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", year: "numeric",
-  });
-}
-
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("en-US", {
-    month: "short", day: "numeric", year: "numeric",
-    hour: "numeric", minute: "2-digit", hour12: true,
-  });
-}
-
-function getDueDateStatus(dueDate: string | null) {
-  if (!dueDate) return null;
-  const diff = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  if (diff < 0) return { label: "Overdue", color: "bg-[#fe8983]/20 text-[#9f403d] border-[#9f403d]/20", icon: "warning" };
-  if (diff === 0) return { label: "Due today", color: "bg-[#fef3c7] text-[#92400e] border-[#92400e]/20", icon: "today" };
-  if (diff <= 3) return { label: `${diff}d left`, color: "bg-[#fef3c7] text-[#92400e] border-[#92400e]/20", icon: "schedule" };
-  return { label: `${diff} days left`, color: "bg-[#e3e9ec] text-[#586064] border-[#abb3b7]/20", icon: "event" };
-}
-
 export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps) {
-  const { updateTask } = useProjects();
-  const [testingNotes, setTestingNotes] = useState(task.testingNotes);
+  const { updateTask, projects, notifications, currentUserId } = useProjects();
+  const project = projects.find(p => p.id === projectId);
+  
+  const [testingNotes, setTestingNotes] = useState(task.testingNotes || "");
   const [editingTitle, setEditingTitle] = useState(false);
   const [title, setTitle] = useState(task.title);
-  const [dueDate, setDueDate] = useState(task.dueDate ? task.dueDate.substring(0, 10) : "");
-  const [showDueDatePicker, setShowDueDatePicker] = useState(false);
+  const [newCheckItem, setNewCheckItem] = useState("");
+  const [showAddCheck, setShowAddCheck] = useState(false);
+  const [showAddAttachment, setShowAddAttachment] = useState(false);
+  const [newAttName, setNewAttName] = useState("");
+  const [newAttUrl, setNewAttUrl] = useState("");
 
   const priority = PRIORITY_MAP[task.priority];
-  const completedItems = task.checklist.filter((c) => c.done).length;
-  const totalItems = task.checklist.length;
+  const completedItems = task.checklist?.filter((c) => c.done).length || 0;
+  const totalItems = task.checklist?.length || 0;
   const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
-  const dueDateStatus = getDueDateStatus(task.dueDate);
 
   const handleChecklistToggle = (itemId: string, done: boolean) => {
     const newChecklist = task.checklist.map((c) =>
@@ -75,17 +57,47 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
     updateTask(projectId, task.id, { checklist: newChecklist });
   };
 
+  const handleAddCheckItem = () => {
+    if (!newCheckItem.trim()) return;
+    const newItem: ChecklistItem = {
+      id: Math.random().toString(36).substr(2, 9),
+      text: newCheckItem,
+      done: false
+    };
+    updateTask(projectId, task.id, { checklist: [...(task.checklist || []), newItem] });
+    setNewCheckItem("");
+    setShowAddCheck(false);
+  };
+
+  const handleAddAttachment = () => {
+    if (!newAttName.trim() || !newAttUrl.trim()) return;
+    let url = newAttUrl;
+    if (!url.startsWith('http')) url = 'https://' + url;
+    
+    let hostname = 'link';
+    try { hostname = new URL(url).hostname; } catch(e) {}
+
+    const newAtt: Attachment = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: newAttName,
+      url: url,
+      subtitle: hostname,
+      type: 'link',
+      icon: url.includes('github') ? 'code' : 'link'
+    };
+    updateTask(projectId, task.id, { attachments: [...(task.attachments || []), newAtt] });
+    setNewAttName("");
+    setNewAttUrl("");
+    setShowAddAttachment(false);
+  };
+
   const handleSaveNotes = () => {
     updateTask(projectId, task.id, { testingNotes });
   };
 
   const handleMarkPassed = () => {
-    updateTask(projectId, task.id, { testingNotes, status: "done" });
+    updateTask(projectId, task.id, { testingNotes, testingStatus: "passed", status: "done" });
     onClose();
-  };
-
-  const handleStatusChange = (newStatus: TaskStatus) => {
-    updateTask(projectId, task.id, { status: newStatus });
   };
 
   const handleTitleSave = () => {
@@ -95,22 +107,11 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
     setEditingTitle(false);
   };
 
-  const handleDueDateSave = () => {
-    updateTask(projectId, task.id, { dueDate: dueDate ? new Date(dueDate).toISOString() : null });
-    setShowDueDatePicker(false);
-  };
-
-  const handleClearDueDate = () => {
-    setDueDate("");
-    updateTask(projectId, task.id, { dueDate: null });
-    setShowDueDatePicker(false);
-  };
-
   const handleTestingStatusChange = (newTestingStatus: Task["testingStatus"]) => {
     updateTask(projectId, task.id, { testingStatus: newTestingStatus });
   };
 
-  const filteredNotifications = useProjects().notifications.filter(n => n.project_id === projectId).slice(0, 8);
+  const filteredNotifications = notifications.filter(n => n.project_id === projectId).slice(0, 8);
 
   return (
     <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-50 flex justify-end">
@@ -201,28 +202,46 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                 Description
               </h3>
               <div className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm group-hover:shadow-md transition-shadow italic">
-                {task.description || "Transfer all legacy endpoints from the internal Express monolith to the new cloud-native AWS API Gateway infrastructure..."}
+                {task.description || "No description provided."}
               </div>
             </div>
 
-            {/* Checklist with Proper Progress Bar */}
+            {/* Checklist */}
             <div className="mb-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest flex items-center gap-2">
                   <span className="material-symbols-outlined text-lg">checklist</span>
                   Checklist
                 </h3>
-                <span className="text-[11px] font-bold text-[#0c56d0]">{percent}% Complete</span>
+                <div className="flex items-center gap-4">
+                  <span className="text-[11px] font-bold text-[#0c56d0]">{percent}% Complete</span>
+                  <button 
+                    onClick={() => setShowAddCheck(!showAddCheck)}
+                    className="w-6 h-6 rounded-full bg-[#0c56d0] text-white flex items-center justify-center hover:scale-110 transition-transform"
+                  >
+                    <span className="material-symbols-outlined text-sm">{showAddCheck ? 'close' : 'add'}</span>
+                  </button>
+                </div>
               </div>
               <div className="h-2 bg-[#eaeff1] rounded-full mb-6 overflow-hidden">
                 <div className="h-full bg-[#0c56d0] rounded-full transition-all duration-500 ease-out" style={{ width: `${percent}%` }} />
               </div>
+
+              {showAddCheck && (
+                <div className="mb-4 flex gap-2">
+                  <input 
+                    className="flex-1 bg-white border border-[#eaeff1] rounded-xl px-4 py-2 text-sm outline-none focus:border-[#0c56d0]"
+                    placeholder="Add item..."
+                    value={newCheckItem}
+                    onChange={e => setNewCheckItem(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleAddCheckItem()}
+                  />
+                  <button onClick={handleAddCheckItem} className="px-4 py-2 bg-[#0c56d0] text-white rounded-xl text-xs font-bold">Add</button>
+                </div>
+              )}
+
               <div className="space-y-4">
-                {(task.checklist.length > 0 ? task.checklist : [
-                  { id: '1', text: 'Define CloudFormation template', done: true },
-                  { id: '2', text: 'Configure VPC Link for Auth Service', done: false },
-                  { id: '3', text: 'Test Lambda Authorizer latency', done: false }
-                ]).map((item) => (
+                {task.checklist?.length > 0 ? task.checklist.map((item) => (
                   <div key={item.id} className="flex items-center gap-4 group cursor-pointer" onClick={() => handleChecklistToggle(item.id, !item.done)}>
                     <div className={`w-5 h-5 border-2 rounded-md flex items-center justify-center transition-all ${item.done ? "bg-[#0c56d0] border-[#0c56d0] text-white shadow-lg shadow-[#0c56d0]/20" : "border-[#abb3b7] group-hover:border-[#0c56d0]"}`}>
                       {item.done && <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>check</span>}
@@ -231,31 +250,59 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                       {item.text}
                     </span>
                   </div>
-                ))}
+                )) : (
+                  <p className="text-xs text-[#abb3b7] italic">No items yet</p>
+                )}
               </div>
             </div>
 
             {/* Attachments Section */}
             <div className="mb-10">
-              <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-lg">attachment</span>
-                Attachments
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-bold text-[#586064] uppercase tracking-widest flex items-center gap-2">
+                  <span className="material-symbols-outlined text-lg">attachment</span>
+                  Attachments
+                </h3>
+                 <button 
+                    onClick={() => setShowAddAttachment(!showAddAttachment)}
+                    className="w-6 h-6 rounded-full bg-[#0c56d0] text-white flex items-center justify-center hover:scale-110 transition-transform"
+                  >
+                    <span className="material-symbols-outlined text-sm">{showAddAttachment ? 'close' : 'add'}</span>
+                  </button>
+              </div>
+
+              {showAddAttachment && (
+                <div className="mb-4 bg-white p-4 border border-[#eaeff1] rounded-2xl space-y-3 shadow-sm">
+                  <input 
+                    className="w-full bg-[#f8f9fa] border border-[#eaeff1] rounded-xl px-4 py-2 text-sm outline-none focus:border-[#0c56d0]"
+                    placeholder="Name (e.g. GitHub Repo)"
+                    value={newAttName}
+                    onChange={e => setNewAttName(e.target.value)}
+                  />
+                  <input 
+                    className="w-full bg-[#f8f9fa] border border-[#eaeff1] rounded-xl px-4 py-2 text-sm outline-none focus:border-[#0c56d0]"
+                    placeholder="URL (https://...)"
+                    value={newAttUrl}
+                    onChange={e => setNewAttUrl(e.target.value)}
+                  />
+                  <button onClick={handleAddAttachment} className="w-full py-2 bg-[#0c56d0] text-white rounded-xl text-xs font-bold">Add Link</button>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {(task.attachments.length > 0 ? task.attachments : [
-                  { id: 'a1', name: 'GitHub Repository', subtitle: 'infra-main/gateway-configs', icon: 'code', url: '#' },
-                  { id: 'a2', name: 'Pull Request #412', subtitle: 'PR for migration draft', icon: 'merge', url: '#' }
-                ]).map((att) => (
-                  <a key={att.id} href={att.url} className="flex items-center gap-4 p-4 bg-white border border-[#eaeff1] rounded-2xl hover:border-[#0c56d0] hover:shadow-md transition-all group">
+                {task.attachments?.length > 0 ? task.attachments.map((att) => (
+                  <a key={att.id} href={att.url} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 bg-white border border-[#eaeff1] rounded-2xl hover:border-[#0c56d0] hover:shadow-md transition-all group">
                     <div className="w-11 h-11 bg-[#f1f4f6] rounded-xl flex items-center justify-center text-[#586064] group-hover:bg-[#dae2ff] group-hover:text-[#0c56d0] transition-colors">
-                      <span className="material-symbols-outlined">{att.icon}</span>
+                      <span className="material-symbols-outlined">{att.icon || 'link'}</span>
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-[#2b3437] truncate">{att.name}</p>
                       <p className="text-[10px] font-medium text-[#abb3b7] uppercase tracking-tight">{att.subtitle}</p>
                     </div>
                   </a>
-                ))}
+                )) : (
+                  <p className="text-xs text-[#abb3b7] italic col-span-2">No attachments yet</p>
+                )}
               </div>
             </div>
 
@@ -302,14 +349,14 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
             </div>
 
             <div className="space-y-8">
-              {filteredNotifications.length > 0 ? filteredNotifications.map((notif, i) => (
-                <div key={notif.id || i} className="flex gap-4 relative">
+              {filteredNotifications.length > 0 ? filteredNotifications.map((notif) => (
+                <div key={notif.id} className="flex gap-4 relative">
                   <div className="w-8 h-8 rounded-full bg-[#0c56d0] flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-md">
-                    {notif.actor_id === useProjects().currentUserId ? 'ME' : '??'}
+                    {notif.actor_id === currentUserId ? 'ME' : (notif.profiles?.username || '??').slice(0, 2).toUpperCase()}
                   </div>
                   <div>
                     <p className="text-[13px] leading-snug text-[#2b3437]">
-                      <span className="font-bold">You</span> {notif.type.includes('move') ? 'moved' : 'updated'} <span className="text-[#0c56d0] font-medium">{task.title.slice(0, 15)}...</span>
+                      <span className="font-bold">{notif.actor_id === currentUserId ? 'You' : (notif.profiles?.username || 'Somebody')}</span> {notif.content ? notif.content.split(' ').slice(1).join(' ') : 'updated something'}
                     </p>
                     <p className="text-[10px] text-[#abb3b7] mt-1 flex items-center gap-1 font-medium">
                        <span className="material-symbols-outlined text-[10px]">schedule</span>
@@ -330,7 +377,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
              <div className="bg-white p-5 rounded-2xl border border-dashed border-[#eaeff1]">
                 <label className="text-[10px] font-bold text-[#abb3b7] uppercase tracking-widest block mb-2">Sprint Goal</label>
                 <p className="text-[11px] leading-relaxed text-[#586064] font-medium">
-                  "Complete all API migrations and finalize the UI system documentation by EOD Friday."
+                  {project?.sprintGoal || "No sprint goal defined for this project."}
                 </p>
              </div>
           </div>
