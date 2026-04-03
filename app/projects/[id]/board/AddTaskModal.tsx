@@ -62,6 +62,7 @@ export default function AddTaskModal({ projectId, status, onClose }: AddTaskModa
       checklist: [],
       attachments: [],
       testingNotes: "",
+      testingStatus: "not_tested",
       assigneeInitials: currentProfile?.username ? currentProfile.username.slice(0, 2).toUpperCase() : "??",
       assigneeName: currentProfile?.username ?? "Anonymous",
       dueDate: dueDate ? new Date(dueDate).toISOString() : null,
