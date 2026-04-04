@@ -206,9 +206,24 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
             );
           }
           if (payload.eventType === "UPDATE") {
-            const t = dbRowToTask(payload.new as Record<string, unknown>);
-            const pid = (payload.new as Record<string, unknown>).project_id as string;
-            return prev.map((p) => p.id === pid ? { ...p, tasks: p.tasks.map((task) => task.id === t.id ? t : task) } : p);
+            const raw = payload.new as Record<string, unknown>;
+            const t = dbRowToTask(raw);
+            const pid = raw.project_id as string;
+            return prev.map((p) => p.id === pid ? { 
+              ...p, 
+              tasks: p.tasks.map((task) => {
+                if (task.id === t.id) {
+                   const updated = { ...t };
+                   if (raw.checklist === undefined) updated.checklist = task.checklist;
+                   if (raw.attachments === undefined) updated.attachments = task.attachments;
+                   if (raw.labels === undefined) updated.labels = task.labels;
+                   if (raw.description === undefined) updated.description = task.description;
+                   if (raw.testing_notes === undefined) updated.testingNotes = task.testingNotes;
+                   return updated;
+                }
+                return task;
+              }) 
+            } : p);
           }
           if (payload.eventType === "DELETE") {
             const pid = (payload.old as Record<string, unknown>).project_id as string;

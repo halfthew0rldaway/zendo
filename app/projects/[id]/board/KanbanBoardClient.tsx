@@ -165,9 +165,11 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
       </h4>
 
       {task.description && (
-        <p className="text-xs text-[#586064] line-clamp-2 leading-relaxed mb-3 whitespace-pre-wrap">
-          {task.description}
-        </p>
+        <div className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-3">
+          {task.description.split('\n').map((line, i) => (
+             <p key={i} className={line.trim() === '' ? 'h-3' : ''}>{line.trim() === '' ? '' : line}</p>
+          ))}
+        </div>
       )}
 
       {/* Due date badge with enhanced UI */}

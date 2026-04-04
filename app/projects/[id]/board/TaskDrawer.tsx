@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Task, Priority, TaskStatus, ChecklistItem, Attachment } from "../../../types";
 import { useProjects } from "../../../lib/store";
 import { getUserColor } from "../../../lib/avatarColors";
@@ -53,6 +53,12 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
 
   const currentAssigneeMember = project?.members.find(m => m.id === task.assigneeId || (task.assigneeId === null && m.username === task.assigneeName));
   const currentAssigneeId = currentAssigneeMember?.id || "";
+
+  useEffect(() => {
+    if (!editingDesc) setDesc(task.description || "");
+    if (!editingTitle) setTitle(task.title || "");
+    setTestingNotes(task.testingNotes || "");
+  }, [task.description, task.title, task.testingNotes, editingDesc, editingTitle]);
 
   const priority = PRIORITY_MAP[task.priority];
   const completedItems = task.checklist?.filter((c) => c.done).length || 0;
@@ -282,24 +288,34 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                 Description
               </h3>
               {editingDesc ? (
-                <div className="bg-white p-6 rounded-2xl border border-[#0c56d0] shadow-sm transform transition-all">
+                <div className="bg-surface-container-lowest p-6 rounded-2xl border border-primary shadow-sm transform transition-all">
                   <textarea
                     autoFocus
-                    className="w-full bg-transparent border-none rounded-xl text-sm p-0 outline-none min-h-[100px] resize-y text-[#586064]"
+                    className="w-full bg-transparent border-none rounded-xl text-sm p-0 outline-none min-h-[100px] resize-y text-on-surface"
                     value={desc}
                     onChange={e => setDesc(e.target.value)}
                     onBlur={handleDescSave}
                   />
                   <div className="flex justify-end mt-2">
-                     <button onClick={handleDescSave} className="text-xs text-white bg-[#0c56d0] px-3 py-1.5 rounded-lg font-bold">Save</button>
+                     <button onClick={handleDescSave} className="text-xs text-white bg-primary hover:bg-primary-dim px-3 py-1.5 rounded-lg font-bold">Save</button>
                   </div>
                 </div>
               ) : (
                 <div 
-                  className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm hover:shadow-md hover:border-[#0c56d0]/30 transition-all italic cursor-pointer min-h-[100px] whitespace-pre-wrap"
+                  className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 text-sm leading-relaxed text-on-surface-variant shadow-sm hover:shadow-md hover:border-primary/40 transition-all cursor-pointer min-h-[100px]"
                   onClick={() => { setDesc(task.description || ""); setEditingDesc(true); }}
                 >
-                  {task.description || "Click to add description..."}
+                  {task.description ? (
+                    <div className="flex flex-col gap-3">
+                      {task.description.split('\n').map((line, i) => (
+                        <p key={i} className={line.trim() === '' ? 'h-4' : ''}>
+                          {line.trim() === '' ? '' : line}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="italic text-outline-variant">Click to add description...</p>
+                  )}
                 </div>
               )}
             </div>
