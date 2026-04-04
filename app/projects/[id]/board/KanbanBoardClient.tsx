@@ -165,7 +165,7 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
       </h4>
 
       {task.description && (
-        <p className="text-xs text-[#586064] line-clamp-2 leading-relaxed mb-3">
+        <p className="text-xs text-[#586064] line-clamp-2 leading-relaxed mb-3 whitespace-pre-wrap">
           {task.description}
         </p>
       )}
@@ -289,7 +289,7 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
                 {project.name}
               </h2>
             </div>
-            <p className="text-[#586064] max-w-2xl leading-relaxed">{project.description}</p>
+            <p className="text-[#586064] max-w-2xl leading-relaxed whitespace-pre-wrap">{project.description}</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex -space-x-3">

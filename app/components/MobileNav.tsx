@@ -21,7 +21,7 @@ export default function MobileNav() {
   };
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2 flex items-center justify-between z-50 shadow-[0_-4px_24px_rgba(43,52,55,0.05)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-2 flex items-center justify-between z-50 flex-row" style={{ boxShadow: "0 -4px 24px rgba(0,0,0,0.05)" }}>
       {navItems.map((item) => {
         const active = isActive(item);
         return (
@@ -29,7 +29,7 @@ export default function MobileNav() {
             key={item.href}
             href={item.href}
             className={`flex flex-col items-center gap-1 p-2 min-w-[64px] rounded-xl transition-all ${
-              active ? "text-[#0c56d0] bg-[#dae2ff]/40" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+              active ? "text-primary bg-primary-container" : "text-on-surface-variant hover:bg-surface hover:text-on-surface"
             }`}
           >
             <span

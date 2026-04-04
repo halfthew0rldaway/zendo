@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useProjects } from "../lib/store";
 import { getUserColor } from "../lib/avatarColors";
+import { useTheme } from "next-themes";
 
 function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   const { notifications, markNotificationsRead } = useProjects();
@@ -52,21 +53,21 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="absolute right-0 top-full mt-2 w-[calc(100vw-40px)] sm:w-96 bg-white rounded-xl shadow-2xl border border-[#abb3b7]/20 z-50 overflow-hidden"
-      style={{ boxShadow: "0 16px 40px rgba(43,52,55,0.12)" }}
+      className="absolute right-0 top-full mt-2 w-[calc(100vw-40px)] sm:w-96 bg-surface-container-lowest rounded-xl shadow-2xl border border-outline-variant/20 z-50 overflow-hidden"
+      style={{ boxShadow: "0 16px 40px rgba(0,0,0,0.12)" }}
     >
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[#f1f4f6]">
-        <h3 className="font-bold text-[#2b3437] text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-surface-container-highest">
+        <h3 className="font-bold text-on-surface text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>
           Notifications
         </h3>
-        <span className="text-[10px] font-bold bg-[#0c56d0] text-white px-2 py-0.5 rounded-full">
+        <span className="text-[10px] font-bold bg-primary text-on-primary px-2 py-0.5 rounded-full">
           {displayNotifications.length}
         </span>
       </div>
 
       {displayNotifications.length === 0 ? (
-        <div className="py-12 text-center text-[#737c7f] text-sm">
-          <span className="material-symbols-outlined text-3xl block mb-2 text-[#abb3b7]">notifications_none</span>
+        <div className="py-12 text-center text-outline text-sm">
+          <span className="material-symbols-outlined text-3xl block mb-2 text-outline-variant">notifications_none</span>
           No recent activity
         </div>
       ) : (
@@ -74,7 +75,7 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
           {displayNotifications.map((notif, i) => (
             <div
               key={notif.id || i}
-              className="flex items-start gap-3 px-5 py-3.5 hover:bg-[#f1f4f6] transition-colors border-b border-[#f1f4f6] last:border-0"
+              className="flex items-start gap-3 px-5 py-3.5 hover:bg-surface-container-low transition-colors border-b border-surface-container-highest last:border-0"
             >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5"
@@ -83,23 +84,23 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                 <span className="material-symbols-outlined text-sm">{STATUS_ICON_MAP[notif.type] || "notifications"}</span>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-[#2b3437] leading-snug">
+                <p className="text-sm text-on-surface leading-snug">
                   {notif.content}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] text-[#737c7f]">{formatTime(notif.created_at)}</span>
+                  <span className="text-[10px] text-outline">{formatTime(notif.created_at)}</span>
                 </div>
               </div>
               {!notif.is_read && (
-                <div className="w-1.5 h-1.5 bg-[#0c56d0] rounded-full mt-2" />
+                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2" />
               )}
             </div>
           ))}
         </div>
       )}
 
-      <div className="px-5 py-3 border-t border-[#f1f4f6]">
-        <button className="text-xs font-bold text-[#0c56d0] hover:underline" onClick={onClose}>
+      <div className="px-5 py-3 border-t border-surface-container-highest">
+        <button className="text-xs font-bold text-primary hover:underline" onClick={onClose}>
           Mark all as read
         </button>
       </div>
@@ -141,11 +142,11 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="absolute right-0 top-full mt-2 w-[calc(100vw-40px)] sm:w-80 bg-white rounded-xl shadow-2xl border border-[#abb3b7]/20 z-50"
-      style={{ boxShadow: "0 16px 40px rgba(43,52,55,0.12)" }}
+      className="absolute right-0 top-full mt-2 w-[calc(100vw-40px)] sm:w-80 bg-surface-container-lowest rounded-xl shadow-2xl border border-outline-variant/20 z-50"
+      style={{ boxShadow: "0 16px 40px rgba(0,0,0,0.12)" }}
     >
-      <div className="px-5 py-4 border-b border-[#f1f4f6]">
-        <h3 className="font-bold text-[#2b3437] text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>
+      <div className="px-5 py-4 border-b border-surface-container-highest">
+        <h3 className="font-bold text-on-surface text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>
           Settings
         </h3>
       </div>
@@ -153,11 +154,11 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
       <div className="p-5 space-y-5">
         {/* App Name */}
         <div>
-          <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest block mb-2">
+          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-2">
             Workspace Name
           </label>
           <input
-            className="w-full px-3 py-2.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg text-sm outline-none focus:border-[#0c56d0]/40 focus:bg-white transition-all"
+            className="w-full px-3 py-2.5 bg-background border-2 border-transparent rounded-lg text-sm text-on-surface outline-none focus:border-primary/40 focus:bg-surface transition-all"
             value={appName}
             onChange={(e) => setAppName(e.target.value)}
           />
@@ -165,37 +166,37 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
 
         {/* Data Management */}
         <div>
-          <label className="text-[10px] font-bold text-[#586064] uppercase tracking-widest block mb-3">
+          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-3">
             Data Management
           </label>
           <div className="space-y-2">
             <button
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#f1f4f6] hover:bg-[#e3e9ec] text-sm font-medium text-[#2b3437] transition-colors active:scale-95"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-sm font-medium text-on-surface transition-colors active:scale-95"
               onClick={handleExport}
             >
-              <span className="material-symbols-outlined text-lg text-[#0c56d0]">download</span>
+              <span className="material-symbols-outlined text-lg text-primary">download</span>
               Export data as JSON
             </button>
             {!confirmReset ? (
               <button
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#f1f4f6] hover:bg-[#fe8983]/20 text-sm font-medium text-[#586064] hover:text-[#9f403d] transition-colors active:scale-95"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container hover:bg-error-container text-sm font-medium text-on-surface-variant hover:text-error transition-colors active:scale-95"
                 onClick={() => setConfirmReset(true)}
               >
                 <span className="material-symbols-outlined text-lg">restart_alt</span>
                 Reset to defaults
               </button>
             ) : (
-              <div className="bg-[#fe8983]/10 border border-[#fe8983]/30 rounded-lg p-3">
-                <p className="text-xs text-[#9f403d] font-medium mb-3">This will erase all your data. Are you sure?</p>
+              <div className="bg-error-container/20 border border-error/20 rounded-lg p-3">
+                <p className="text-xs text-error font-medium mb-3">This will erase all your data. Are you sure?</p>
                 <div className="flex gap-2">
                   <button
-                    className="flex-1 py-1.5 rounded-lg bg-[#9f403d] text-white text-xs font-bold active:scale-95 transition-all"
+                    className="flex-1 py-1.5 rounded-lg bg-error text-white text-xs font-bold active:scale-95 transition-all"
                     onClick={() => { resetData(); setConfirmReset(false); onClose(); }}
                   >
                     Yes, reset
                   </button>
                   <button
-                    className="flex-1 py-1.5 rounded-lg bg-[#e3e9ec] text-[#586064] text-xs font-bold"
+                    className="flex-1 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant text-xs font-bold"
                     onClick={() => setConfirmReset(false)}
                   >
                     Cancel
@@ -207,8 +208,8 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* App Info */}
-        <div className="pt-2 border-t border-[#f1f4f6]">
-          <div className="flex items-center justify-between text-[10px] text-[#737c7f]">
+        <div className="pt-2 border-t border-surface-container-highest">
+          <div className="flex items-center justify-between text-[10px] text-outline">
             <span className="uppercase tracking-widest font-bold">Version</span>
             <span>1.0.0</span>
           </div>
@@ -227,34 +228,18 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState<string>("system");
   const [mounted, setMounted] = useState(false);
+  
+  const { theme, setTheme, systemTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem("zendo-theme") || "system";
-    setTheme(saved);
   }, []);
 
   const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("zendo-theme", next);
-    doc().classList.toggle("dark", next === "dark");
+    const currentTheme = theme === "system" ? systemTheme : theme;
+    setTheme(currentTheme === "dark" ? "light" : "dark");
   };
-
-  const doc = () => document.documentElement;
-
-  useEffect(() => {
-    if (mounted) {
-      if (theme === "system") {
-        const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        doc().classList.toggle("dark", isDark);
-      } else {
-        doc().classList.toggle("dark", theme === "dark");
-      }
-    }
-  }, [theme, mounted]);
 
   // Close avatar menu on outside click
   useEffect(() => {
@@ -286,21 +271,21 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
               architecture
             </span>
           </div>
-          <span className="text-xl font-black tracking-tighter text-[#0c56d0]" style={{ fontFamily: "Outfit, sans-serif" }}>
+          <span className="text-xl font-black tracking-tighter text-primary" style={{ fontFamily: "Outfit, sans-serif" }}>
             ZENDO
           </span>
         </div>
-        <span className="hidden md:block text-2xl font-black tracking-tighter text-[#0c56d0] opacity-0 pointer-events-none" style={{ fontFamily: "Outfit, sans-serif" }}>
+        <span className="hidden md:block text-2xl font-black tracking-tighter text-primary opacity-0 pointer-events-none" style={{ fontFamily: "Outfit, sans-serif" }}>
           ZENDO
         </span>
         <nav className="hidden md:flex gap-6">
-          <Link href="/projects" className={`font-medium transition-all duration-300 text-sm ${pathname === "/projects" ? "text-[#0c56d0] font-bold border-b-2 border-[#0c56d0] pb-1" : "text-slate-500 hover:text-[#0c56d0]"}`}>
+          <Link href="/projects" className={`font-medium transition-all duration-300 text-sm ${pathname === "/projects" ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-on-surface-variant hover:text-primary"}`}>
             Projects
           </Link>
-          <Link href="/projects/board" className={`font-medium transition-all duration-300 text-sm ${pathname.startsWith("/projects/board") || /^\/projects\/[^/]+\/board/.test(pathname) ? "text-[#0c56d0] font-bold border-b-2 border-[#0c56d0] pb-1" : "text-slate-500 hover:text-[#0c56d0]"}`}>
+          <Link href="/projects/board" className={`font-medium transition-all duration-300 text-sm ${pathname.startsWith("/projects/board") || /^\/projects\/[^/]+\/board/.test(pathname) ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-on-surface-variant hover:text-primary"}`}>
             Kanban
           </Link>
-          <Link href="/projects/schedule" className={`font-medium transition-all duration-300 text-sm ${pathname.startsWith("/projects/schedule") ? "text-[#0c56d0] font-bold border-b-2 border-[#0c56d0] pb-1" : "text-slate-500 hover:text-[#0c56d0]"}`}>
+          <Link href="/projects/schedule" className={`font-medium transition-all duration-300 text-sm ${pathname.startsWith("/projects/schedule") ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-on-surface-variant hover:text-primary"}`}>
             Schedule
           </Link>
         </nav>
@@ -309,9 +294,9 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
       <div className="flex items-center gap-4">
         {showSearch && (
           <div className="relative group hidden sm:block">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737c7f] text-[20px]">search</span>
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
             <input
-              className="bg-[#f1f4f6] border border-transparent rounded-full py-2 pl-10 pr-4 w-48 lg:w-64 focus:ring-2 focus:ring-[#0c56d0]/20 text-sm outline-none transition-all focus:bg-white focus:w-64 lg:focus:w-80"
+              className="bg-surface-container border border-transparent text-on-surface rounded-full py-2 pl-10 pr-4 w-48 lg:w-64 focus:ring-2 focus:ring-primary/20 text-sm outline-none transition-all focus:bg-background focus:w-64 lg:focus:w-80"
               placeholder={searchPlaceholder}
               type="text"
             />
@@ -327,7 +312,7 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
             >
               <span className="material-symbols-outlined">notifications</span>
               {hasUnread && (
-                <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full bg-[#9f403d] border-2 border-white box-content shadow-sm dark:border-background" />
+                <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full bg-error border-2 border-background box-content shadow-sm" />
               )}
             </button>
             {notifOpen && <NotificationsDropdown onClose={() => setNotifOpen(false)} />}
@@ -340,7 +325,7 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
             title="Toggle theme"
           >
             <span className="material-symbols-outlined">
-              {mounted && theme === "dark" ? "light_mode" : "dark_mode"}
+              {mounted && (theme === "dark" || (theme === "system" && systemTheme === "dark")) ? "light_mode" : "dark_mode"}
             </span>
           </button>
 
@@ -365,13 +350,13 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
               {initials}
             </button>
             {avatarOpen && (
-              <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-[#abb3b7]/20 overflow-hidden z-50 min-w-[160px]">
-                <div className="px-4 py-3 border-b border-[#f1f4f6]">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#737c7f]">Signed in</p>
-                  <p className="text-xs text-[#2b3437] font-medium truncate">{nameToUse}</p>
+              <div className="absolute right-0 top-full mt-2 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant/20 overflow-hidden z-50 min-w-[160px]">
+                <div className="px-4 py-3 border-b border-surface-container-highest">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-outline">Signed in</p>
+                  <p className="text-xs text-on-surface font-medium truncate">{nameToUse}</p>
                 </div>
                 <button
-                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-[#9f403d] hover:bg-[#fe8983]/10 transition-colors font-semibold"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-error hover:bg-error-container/20 transition-colors font-semibold"
                   onClick={handleSignOut}
                 >
                   <span className="material-symbols-outlined text-lg">logout</span>

@@ -73,7 +73,7 @@ export default function Sidebar({ className }: { className?: string }) {
       </nav>
 
       {/* Bottom */}
-      <div className="pt-6 mt-auto border-t border-slate-200/50 flex flex-col gap-1">
+      <div className="pt-6 mt-auto border-t border-outline-variant/20 flex flex-col gap-1">
         <Link
           href="/projects/help"
           className={`flex items-center gap-3 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${pathname === "/projects/help" ? "text-primary bg-surface-container-lowest" : "text-on-surface-variant hover:bg-surface-container-lowest"}`}

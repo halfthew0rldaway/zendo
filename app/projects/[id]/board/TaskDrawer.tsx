@@ -296,7 +296,7 @@ export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps
                 </div>
               ) : (
                 <div 
-                  className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm hover:shadow-md hover:border-[#0c56d0]/30 transition-all italic cursor-pointer min-h-[100px]"
+                  className="bg-white p-6 rounded-2xl border border-[#eaeff1] text-sm leading-relaxed text-[#586064] shadow-sm hover:shadow-md hover:border-[#0c56d0]/30 transition-all italic cursor-pointer min-h-[100px] whitespace-pre-wrap"
                   onClick={() => { setDesc(task.description || ""); setEditingDesc(true); }}
                 >
                   {task.description || "Click to add description..."}
