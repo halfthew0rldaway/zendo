@@ -33,6 +33,7 @@ export default function AddTaskModal({ projectId, status, onClose }: AddTaskModa
   const [priority, setPriority] = useState<Priority>("medium");
   const [selectedLabels, setSelectedLabels] = useState<typeof LABEL_OPTIONS>([]);
   const [dueDate, setDueDate] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const toggleLabel = (label: typeof LABEL_OPTIONS[0]) => {
@@ -43,13 +44,16 @@ export default function AddTaskModal({ projectId, status, onClose }: AddTaskModa
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     if (!title.trim()) {
       setError("Task title is required.");
       return;
     }
-    addTask(projectId, {
+    
+    setSubmitting(true);
+    await addTask(projectId, {
       title: title.trim(),
       description: description.trim(),
       status,
@@ -159,17 +163,26 @@ export default function AddTaskModal({ projectId, status, onClose }: AddTaskModa
 
           <div className="flex gap-3 pt-2">
             <button
-              className="flex-1 px-4 py-2.5 rounded-full border border-[#e3e9ec] text-sm font-semibold text-[#586064] hover:bg-[#f1f4f6] transition-colors active:scale-95"
+              className="flex-1 px-4 py-2.5 rounded-full border border-[#e3e9ec] text-sm font-semibold text-[#586064] hover:bg-[#f1f4f6] transition-colors active:scale-95 disabled:opacity-50"
               type="button"
               onClick={onClose}
+              disabled={submitting}
             >
               Cancel
             </button>
             <button
-              className="flex-1 primary-gradient text-white px-4 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-all"
+              className="flex-1 primary-gradient text-white px-4 py-2.5 rounded-full text-sm font-bold active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               type="submit"
+              disabled={submitting}
             >
-              Add Task
+              {submitting ? (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
+                  Adding...
+                </>
+              ) : (
+                "Add Task"
+              )}
             </button>
           </div>
         </form>

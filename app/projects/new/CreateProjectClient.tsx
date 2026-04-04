@@ -60,6 +60,7 @@ export default function CreateProjectClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     if (!validate()) return;
     setSubmitting(true);
 
@@ -272,21 +273,32 @@ export default function CreateProjectClient() {
             {/* Actions */}
             <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-6">
               <button
-                className="text-[#0c56d0] font-bold px-6 py-3 hover:bg-[#0c56d0]/5 rounded-full transition-all active:scale-95"
+                className="text-[#0c56d0] font-bold px-6 py-3 hover:bg-[#0c56d0]/5 rounded-full transition-all active:scale-95 disabled:opacity-50"
                 type="button"
                 onClick={() => router.back()}
+                disabled={submitting}
               >
                 Cancel
               </button>
               <button
-                className="primary-gradient text-white font-bold px-10 py-4 rounded-full active:scale-95 transition-all text-lg flex items-center gap-3"
+                className="primary-gradient text-white font-bold px-10 py-4 rounded-full active:scale-95 transition-all text-lg flex items-center gap-3 disabled:opacity-70"
                 style={{ boxShadow: "0 8px 24px rgba(12,86,208,0.2)" }}
                 type="submit"
+                disabled={submitting}
               >
-                <span>Create Project</span>
-                <span className="material-symbols-outlined text-sm">
-                  arrow_forward
-                </span>
+                {submitting ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
+                    Initializing...
+                  </>
+                ) : (
+                  <>
+                    <span>Create Project</span>
+                    <span className="material-symbols-outlined text-sm">
+                      arrow_forward
+                    </span>
+                  </>
+                )}
               </button>
             </div>
           </form>

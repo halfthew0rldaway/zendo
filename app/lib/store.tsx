@@ -200,7 +200,10 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
           if (payload.eventType === "INSERT") {
             const t = dbRowToTask(payload.new as Record<string, unknown>);
             const pid = (payload.new as Record<string, unknown>).project_id as string;
-            return prev.map((p) => p.id === pid ? { ...p, tasks: [...p.tasks, t] } : p);
+            return prev.map((p) => p.id === pid 
+              ? { ...p, tasks: p.tasks.find(tk => tk.id === t.id) ? p.tasks : [...p.tasks, t] } 
+              : p
+            );
           }
           if (payload.eventType === "UPDATE") {
             const t = dbRowToTask(payload.new as Record<string, unknown>);
