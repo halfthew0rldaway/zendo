@@ -72,7 +72,7 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <div
-      className="group bg-white p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden cursor-pointer"
+      className="group bg-white p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden cursor-pointer h-full"
       onClick={handleClick}
     >
       <div className="flex justify-between items-start">
@@ -172,7 +172,7 @@ function ProjectCard({ project }: { project: Project }) {
         </div>
       )}
 
-      <div className="mt-2 pt-4 border-t border-[#eaeff1] flex items-center justify-between">
+      <div className="mt-auto pt-4 border-t border-[#eaeff1] flex items-center justify-between">
         <div className="flex -space-x-2">
           {project.members.slice(0, 3).map((m) => (
             <div

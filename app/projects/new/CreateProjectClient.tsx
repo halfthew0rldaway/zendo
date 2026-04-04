@@ -232,7 +232,7 @@ export default function CreateProjectClient() {
               <div className="flex flex-col gap-2 group">
                 <label
                   className="text-sm font-semibold tracking-wide text-[#586064] ml-1"
-                  htmlFor="pin"
+                  htmlFor="project-security-pin"
                 >
                   Security PIN{" "}
                   <span className="font-normal text-[#737c7f]">(Optional)</span>
@@ -240,7 +240,8 @@ export default function CreateProjectClient() {
                 <div className="relative flex items-center">
                   <input
                     className="w-full px-4 py-3.5 bg-[#f1f4f6] border-2 border-transparent rounded-lg focus:bg-white focus:border-[#0c56d0]/40 transition-all outline-none tracking-[0.5em] pr-12"
-                    id="pin"
+                    id="project-security-pin"
+                    autoComplete="new-password"
                     maxLength={6}
                     placeholder="4-6 digits"
                     type={showPinText ? "text" : "password"}

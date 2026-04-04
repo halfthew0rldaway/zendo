@@ -37,7 +37,7 @@ function BoardProjectCard({ project }: { project: Project }) {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 ghost-border hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 flex flex-col gap-5">
+    <div className="bg-white rounded-xl p-6 ghost-border hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 flex flex-col gap-5 h-full">
       <div className="flex items-start justify-between">
         <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${ICON_BG_MAP[project.iconBg]}`}>
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -85,7 +85,7 @@ function BoardProjectCard({ project }: { project: Project }) {
         </div>
       )}
 
-      <div className="pt-4 border-t border-[#f1f4f6] flex items-center justify-between">
+      <div className="mt-auto pt-4 border-t border-[#f1f4f6] flex items-center justify-between">
         <span className="text-[11px] font-bold text-[#737c7f] uppercase tracking-wider">
           {formatDistanceToNow(new Date(project.updatedAt))}
         </span>

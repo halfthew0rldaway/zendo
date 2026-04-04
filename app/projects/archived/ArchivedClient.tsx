@@ -41,7 +41,7 @@ export default function ArchivedClient() {
           {archivedProjects.map((project) => (
             <div
               key={project.id}
-              className="bg-white p-6 rounded-xl ghost-border opacity-80 hover:opacity-100 hover:shadow-lg transition-all cursor-pointer"
+              className="bg-white p-6 rounded-xl ghost-border opacity-80 hover:opacity-100 hover:shadow-lg transition-all cursor-pointer flex flex-col h-full"
               onClick={() => router.push(`/projects/${project.id}/board`)}
             >
               <div className="flex items-start justify-between mb-4">
@@ -59,7 +59,7 @@ export default function ArchivedClient() {
                 {project.name}
               </h3>
               <p className="text-[#586064] text-sm line-clamp-2 mb-4">{project.description}</p>
-              <div className="pt-4 border-t border-[#f1f4f6] flex justify-between items-center">
+              <div className="mt-auto pt-4 border-t border-[#f1f4f6] flex justify-between items-center">
                 <span className="text-xs text-[#737c7f] font-medium">{project.tasks.length} tasks completed</span>
                 <span className="text-[11px] font-bold text-[#737c7f] uppercase tracking-wider">
                   {formatDistanceToNow(new Date(project.updatedAt))}
