@@ -29,7 +29,7 @@ export default function MobileNav() {
             key={item.href}
             href={item.href}
             className={`flex flex-col items-center gap-1 p-2 min-w-[64px] rounded-xl transition-all ${
-              active ? "text-[#0c56d0]" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+              active ? "text-[#0c56d0] bg-[#dae2ff]/40" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
             }`}
           >
             <span

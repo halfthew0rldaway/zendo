@@ -21,7 +21,7 @@ export default function Sidebar({ className }: { className?: string }) {
   };
 
   return (
-    <aside className={`h-screen sticky top-0 left-0 w-64 bg-slate-50 flex-col gap-8 p-6 z-50 shrink-0 border-r border-slate-100 ${className || "flex"}`}>
+    <aside className={`h-screen sticky top-0 left-0 w-64 bg-surface-container-low flex-col gap-8 p-6 z-50 shrink-0 border-r border-outline-variant/20 ${className || "flex"}`}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-2">
         <div className="w-10 h-10 rounded-lg primary-gradient flex items-center justify-center text-white shadow-lg">
@@ -30,7 +30,7 @@ export default function Sidebar({ className }: { className?: string }) {
           </span>
         </div>
         <div>
-          <div className="font-bold text-lg text-slate-900 tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+          <div className="font-bold text-lg text-on-surface tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
             ZENDO
           </div>
         </div>
@@ -56,8 +56,8 @@ export default function Sidebar({ className }: { className?: string }) {
               href={item.href}
               className={`flex items-center gap-3 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
                 active
-                  ? "text-[#0c56d0] font-bold bg-white shadow-sm"
-                  : "text-slate-500 hover:bg-white"
+                  ? "text-primary font-bold bg-surface-container-lowest shadow-sm"
+                  : "text-on-surface-variant hover:bg-surface-container-lowest"
               }`}
             >
               <span
@@ -76,14 +76,14 @@ export default function Sidebar({ className }: { className?: string }) {
       <div className="pt-6 mt-auto border-t border-slate-200/50 flex flex-col gap-1">
         <Link
           href="/projects/help"
-          className={`flex items-center gap-3 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${pathname === "/projects/help" ? "text-[#0c56d0] bg-white" : "text-slate-500 hover:bg-white"}`}
+          className={`flex items-center gap-3 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${pathname === "/projects/help" ? "text-primary bg-surface-container-lowest" : "text-on-surface-variant hover:bg-surface-container-lowest"}`}
         >
           <span className="material-symbols-outlined">help</span>
           Help
         </Link>
         <Link
           href="/projects/archived"
-          className={`flex items-center gap-3 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${pathname === "/projects/archived" ? "text-[#0c56d0] bg-white" : "text-slate-500 hover:bg-white"}`}
+          className={`flex items-center gap-3 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${pathname === "/projects/archived" ? "text-primary bg-surface-container-lowest" : "text-on-surface-variant hover:bg-surface-container-lowest"}`}
         >
           <span className="material-symbols-outlined">archive</span>
           Archived

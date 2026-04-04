@@ -19,17 +19,20 @@ const COLUMNS: Column[] = [
 ];
 
 const PRIORITY_MAP: Record<Priority, { label: string; icon: string; color: string }> = {
-  urgent: { label: "Urgent", icon: "priority_high", color: "text-[#9f403d]" },
-  high: { label: "High", icon: "arrow_upward", color: "text-[#9f403d]" },
-  medium: { label: "Medium", icon: "schedule", color: "text-[#0c56d0]" },
-  low: { label: "Low", icon: "low_priority", color: "text-[#4d626c]" },
+  urgent: { label: "Urgent", icon: "priority_high", color: "text-[#9f403d] bg-[#fee2e2] px-2 py-0.5 rounded" },
+  high: { label: "High", icon: "arrow_upward", color: "text-[#d97706] bg-[#fef3c7] px-2 py-0.5 rounded" },
+  medium: { label: "Medium", icon: "schedule", color: "text-[#0c56d0] bg-[#dae2ff] px-2 py-0.5 rounded" },
+  low: { label: "Low", icon: "low_priority", color: "text-[#059669] bg-[#d1fae5] px-2 py-0.5 rounded" },
 };
 
 const LABEL_COLOR_MAP: Record<string, string> = {
   primary: "bg-[#dae2ff] text-[#004ab9]",
   secondary: "bg-[#cfe6f2] text-[#40555f]",
   tertiary: "bg-[#e3dbfd] text-[#524c68]",
-  error: "bg-[#fe8983]/20 text-[#9f403d]",
+  error: "bg-[#fee2e2] text-[#9f403d]",
+  warning: "bg-[#fef3c7] text-[#92400e]",
+  success: "bg-[#d1fae5] text-[#065f46]",
+  info: "bg-[#e0f2fe] text-[#0369a1]",
 };
 
 const COL_BADGE_MAP: Record<TaskStatus, string> = {
@@ -42,34 +45,34 @@ const COL_BADGE_MAP: Record<TaskStatus, string> = {
 
 const STATUS_THEME_MAP: Record<TaskStatus, { card: string; bar: string; icon: string; iconColor: string }> = {
   todo: { 
-    card: "border-l-4 border-[#e3e9ec]", 
-    bar: "bg-[#e3e9ec]", 
+    card: "border-l-4 border-outline-variant/30", 
+    bar: "bg-outline-variant/30", 
     icon: "assignment", 
-    iconColor: "text-[#586064]" 
+    iconColor: "text-on-surface-variant" 
   },
   in_progress: { 
-    card: "border-l-4 border-[#0c56d0] bg-[#dae2ff]/10 shadow-[#0c56d0]/5 shadow-lg", 
-    bar: "bg-[#0c56d0]", 
+    card: "border-l-4 border-primary bg-primary/5 shadow-lg shadow-primary/5", 
+    bar: "bg-primary", 
     icon: "sync", 
-    iconColor: "text-[#0c56d0]" 
+    iconColor: "text-primary" 
   },
   review: { 
-    card: "border-l-4 border-[#d97706] bg-[#fef3c7]/10", 
-    bar: "bg-[#d97706]", 
+    card: "border-l-4 border-amber-600 bg-amber-500/5", 
+    bar: "bg-amber-600", 
     icon: "visibility", 
-    iconColor: "text-[#d97706]" 
+    iconColor: "text-amber-600" 
   },
   testing: { 
-    card: "border-l-4 border-[#7c3aed] bg-[#f5f3ff]/40", 
-    bar: "bg-[#7c3aed]", 
+    card: "border-l-4 border-tertiary bg-tertiary/5", 
+    bar: "bg-tertiary", 
     icon: "biotech", 
-    iconColor: "text-[#7c3aed]" 
+    iconColor: "text-tertiary" 
   },
   done: { 
-    card: "border-l-4 border-[#059669] opacity-75 grayscale-[0.2] hover:grayscale-0 hover:opacity-100", 
-    bar: "bg-[#059669]", 
+    card: "border-l-4 border-emerald-600 opacity-75 grayscale-[0.2] hover:grayscale-0 hover:opacity-100", 
+    bar: "bg-emerald-600", 
     icon: "check_circle", 
-    iconColor: "text-[#059669]" 
+    iconColor: "text-emerald-600" 
   },
 };
 
@@ -103,9 +106,9 @@ function TaskCard({ task, projectId, onOpen, onDragStart, isInProgress }: TaskCa
 
   return (
     <div
-      className={`group bg-white p-5 rounded-xl shadow-sm hover:shadow-xl hover:shadow-black/5 transition-all duration-300 cursor-pointer relative overflow-hidden ${theme.card} ${
-        testingError ? "!border-[#9f403d]/70 !bg-[#fee2e2]/20" : ""
-      } ${isOverdue ? "!border-[#9f403d]/70" : ""}`}
+      className={`group bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden ${theme.card} ${
+        testingError ? "!border-error/70 !bg-error/5" : ""
+      } ${isOverdue ? "!border-error/70" : ""}`}
       draggable
       onClick={() => onOpen(task)}
       onDragStart={(e) => {
@@ -312,10 +315,10 @@ export default function KanbanBoardClient({ projectId }: KanbanBoardClientProps)
             </div>
             {isMemberOrOwner && (
               <button 
-                className="flex items-center gap-2 bg-[#e3e9ec] hover:bg-[#dbe4e7] px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95"
+                className="flex items-center gap-2 bg-white border border-[#0c56d0]/30 hover:border-[#0c56d0] text-[#0c56d0] px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95 shadow-sm"
                 onClick={() => setIsInviteOpen(true)}
               >
-                <span className="material-symbols-outlined text-sm">share</span>
+                <span className="material-symbols-outlined text-sm">person_add</span>
                 Invite
               </button>
             )}

@@ -13,7 +13,7 @@ export default function ProjectsLayout({
 }) {
   return (
     <ProjectProvider>
-      <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#f8f9fa] pb-[60px] md:pb-0">
+      <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-background pb-[60px] md:pb-0">
         <Sidebar className="hidden md:flex" />
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
           <TopBar />

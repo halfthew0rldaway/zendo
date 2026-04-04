@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useProjects } from "../lib/store";
 import { getUserColor } from "../lib/avatarColors";
+import { useTheme } from "next-themes";
 
 function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   const { notifications, markNotificationsRead } = useProjects();
@@ -21,6 +22,14 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
     task_added: "add_circle",
     task_updated: "edit",
     task_moved: "swap_horiz",
+    task_tested: "fact_check",
+  };
+
+  const STATUS_COLOR_MAP: Record<string, string> = {
+    task_added: "#0c56d0",    // Primary Blue
+    task_updated: "#615b77",  // Tertiary Purple
+    task_moved: "#4d626c",    // Secondary Slate/Teal
+    task_tested: "#22c55e",   // Success Green
   };
 
   const formatTime = (iso: string) => {
@@ -70,7 +79,7 @@ function NotificationsDropdown({ onClose }: { onClose: () => void }) {
             >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5"
-                style={{ backgroundColor: "#0c56d0" }}
+                style={{ backgroundColor: STATUS_COLOR_MAP[notif.type] || "#0c56d0" }}
               >
                 <span className="material-symbols-outlined text-sm">{STATUS_ICON_MAP[notif.type] || "notifications"}</span>
               </div>
@@ -219,6 +228,10 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   // Close avatar menu on outside click
   useEffect(() => {
@@ -242,7 +255,7 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
       : currentUserId ? currentUserId.slice(0, 2).toUpperCase() : "?";
 
   return (
-    <header className="bg-[#f8f9fa] flex justify-between items-center w-full px-5 md:px-10 py-4 sticky top-0 z-40 border-b border-slate-100 min-h-[72px]">
+    <header className="bg-background/80 backdrop-blur-md flex justify-between items-center w-full px-5 md:px-10 py-4 sticky top-0 z-40 border-b border-outline-variant/20 min-h-[72px]">
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2 md:hidden">
           <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center text-white shadow-lg">
@@ -286,21 +299,32 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
           {/* Notifications */}
           <div className="relative">
             <button
-              className={`p-2 rounded-full transition-colors relative active:scale-95 ${notifOpen ? "bg-[#dae2ff] text-[#0c56d0]" : "text-slate-500 hover:bg-[#eaeff1]"}`}
+              className={`p-2 rounded-full transition-colors relative active:scale-95 ${notifOpen ? "bg-primary-container text-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}
               onClick={() => { setNotifOpen((v) => !v); setHasUnread(false); setSettingsOpen(false); }}
             >
               <span className="material-symbols-outlined">notifications</span>
               {hasUnread && (
-                <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full bg-[#9f403d] border-2 border-white box-content shadow-sm" />
+                <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full bg-[#9f403d] border-2 border-white box-content shadow-sm dark:border-background" />
               )}
             </button>
             {notifOpen && <NotificationsDropdown onClose={() => setNotifOpen(false)} />}
           </div>
 
+          {/* Theme Toggle */}
+          <button
+            className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors active:scale-95"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            title="Toggle theme"
+          >
+            <span className="material-symbols-outlined">
+              {mounted && theme === "dark" ? "light_mode" : "dark_mode"}
+            </span>
+          </button>
+
           {/* Settings */}
           <div className="relative">
             <button
-              className={`p-2 rounded-full transition-colors active:scale-95 ${settingsOpen ? "bg-[#dae2ff] text-[#0c56d0]" : "text-slate-500 hover:bg-[#eaeff1]"}`}
+              className={`p-2 rounded-full transition-colors active:scale-95 ${settingsOpen ? "bg-primary-container text-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}
               onClick={() => { setSettingsOpen((v) => !v); setNotifOpen(false); }}
             >
               <span className="material-symbols-outlined">settings</span>

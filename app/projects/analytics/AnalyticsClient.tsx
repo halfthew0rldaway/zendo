@@ -24,7 +24,7 @@ export default function AnalyticsClient() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <div className="bg-white rounded-xl p-6 ghost-border">
+        <div className="bg-white rounded-xl p-6 ghost-border border-b-4 border-[#0c56d0]">
           <p className="text-xs font-bold text-[#737c7f] uppercase tracking-widest mb-2">Total Projects</p>
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-4xl text-[#0c56d0]">folder</span>
@@ -32,7 +32,7 @@ export default function AnalyticsClient() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl p-6 ghost-border">
+        <div className="bg-white rounded-xl p-6 ghost-border border-b-4 border-[#615b77]">
           <p className="text-xs font-bold text-[#737c7f] uppercase tracking-widest mb-2">Tasks Created</p>
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-4xl text-[#615b77]">task</span>
@@ -40,22 +40,22 @@ export default function AnalyticsClient() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 ghost-border">
+        <div className="bg-white rounded-xl p-6 ghost-border border-b-4 border-[#d97706]">
           <p className="text-xs font-bold text-[#737c7f] uppercase tracking-widest mb-2">In Progress</p>
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-4xl text-[#92400e]">pending_actions</span>
+            <span className="material-symbols-outlined text-4xl text-[#d97706]">pending_actions</span>
             <p className="text-4xl font-black text-[#2b3437]">{inProgressTasks}</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 ghost-border relative overflow-hidden">
+        <div className="bg-white rounded-xl p-6 ghost-border border-b-4 border-[#059669] relative overflow-hidden">
           <p className="text-xs font-bold text-[#737c7f] uppercase tracking-widest mb-2 relative z-10">Completion Rate</p>
           <div className="flex items-center gap-3 relative z-10">
-            <span className="material-symbols-outlined text-4xl text-[#0c56d0]">incomplete_circle</span>
+            <span className="material-symbols-outlined text-4xl text-[#059669]">check_circle</span>
             <p className="text-4xl font-black text-[#2b3437]">{completionRate}%</p>
           </div>
           <div 
-            className="absolute bottom-0 left-0 h-1 bg-[#0c56d0] transition-all duration-1000" 
+            className="absolute bottom-0 left-0 h-1 bg-[#059669] transition-all duration-1000" 
             style={{ width: `${completionRate}%` }} 
           />
         </div>

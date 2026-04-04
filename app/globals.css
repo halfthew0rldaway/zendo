@@ -1,58 +1,43 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Design System Colors */
-  --color-surface-container: #eaeff1;
-  --color-error-dim: #4e0309;
-  --color-on-error: #fff7f6;
-  --color-secondary: #4d626c;
-  --color-on-secondary-fixed: #2d424c;
-  --color-surface-tint: #0c56d0;
-  --color-on-tertiary-fixed: #3f3a54;
-  --color-tertiary-fixed: #e3dbfd;
-  --color-secondary-dim: #415660;
-  --color-on-surface: #2b3437;
-  --color-on-primary-fixed-variant: #0253cd;
-  --color-secondary-fixed-dim: #c1d8e4;
-  --color-on-error-container: #752121;
-  --color-error-container: #fe8983;
-  --color-surface-bright: #f8f9fa;
-  --color-primary-fixed-dim: #c6d3ff;
-  --color-on-secondary: #f2faff;
-  --color-on-secondary-container: #40555f;
-  --color-surface-container-high: #e3e9ec;
-  --color-outline-variant: #abb3b7;
-  --color-secondary-fixed: #cfe6f2;
-  --color-surface-container-highest: #dbe4e7;
-  --color-primary-fixed: #dae2ff;
-  --color-inverse-on-surface: #9b9d9e;
-  --color-surface: #f8f9fa;
-  --color-surface-variant: #dbe4e7;
-  --color-surface-dim: #d1dce0;
-  --color-tertiary: #615b77;
-  --color-tertiary-fixed-dim: #d5cdee;
-  --color-on-tertiary: #fcf7ff;
-  --color-on-primary-fixed: #003993;
-  --color-on-primary: #f8f7ff;
-  --color-inverse-surface: #0c0f10;
+  /* Dynamic Design System Colors */
+  --color-background: var(--background);
+  --color-on-background: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-on-surface: var(--foreground);
+  
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface-variant: var(--on-surface-variant);
+
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+
+  /* Primary & Fixed Colors (mostly constant or slightly dimmed) */
   --color-primary: #0c56d0;
-  --color-surface-container-lowest: #ffffff;
-  --color-on-secondary-fixed-variant: #495f69;
-  --color-primary-dim: #004aba;
-  --color-inverse-primary: #5c8bff;
-  --color-tertiary-container: #e3dbfd;
-  --color-on-tertiary-container: #524c68;
-  --color-tertiary-dim: #554f6b;
+  --color-primary-dim: var(--primary-dim);
+  --color-on-primary: #f8f7ff;
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+
   --color-error: #9f403d;
-  --color-primary-container: #dae2ff;
-  --color-secondary-container: #cfe6f2;
-  --color-outline: #737c7f;
-  --color-on-tertiary-fixed-variant: #5c5672;
-  --color-on-surface-variant: #586064;
-  --color-surface-container-low: #f1f4f6;
-  --color-on-primary-container: #004ab9;
-  --color-background: #f8f9fa;
-  --color-on-background: #2b3437;
+  --color-error-container: #fe8983;
+  --color-on-error-container: #752121;
 
   /* Font Families */
   --font-sans: "Inter", sans-serif;
@@ -61,27 +46,107 @@
   --font-label: "Inter", sans-serif;
 }
 
-/* Custom utilities */
+:root {
+  /* Light Mode Palette */
+  --background: #f8f9fa;
+  --foreground: #2b3437;
+  
+  --surface: #f8f9fa;
+  --surface-variant: #dbe4e7;
+  --on-surface-variant: #586064;
+
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f1f4f6;
+  --surface-container: #eaeff1;
+  --surface-container-high: #e3e9ec;
+  --surface-container-highest: #dbe4e7;
+
+  --outline: #737c7f;
+  --outline-variant: #abb3b7;
+
+  --primary-dim: #004aba;
+  --primary-container: #dae2ff;
+  --on-primary-container: #004ab9;
+
+  --secondary: #4d626c;
+  --secondary-container: #cfe6f2;
+  --on-secondary-container: #40555f;
+
+  --tertiary: #615b77;
+  --tertiary-container: #e3dbfd;
+  --on-tertiary-container: #524c68;
+
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --ghost-border-color: rgba(115, 124, 127, 0.15);
+}
+
+.dark {
+  /* Dark Mode Palette - Deep Zen Tones */
+  --background: #0a0e10;
+  --foreground: #fcfcfc;
+  
+  --surface: #0a0e10;
+  --surface-variant: #1c2529;
+  --on-surface-variant: #abb3b7;
+
+  --surface-container-lowest: #0e1417;
+  --surface-container-low: #141c20;
+  --surface-container: #1b2429;
+  --surface-container-high: #242e34;
+  --surface-container-highest: #2d383e;
+
+  --outline: #8e9192;
+  --outline-variant: rgba(171, 179, 183, 0.15);
+
+  --primary-dim: #5c8bff;
+  --primary-container: #004aba;
+  --on-primary-container: #dae2ff;
+
+  --secondary: #c1d8e4;
+  --secondary-container: #415660;
+  --on-secondary-container: #cfe6f2;
+
+  --tertiary: #d5cdee;
+  --tertiary-container: #554f6b;
+  --on-tertiary-container: #e3dbfd;
+
+  --glass-bg: rgba(14, 20, 23, 0.8);
+  --ghost-border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Custom utilities using tokens */
 .primary-gradient {
-  background: linear-gradient(135deg, #0c56d0 0%, #004aba 100%);
+  background: linear-gradient(135deg, #0c56d0 0%, var(--primary-dim) 100%);
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .ghost-border {
-  border: 1px solid rgba(115, 124, 127, 0.15);
+  border: 1px solid var(--ghost-border-color);
 }
 
+/* Scrollbars */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 10px;
 }
 
 .material-symbols-outlined {

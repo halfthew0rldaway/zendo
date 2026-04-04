@@ -72,11 +72,11 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <div
-      className="group bg-white p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden cursor-pointer h-full"
+      className="group bg-surface-container-lowest p-6 rounded-xl ghost-border hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 flex flex-col gap-4 relative overflow-hidden cursor-pointer h-full"
       onClick={handleClick}
     >
       <div className="flex justify-between items-start">
-        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${ICON_BG_MAP[project.iconBg]}`}>
+        <div className={`w-12 h-12 rounded-lg flex items-center justify-center transition-colors ${ICON_BG_MAP[project.iconBg]}`}>
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
             {project.icon}
           </span>

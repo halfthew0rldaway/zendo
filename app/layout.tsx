@@ -20,13 +20,15 @@ export const metadata: Metadata = {
     "A Zen-inspired workspace for high-precision project planning and development pipelines.",
 };
 
+import { ThemeProvider } from "./components/ThemeProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
@@ -34,10 +36,17 @@ export default function RootLayout({
         />
       </head>
       <body
+        className="bg-background text-on-background min-h-screen antialiased transition-colors duration-300 selection:bg-primary/20"
         style={{ fontFamily: "Inter, sans-serif" }}
-        className="bg-[#f8f9fa] text-[#2b3437] min-h-screen"
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

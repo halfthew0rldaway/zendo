@@ -12,10 +12,10 @@ interface TaskDrawerProps {
 }
 
 const PRIORITY_MAP: Record<Priority, { label: string; icon: string; color: string }> = {
-  urgent: { label: "Urgent", icon: "priority_high", color: "text-[#9f403d]" },
-  high: { label: "High", icon: "arrow_upward", color: "text-[#9f403d]" },
-  medium: { label: "Medium", icon: "schedule", color: "text-[#0c56d0]" },
-  low: { label: "Low", icon: "low_priority", color: "text-[#4d626c]" },
+  urgent: { label: "Urgent", icon: "priority_high", color: "text-[#9f403d] bg-[#fee2e2] px-2 py-0.5 rounded shadow-sm border border-[#9f403d]/10" },
+  high: { label: "High", icon: "arrow_upward", color: "text-[#d97706] bg-[#fef3c7] px-2 py-0.5 rounded shadow-sm border border-[#d97706]/10" },
+  medium: { label: "Medium", icon: "schedule", color: "text-[#0c56d0] bg-[#dae2ff] px-2 py-0.5 rounded shadow-sm border border-[#0c56d0]/10" },
+  low: { label: "Low", icon: "low_priority", color: "text-[#059669] bg-[#d1fae5] px-2 py-0.5 rounded shadow-sm border border-[#059669]/10" },
 };
 
 const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
@@ -27,10 +27,10 @@ const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
 ];
 
 const TESTING_STATUS_OPTIONS: { value: Task["testingStatus"]; label: string; color: string; icon: string }[] = [
-  { value: "not_tested", label: "Not Tested", color: "bg-[#e3e9ec] text-[#586064]", icon: "pending" },
-  { value: "under_review", label: "Under Review", color: "bg-[#e3dbfd] text-[#524c68]", icon: "visibility" },
-  { value: "passed", label: "Passed", color: "bg-[#d1fae5] text-[#065f46]", icon: "check_circle" },
-  { value: "failed", label: "Failed", color: "bg-[#fee2e2] text-[#991b1b]", icon: "cancel" },
+  { value: "not_tested", label: "Not Tested", color: "bg-[#f1f4f6] text-[#586064] border border-[#eaeff1]", icon: "pending" },
+  { value: "under_review", label: "Under Review", color: "bg-[#e3dbfd] text-[#524c68] border border-[#d4c9f7]", icon: "visibility" },
+  { value: "passed", label: "Passed", color: "bg-[#d1fae5] text-[#065f46] border border-[#a7f3d0]", icon: "check_circle" },
+  { value: "failed", label: "Failed", color: "bg-[#fee2e2] text-[#991b1b] border border-[#fecaca]", icon: "cancel" },
 ];
 
 export default function TaskDrawer({ task, projectId, onClose }: TaskDrawerProps) {
