@@ -399,6 +399,11 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       content: content
     });
 
+    const { error } = await supabase.from("tasks").update(dbUpdates).eq("id", taskId);
+    if (error) {
+      console.error("Failed to update task in db:", error);
+    }
+
     setProjects((prev) => prev.map((p) =>
       p.id === projectId
         ? { ...p, tasks: p.tasks.map((t) => t.id === taskId ? { ...t, ...updates, updatedAt: dbUpdates.updated_at as string } : t), updatedAt: new Date().toISOString() }
