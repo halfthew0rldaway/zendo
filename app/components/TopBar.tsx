@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useProjects } from "../lib/store";
 import { getUserColor } from "../lib/avatarColors";
-import { useTheme } from "next-themes";
 
 function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   const { notifications, markNotificationsRead } = useProjects();
@@ -228,10 +227,34 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
-  const { theme, setTheme } = useTheme();
+  const [theme, setTheme] = useState<string>("system");
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem("zendo-theme") || "system";
+    setTheme(saved);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("zendo-theme", next);
+    doc().classList.toggle("dark", next === "dark");
+  };
+
+  const doc = () => document.documentElement;
+
+  useEffect(() => {
+    if (mounted) {
+      if (theme === "system") {
+        const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        doc().classList.toggle("dark", isDark);
+      } else {
+        doc().classList.toggle("dark", theme === "dark");
+      }
+    }
+  }, [theme, mounted]);
 
   // Close avatar menu on outside click
   useEffect(() => {
@@ -313,7 +336,7 @@ export default function TopBar({ showSearch = true, searchPlaceholder = "Search 
           {/* Theme Toggle */}
           <button
             className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors active:scale-95"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={toggleTheme}
             title="Toggle theme"
           >
             <span className="material-symbols-outlined">

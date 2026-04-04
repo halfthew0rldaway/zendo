@@ -20,8 +20,6 @@ export const metadata: Metadata = {
     "A Zen-inspired workspace for high-precision project planning and development pipelines.",
 };
 
-import { ThemeProvider } from "./components/ThemeProvider";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,14 +37,7 @@ export default function RootLayout({
         className="bg-background text-on-background min-h-screen antialiased transition-colors duration-300 selection:bg-primary/20"
         style={{ fontFamily: "Inter, sans-serif" }}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );
